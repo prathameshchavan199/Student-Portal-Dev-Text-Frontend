@@ -13,7 +13,7 @@ import {
 import { getCourseById } from './courseData.js';
 import StudentShell from '../components/StudentShell.jsx';
 
-const PAYMENT_API = 'http://3.111.47.41:8081/api/payment';
+const PAYMENT_API = 'https://3.111.47.41:8081/api/payment';
 
 export default function CoursePayment({ onSignOut }) {
   const { courseId } = useParams();
