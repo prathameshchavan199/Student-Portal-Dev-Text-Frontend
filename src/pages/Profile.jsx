@@ -31,7 +31,7 @@ export default function Profile({ onSignOut }) {
   const handleLogout = async () => {
     if (onSignOut) { onSignOut(); return; }
     try {
-      await axios.post('http://13.201.129.245:8081/api/users/logout', {}, { withCredentials: true });
+      await axios.post('https://13.235.67.169/api/users/logout', {}, { withCredentials: true });
     } catch (error) {
       console.error('Logout failed:', error);
     } finally {

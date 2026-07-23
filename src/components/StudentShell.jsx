@@ -103,7 +103,7 @@ export default function StudentShell({
 
     try {
       await axios.post(
-        'http://13.201.129.245:8081/api/users/logout',
+        'https://13.235.67.169/api/users/logout',
         {},
         {
           withCredentials: true,
