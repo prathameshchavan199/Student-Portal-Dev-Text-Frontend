@@ -32,7 +32,7 @@ export default function Login() {
  
 //      console.log('Submitting login data:', payload);
 //      const response = await axios.post(
-//        'https://13.126.254.96:8081/api/users/login',
+//        'http://13.201.129.245:8081/api/users/login',
 //        payload,{
 //             withCredentials: true
 //         }
@@ -67,7 +67,7 @@ const onSubmit = async (data) => {
     setLoading(true);
 
     const response = await axios.post(
-      'https://13.126.254.96:8081/api/users/login',
+      'http://13.201.129.245:8081/api/users/login',
       data,
       { withCredentials: true }
     );

@@ -110,7 +110,7 @@ const createEmptyPosition = () => ({
 });
 
 const DRAFT_KEY = 'student-portal-registration-draft';
-const API_BASE_URL = 'https://13.126.254.96:8081';
+const API_BASE_URL = 'http://13.201.129.245:8081';
 
 const createEmptyDraft = () => ({
   profileImage: null,

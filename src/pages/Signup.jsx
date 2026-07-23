@@ -53,7 +53,7 @@ export default function Signup() {
 
       console.log('Submitting signup data:', payload);
       const response = await axios.post(
-        'https://13.126.254.96:8081/api/users/signup',
+        'http://13.201.129.245:8081/api/users/signup',
         payload,
         {
           withCredentials: true
@@ -144,7 +144,7 @@ const handleVerifyOtp = async (event) => {
 
   try {
     const response = await axios.post(
-      'https://13.126.254.96:8081/api/users/verify-otp',
+      'http://13.201.129.245:8081/api/users/verify-otp',
       {
         email: signupEmail,
         otp: enteredOtp,
@@ -186,7 +186,7 @@ const handleVerifyOtp = async (event) => {
   //     const enteredOtp = otp.join('');
   //    try{
   //     const response = await axios.post(
-  //       'https://13.126.254.96:8081/api/users/verify-otp',
+  //       'http://13.201.129.245:8081/api/users/verify-otp',
   //       { email: signupEmail, otp: enteredOtp },
   //       { withCredentials: true }
   //     );

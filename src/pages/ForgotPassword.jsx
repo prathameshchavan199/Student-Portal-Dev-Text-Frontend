@@ -61,7 +61,7 @@ export default function ForgotPassword() {
       setLoading(true);
       setServerError('');
       await axios.post(
-        'https://13.126.254.96:8081/api/users/forgot-password',
+        'http://13.201.129.245:8081/api/users/forgot-password',
         { email: data.email },
         { withCredentials: true },
       );
@@ -82,7 +82,7 @@ export default function ForgotPassword() {
 
   // const resetOpt = async (data) =>{
   //   const res=       await axios.post(
-  //       'https://13.126.254.96:8081/api/users/reset-password',
+  //       'http://13.201.129.245:8081/api/users/reset-password',
   //       { email: data.email },
   //       { withCredentials: true },
   //     );
@@ -124,7 +124,7 @@ export default function ForgotPassword() {
     setOtpError('');
     try {
       const response = await axios.post(
-        'https://13.126.254.96:8081/api/users/verify-otp',
+        'http://13.201.129.245:8081/api/users/verify-otp',
         { email, otp: enteredOtp },
         { withCredentials: true },
       );
@@ -155,7 +155,7 @@ export default function ForgotPassword() {
     if (resendSeconds > 0) return;
     try {
       await axios.post(
-        'https://13.126.254.96:8081/api/users/forgot-password',
+        'http://13.201.129.245:8081/api/users/forgot-password',
         { email },
         { withCredentials: true },
       );
@@ -175,7 +175,7 @@ export default function ForgotPassword() {
       setResetLoading(true);
       setServerError('');
       await axios.post(
-        'https://13.126.254.96:8081/api/users/reset-password',
+        'http://13.201.129.245:8081/api/users/reset-password',
         { email, otp: verifiedOtp, newPassword: data.newPassword },
         { withCredentials: true },
       );
