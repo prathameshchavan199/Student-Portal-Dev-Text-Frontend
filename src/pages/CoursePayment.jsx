@@ -12,8 +12,9 @@ import {
 } from 'react-icons/fi';
 import { getCourseById } from './courseData.js';
 import StudentShell from '../components/StudentShell.jsx';
+import { API_BASE_URL } from '../api/axiosSetup.js';
 
-const PAYMENT_API = 'https://13.235.67.169/api/payment';
+const PAYMENT_API = `${API_BASE_URL}/api/payment`;
 
 export default function CoursePayment({ onSignOut }) {
   const { courseId } = useParams();

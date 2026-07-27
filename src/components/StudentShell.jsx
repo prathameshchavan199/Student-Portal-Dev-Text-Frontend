@@ -1,6 +1,7 @@
 import { useContext, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_BASE_URL } from '../api/axiosSetup.js';
 import { FiBriefcase, FiBook, FiClipboard, FiFolder, FiGrid, FiLogOut, FiMenu, FiSearch, FiTrendingUp, FiVideo, FiX } from 'react-icons/fi';
 import { AuthContext } from '../context/AuthContext.jsx';
 import { courseType, courses } from '../pages/courseData.js';
@@ -103,7 +104,7 @@ export default function StudentShell({
 
     try {
       await axios.post(
-        'https://13.235.67.169/api/users/logout',
+        '${API_BASE_URL}/api/users/logout',
         {},
         {
           withCredentials: true,

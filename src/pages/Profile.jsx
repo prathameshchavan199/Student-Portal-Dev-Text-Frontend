@@ -7,6 +7,8 @@ import {
 } from 'react-icons/fi';
 import { AuthContext } from '../context/AuthContext.jsx';
 import StudentShell from '../components/StudentShell.jsx';
+import{API_BASE_URL} from '../api/axiosSetup.js';
+
 
 const DRAFT_KEY = 'student-portal-registration-draft';
 
@@ -31,7 +33,7 @@ export default function Profile({ onSignOut }) {
   const handleLogout = async () => {
     if (onSignOut) { onSignOut(); return; }
     try {
-      await axios.post('https://13.235.67.169/api/users/logout', {}, { withCredentials: true });
+      await axios.post(`${API_BASE_URL}/api/users/logout`, {}, { withCredentials: true });
     } catch (error) {
       console.error('Logout failed:', error);
     } finally {

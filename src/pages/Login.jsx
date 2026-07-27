@@ -2,7 +2,7 @@
 import {useContext } from "react";
 import {AuthContext } from "../context/AuthContext";
 import CyfenixLogo from "../assets/images/Cyfenix-Logo.png";
-
+import{API_BASE_URL} from '../api/axiosSetup.js';
 
 import {useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
@@ -16,58 +16,19 @@ import axios from 'axios';
 export default function Login() {
   const { user, setUser, authenticated, setAuthenticated, setRegistered } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
+  const [loginError, setLoginError] = useState('');
 
   const { register, handleSubmit, formState: { errors } } = useForm();
   const navigate = useNavigate();
-
-//  const onSubmit = async (data) => {
-//    try {
-//      const { email, password } = data;
- 
-//      const payload = {
-      
-//        email,
-//        password,
-//      };
- 
-//      console.log('Submitting login data:', payload);
-//      const response = await axios.post(
-//        'https://13.235.67.169/api/users/login',
-//        payload,{
-//             withCredentials: true
-//         }
-//      );
-
-//      console.log(response.data.name);
-// console.log(response.data.email);
-
-//      alert("Login successful! Token stored in localStorage."+response.data.email);
- 
-//      console.log('User logged in successfully:', response.data);
- 
-//      // alert('Account created successfully!');
- 
-//      navigate('/dashboard');
- 
-//    } catch (error) {
-//      console.error('Error logging in:', error);
- 
-//      const errorMessage =
-//        error.response?.data?.message ||
-//        error.message ||
-//        'An error occurred during login.';
- 
-//      // alert(errorMessage);
-//    }
-//  };
 
 
 const onSubmit = async (data) => {
   try {
     setLoading(true);
+    setLoginError('');
 
     const response = await axios.post(
-      'https://13.235.67.169/api/users/login',
+      `${API_BASE_URL}/api/users/login`,
       data,
       { withCredentials: true }
     );
@@ -86,6 +47,19 @@ const onSubmit = async (data) => {
 
   } catch (error) {
     console.error('Error logging in:', error);
+
+    const status = error.response?.status;
+    const serverMessage = error.response?.data?.message;
+
+    if (serverMessage) {
+      setLoginError(serverMessage);
+    } else if (status === 404) {
+      setLoginError('This email is not registered. Please sign up first.');
+    } else if (status === 401) {
+      setLoginError('Wrong credentials. Please check your email and password.');
+    } else {
+      setLoginError('Unable to log in. Please try again.');
+    }
   } finally {
     setLoading(false);
   }
@@ -112,6 +86,9 @@ const onSubmit = async (data) => {
           error={errors.password?.message}
           register={register('password', { required: 'Password is required', minLength: { value: 6, message: 'Min 6 chars' } })}
         />
+        {loginError && (
+          <div className="text-danger small mt-1 mb-2">{loginError}</div>
+        )}
         <GradientButton type="submit" style={{ width: '100%', marginTop: 10}} disabled={loading}>
           {loading ? 'Logging in…' : 'Login →'}
         </GradientButton>

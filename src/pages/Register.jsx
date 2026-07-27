@@ -3,6 +3,8 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence, color } from 'framer-motion';
 import axios from 'axios';
+import { API_BASE_URL } from '../api/axiosSetup.js';
+
 import Stepper from '../components/Stepper.jsx';
 import TagInput from '../components/TagInput.jsx';
 import { DarkInput, PasswordField, GradientButton, FiMail, FiUser, FiPhone } from '../components/UI.jsx';
@@ -110,7 +112,6 @@ const createEmptyPosition = () => ({
 });
 
 const DRAFT_KEY = 'student-portal-registration-draft';
-const API_BASE_URL = 'https://13.235.67.169';
 
 const createEmptyDraft = () => ({
   profileImage: null,

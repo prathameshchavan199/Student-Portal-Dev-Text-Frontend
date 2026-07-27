@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import AuthLayout from '../layouts/AuthLayout.jsx';
+import { API_BASE_URL } from '../api/axiosSetup.js';
+
 import axios from 'axios';
 import {
   DarkInput,
@@ -53,7 +55,7 @@ export default function Signup() {
 
       console.log('Submitting signup data:', payload);
       const response = await axios.post(
-        'https://13.235.67.169/api/users/signup',
+        `${API_BASE_URL}/api/users/signup`,
         payload,
         {
           withCredentials: true
@@ -144,7 +146,7 @@ const handleVerifyOtp = async (event) => {
 
   try {
     const response = await axios.post(
-      'https://13.235.67.169/api/users/verify-otp',
+      `${API_BASE_URL}/api/users/verify-otp`,
       {
         email: signupEmail,
         otp: enteredOtp,
@@ -180,38 +182,7 @@ const handleVerifyOtp = async (event) => {
     );
   }
 };
-  // const handleVerifyOtp = async (event) => {
-  //   event.preventDefault();
-  //   try {
-  //     const enteredOtp = otp.join('');
-  //    try{
-  //     const response = await axios.post(
-  //       'https://13.235.67.169/api/users/verify-otp',
-  //       { email: signupEmail, otp: enteredOtp },
-  //       { withCredentials: true }
-  //     );
-  //     console.log('OTP verification response:', response.data);
-  //     if(response.data.success===false){
-  //       alert('OTP verification failed: ' + response.data.message);
-  //       return;
-  //     }else if(response.data.success===true){
-  //       alert('OTP verified successfully! You can now log in.');
-  //       navigate('/login');
-  //     }
-      
-  //     }catch (error) {console.error('OTP verification error:', error);}
-
-  //      console.log('Verifying OTP sent: ', enteredOtp);
-
-  //   } catch (error) {
-      
-  //     console.log('Error verifying OTP:', error);
-
-      
-  //     return;
-  //   }
-    
-  // };
+  
 
   const handleChangeEmail = () => {
     setShowOtpModal(false);
@@ -280,6 +251,12 @@ const handleVerifyOtp = async (event) => {
             minLength: {
               value: 8,
               message: 'Password must be at least 8 characters',
+            },
+
+            validate: {
+              hasUpper: (value) => /[A-Z]/.test(value) || 'Password must contain at least one capital letter',
+              hasNumber: (value) => /[0-9]/.test(value) || 'Password must contain at least one number',
+              hasSpecial: (value) => /[^A-Za-z0-9]/.test(value) || 'Password must contain at least one special character',
             },
           })}
         />

@@ -10,6 +10,7 @@ import {
   FiMail,
 } from '../components/UI.jsx';
 import { FiCheckCircle } from 'react-icons/fi';
+import { API_BASE_URL } from '../api/axiosSetup.js';
 
 export default function ForgotPassword() {
   const [step, setStep] = useState('email'); // 'email' | 'reset'
@@ -61,7 +62,7 @@ export default function ForgotPassword() {
       setLoading(true);
       setServerError('');
       await axios.post(
-        'https://13.235.67.169/api/users/forgot-password',
+        `${API_BASE_URL}/api/users/forgot-password`,
         { email: data.email },
         { withCredentials: true },
       );
@@ -82,7 +83,7 @@ export default function ForgotPassword() {
 
   // const resetOpt = async (data) =>{
   //   const res=       await axios.post(
-  //       'https://13.235.67.169/api/users/reset-password',
+  //       `${API_BASE_URL}/api/users/reset-password`,
   //       { email: data.email },
   //       { withCredentials: true },
   //     );
@@ -124,7 +125,7 @@ export default function ForgotPassword() {
     setOtpError('');
     try {
       const response = await axios.post(
-        'https://13.235.67.169/api/users/verify-otp',
+        `${API_BASE_URL}/api/users/verify-otp`,
         { email, otp: enteredOtp },
         { withCredentials: true },
       );
@@ -155,7 +156,7 @@ export default function ForgotPassword() {
     if (resendSeconds > 0) return;
     try {
       await axios.post(
-        'https://13.235.67.169/api/users/forgot-password',
+        `${API_BASE_URL}/api/users/forgot-password`,
         { email },
         { withCredentials: true },
       );
@@ -175,7 +176,7 @@ export default function ForgotPassword() {
       setResetLoading(true);
       setServerError('');
       await axios.post(
-        'https://13.235.67.169/api/users/reset-password',
+        `${API_BASE_URL}/api/users/reset-password`,
         { email, otp: verifiedOtp, newPassword: data.newPassword },
         { withCredentials: true },
       );
@@ -249,6 +250,11 @@ export default function ForgotPassword() {
               register={registerReset('newPassword', {
                 required: 'New password is required',
                 minLength: { value: 8, message: 'Password must be at least 8 characters' },
+                validate: {
+                  hasUpper: (value) => /[A-Z]/.test(value) || 'Password must contain at least one capital letter',
+                  hasNumber: (value) => /[0-9]/.test(value) || 'Password must contain at least one number',
+                  hasSpecial: (value) => /[^A-Za-z0-9]/.test(value) || 'Password must contain at least one special character',
+                },
               })}
             />
 

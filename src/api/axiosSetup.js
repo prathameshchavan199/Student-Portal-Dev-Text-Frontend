@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'https://13.235.67.169';
+export const API_BASE_URL = 'http://13.235.67.169:8081';
 
 // Attach stored idToken as Bearer on every outgoing request
 axios.interceptors.request.use(request => {
