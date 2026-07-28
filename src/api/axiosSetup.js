@@ -10,7 +10,6 @@ axios.interceptors.request.use(request => {
   return request;
 });
 
-// On 401, try to refresh using stored refreshToken; retry the original request
 axios.interceptors.response.use(
   response => response,
   async error => {
