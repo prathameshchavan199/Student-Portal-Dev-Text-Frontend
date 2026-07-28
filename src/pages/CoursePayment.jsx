@@ -20,7 +20,7 @@ export default function CoursePayment({ onSignOut }) {
   const { courseId } = useParams();
   const navigate = useNavigate();
   const course = getCourseById(courseId);
-
+  console.log('Course Data:', course);
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState('');
 
@@ -32,10 +32,10 @@ export default function CoursePayment({ onSignOut }) {
   const paymentPayload = {
     amount: Number(payable),
     currency: 'INR',
-    courseId: course.paymentCourseId,
+    courseId: course.id,
     courseName: course.title,
   };
-
+console.log('Payment Payload:', paymentPayload);
   const handlePay = async () => {
     if (processing) return;
     setError('');
@@ -55,6 +55,7 @@ export default function CoursePayment({ onSignOut }) {
         body: JSON.stringify(paymentPayload),
 
       }).then((r) => {
+        console.log('Create Order Response:', r);
         if (!r.ok) throw new Error('Failed to create order');
         return r.json();
        

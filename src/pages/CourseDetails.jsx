@@ -160,8 +160,13 @@ export default function CourseDetails({ onSignOut }) {
               <button
                 type="button"
                 className="course-booking-action"
-                onClick={() => navigate(`/courses/${course.id}/payment?session=${selectedSession}`)}>
-                Continue 
+onClick={() => {
+  console.log("course:", course);
+  console.log("course.id:", course.id);
+  console.log("URL:", `/courses/${course.id}/payment?session=${selectedSession}`);
+
+  navigate(`/courses/${course.id}/payment?session=${selectedSession}`);
+}}>                Continue 
                 {/* <FiLayers /> */}
               </button>
             </aside>

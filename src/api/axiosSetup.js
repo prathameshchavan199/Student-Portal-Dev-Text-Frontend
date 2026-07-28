@@ -1,7 +1,8 @@
 import axios from 'axios';
 
-export const API_BASE_URL = 'https://13.235.67.169';
+export const API_BASE_URL = 'https://13.235.67.169'; // Replace with your backend API base URL
 
+// Attach stored idToken as Bearer on every outgoing request
 axios.interceptors.request.use(request => {
   const token = localStorage.getItem('idToken');
   if (token) {
