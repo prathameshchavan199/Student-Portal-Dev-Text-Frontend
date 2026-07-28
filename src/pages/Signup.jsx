@@ -248,15 +248,9 @@ const handleVerifyOtp = async (event) => {
           register={register('password', {
             required: 'Password is required',
 
-            minLength: {
-              value: 8,
-              message: 'Password must be at least 8 characters',
-            },
-
-            validate: {
-              hasUpper: (value) => /[A-Z]/.test(value) || 'Password must contain at least one capital letter',
-              hasNumber: (value) => /[0-9]/.test(value) || 'Password must contain at least one number',
-              hasSpecial: (value) => /[^A-Za-z0-9]/.test(value) || 'Password must contain at least one special character',
+            pattern: {
+              value: /^(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{8,}$/,
+              message: 'Password must be at least 8 characters and include one capital letter, one number, and one special character.',
             },
           })}
         />
