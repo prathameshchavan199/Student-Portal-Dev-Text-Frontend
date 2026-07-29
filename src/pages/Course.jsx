@@ -10,7 +10,7 @@ import {
   FiX,
 } from 'react-icons/fi';
 import CourseCard from './CourseCard.jsx';
-import { courseType, courses } from './courseData.js';
+import { useCourses } from '../context/CourseContext.jsx';
 import StudentShell from '../components/StudentShell.jsx';
 
 const emptyFilters = {
@@ -101,6 +101,7 @@ function getRecommendedTopics() {
 }
 
 export default function Course({ onSignOut }) {
+  const { courseTypes: courseType, courses, loading } = useCourses();
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [courseMode, setCourseMode] = useState('onlineProgram');
   const [query, setQuery] = useState('');
@@ -203,6 +204,18 @@ export default function Course({ onSignOut }) {
       matchesPrice(course, filters.price)
     );
   });
+
+  if (loading) {
+    return (
+      <StudentShell onSignOut={onSignOut}>
+        <main className="course-shell">
+          <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+            Loading courses…
+          </div>
+        </main>
+      </StudentShell>
+    );
+  }
 
   return (
     <StudentShell

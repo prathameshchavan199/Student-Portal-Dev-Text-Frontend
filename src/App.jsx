@@ -20,6 +20,7 @@ import McqTest from './pages/McqTest.jsx';
 import SpeakingTest from './pages/SpeakingTest.jsx';
 import WritingTest from './pages/WritingTest.jsx';
 import Profile from './pages/Profile.jsx';
+import AddCourse from './pages/AddCourse.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 
 function ScrollToTop() {
@@ -59,6 +60,7 @@ export default function App() {
       <Route path="/assessment/:category/test" element={<ProtectedRoute><McqTest /></ProtectedRoute>} />
       <Route path="/courses-progress" element={<ProtectedRoute><CourseProgress /></ProtectedRoute>} />
       <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+      {/* <Route path="/admin/add-course" element={<ProtectedRoute><AddCourse /></ProtectedRoute>} /> */}
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
     </>

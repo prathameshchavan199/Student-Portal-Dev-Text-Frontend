@@ -1,29 +1,31 @@
 import { useContext, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { API_BASE_URL } from '../api/axiosSetup.js';
-import { FiBriefcase, FiBook, FiClipboard, FiFolder, FiGrid, FiLogOut, FiMenu, FiSearch, FiTrendingUp, FiVideo, FiX } from 'react-icons/fi';
+import {   } from '../api/axiosSetup.js';
+import { FiBriefcase, FiBook, FiClipboard, FiFolder, FiGrid, FiLogOut, FiMenu, FiPlusCircle, FiSearch, FiTrendingUp, FiVideo, FiX } from 'react-icons/fi';
 import { AuthContext } from '../context/AuthContext.jsx';
 import { courseType, courses } from '../pages/courseData.js';
 import CyfenixLogo from "../assets/images/Cyfenix-Logo.png";
 
 const mainNavItems = [
-  { icon: FiGrid,       label: 'Dashboard',       path: '/dashboard' },
-  { icon: FiBook,       label: 'Courses',          path: '/courses' },
-  { icon: FiTrendingUp, label: 'Course Progress',  path: '/course-progress' },
-  { icon: FiClipboard,  label: 'Assessment',       path: '/assessment' },
-  { icon: FiBriefcase, label: 'Campus Placement Programs', path: '/dashboard' },
-  { icon: FiVideo,     label: 'Interactive Sessions',   path: '/dashboard' },
+  { icon: FiGrid,        label: 'Dashboard',                path: '/dashboard' },
+  { icon: FiBook,        label: 'Courses',                  path: '/courses' },
+  { icon: FiTrendingUp,  label: 'Course Progress',          path: '/course-progress' },
+  { icon: FiClipboard,   label: 'Assessment',               path: '/assessment' },
+  { icon: FiBriefcase,   label: 'Campus Placement Programs', path: '/dashboard' },
+  { icon: FiVideo,       label: 'Interactive Sessions',      path: '/dashboard' },
+  // { icon: FiPlusCircle,  label: 'Manage Courses',            path: '/admin/add-course' },
 ];
 
 const registerNavItem = { icon: FiFolder, label: 'Registration', path: '/register' };
 
 export const registrationNavItems = [
   { ...registerNavItem, active: true },
-  { icon: FiGrid,       label: 'Dashboard',       path: '/dashboard' },
-  { icon: FiBook,       label: 'Courses',          path: '/courses' },
-  { icon: FiTrendingUp, label: 'Course Progress',  path: '/course-progress' },
-  { icon: FiClipboard,  label: 'Assessment',       path: '/assessment' },
+  { icon: FiGrid,        label: 'Dashboard',      path: '/dashboard' },
+  { icon: FiBook,        label: 'Courses',         path: '/courses' },
+  { icon: FiTrendingUp,  label: 'Course Progress', path: '/course-progress' },
+  { icon: FiClipboard,   label: 'Assessment',      path: '/assessment' },
+  { icon: FiPlusCircle,  label: 'Manage Courses',  path: '/admin/add-course' },
 ];
 
 function getProfileInfo() {

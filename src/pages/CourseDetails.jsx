@@ -17,7 +17,7 @@ import {
 } from 'react-icons/fi';
 import StudentShell from '../components/StudentShell.jsx';
 import CourseCard from './CourseCard.jsx';
-import { courses, getCourseById } from './courseData.js';
+import { useCourses } from '../context/CourseContext.jsx';
 
 const detailTabs = ['Overview', 'Curriculum', 'Instructor', 'Reviews'];
 
@@ -78,6 +78,7 @@ export default function CourseDetails({ onSignOut }) {
   const { courseId } = useParams();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('Overview');
+  const { courses, getCourseById, loading } = useCourses();
   const course = getCourseById(courseId);
   const sessions = useMemo(
     () =>
@@ -100,6 +101,18 @@ export default function CourseDetails({ onSignOut }) {
         .slice(0, 3),
     [courseId, course],
   );
+
+  if (loading) {
+    return (
+      <StudentShell onSignOut={onSignOut}>
+        <main className="course-shell">
+          <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+            Loading…
+          </div>
+        </main>
+      </StudentShell>
+    );
+  }
 
   if (!course) return <Navigate to="/courses" replace />;
 

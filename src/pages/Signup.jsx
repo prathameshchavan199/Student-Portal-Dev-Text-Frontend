@@ -276,7 +276,7 @@ const handleVerifyOtp = async (event) => {
         OR REGISTER WITH
       </div>
 
-      <div className="d-flex gap-2">
+      {/* <div className="d-flex gap-2">
         <button
           type="button"
           className="social-btn d-flex align-items-center justify-content-center gap-2"
@@ -284,7 +284,7 @@ const handleVerifyOtp = async (event) => {
           <FaGoogle />
           Google
         </button>
-      </div>
+      </div> */}
 
       <p
         className="text-center text-muted-2 mt-3 mb-0"

@@ -10,7 +10,7 @@ import {
   FiLock,
   FiSmartphone,
 } from 'react-icons/fi';
-import { getCourseById } from './courseData.js';
+import { useCourses } from '../context/CourseContext.jsx';
 import StudentShell from '../components/StudentShell.jsx';
 import { API_BASE_URL } from '../api/axiosSetup.js';
 
@@ -19,10 +19,22 @@ const PAYMENT_API = `${API_BASE_URL}/api/payment`;
 export default function CoursePayment({ onSignOut }) {
   const { courseId } = useParams();
   const navigate = useNavigate();
+  const { getCourseById, loading } = useCourses();
   const course = getCourseById(courseId);
-  console.log('Course Data:', course);
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState('');
+
+  if (loading) {
+    return (
+      <StudentShell onSignOut={onSignOut}>
+        <main className="course-shell">
+          <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+            Loading…
+          </div>
+        </main>
+      </StudentShell>
+    );
+  }
 
   if (!course) return <Navigate to="/courses" replace />;
 
