@@ -19,6 +19,7 @@ import { FiCheckCircle } from 'react-icons/fi';
 
 export default function Signup() {
   const [showOtpModal, setShowOtpModal] = useState(false);
+  const [signupError, setSignupError] = useState('');
   const [signupEmail, setSignupEmail] = useState('');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [otpError, setOtpError] = useState('');
@@ -45,6 +46,7 @@ export default function Signup() {
   const onSubmit = async (data) => {
     try {
       setLoading(true);
+      setSignupError('');
       const { name, email, password } = data;
 
       const payload = {
@@ -62,9 +64,6 @@ export default function Signup() {
         }
       );
 
-
-
-
       console.log('User signed up successfully:', response.data);
 
       setSignupEmail(email);
@@ -76,17 +75,20 @@ export default function Signup() {
       
 
     } catch (error) {
-      console.error('Error signing up:', error);
-      console.error('Error response data:', error.response?.data);
-      const errorMessage =
-        error.response?.data?.message ||
-        error.message ||
-        'An error occurred during sign up.';
+  console.error('Error signing up:', error);
+  console.error('Error response data:', error.response?.data);
 
-      // alert(errorMessage);
-    } finally {
-      setLoading(false);
-    }
+  const errorMessage =
+    error.response?.data?.message ||
+    error.message ||
+    'An error occurred during sign up.';
+
+  setSignupError(errorMessage);
+
+  // alert(errorMessage);
+} finally {
+  setLoading(false);
+}
   };
 
   useEffect(() => {
@@ -267,14 +269,32 @@ const handleVerifyOtp = async (event) => {
           })}
         />
 
+        {signupError && (
+  <div
+    style={{
+      color: '#dc3545',
+      backgroundColor: '#fdeaea',
+      border: '1px solid #f5c2c7',
+      borderRadius: '6px',
+      padding: '10px',
+      marginTop: '10px',
+      marginBottom: '10px',
+      textAlign: 'center',
+      fontSize: '14px',
+    }}
+  >
+    {signupError}
+  </div>
+)}
+
         <GradientButton type="submit" disabled={loading} style={{ width: '100%', marginTop: 10 }}>
           Sign Up →
         </GradientButton>
       </form>
 
-      <div className="divider-or">
+      {/* <div className="divider-or">
         OR REGISTER WITH
-      </div>
+      </div> */}
 
       {/* <div className="d-flex gap-2">
         <button
@@ -282,7 +302,7 @@ const handleVerifyOtp = async (event) => {
           className="social-btn d-flex align-items-center justify-content-center gap-2"
         >
           <FaGoogle />
-          Google
+          Google  
         </button>
       </div> */}
 
