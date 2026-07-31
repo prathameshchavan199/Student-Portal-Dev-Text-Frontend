@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import {
   FiArrowLeft, FiBell, FiBriefcase, FiChevronRight,
-  FiEdit2, FiFileText, FiLogOut, FiMail, FiMapPin, FiPhone, FiShield,
+  FiEdit2, FiExternalLink, FiFileText, FiLogOut, FiMail, FiMapPin, FiPhone, FiShield,
 } from 'react-icons/fi';
 import { AuthContext } from '../context/AuthContext.jsx';
 import StudentShell from '../components/StudentShell.jsx';
@@ -15,9 +15,9 @@ export default function Profile({ onSignOut }) {
   const navigate = useNavigate();
   const { user, setUser } = useContext(AuthContext);
 
-  const [reg, setReg]                   = useState(null);   // registration data from API
+  const [reg, setReg]                         = useState(null);
   const [profileImageUrl, setProfileImageUrl] = useState(null);
-  const [loading, setLoading]           = useState(true);
+  const [loading, setLoading]                 = useState(true);
 
   /* ── Fetch registration on every visit ── */
   useEffect(() => {
@@ -33,22 +33,36 @@ export default function Profile({ onSignOut }) {
           const data = res.data.data;
           setReg(data);
 
-          // Fetch profile image presigned URL if one was uploaded
           if (data.hasProfileImage && data.id) {
             try {
               const imgRes = await axios.get(
-                `${API_BASE_URL}/api/registration/file/${data.id}/profileImage`
+                `${API_BASE_URL}/api/registration/file/${data.id}/profileImage`,
               );
               if (!cancelled && imgRes.data.success) {
                 setProfileImageUrl(imgRes.data.url);
+                return; // S3 URL found — skip localStorage fallback
               }
-            } catch {
-              // no image — leave as null
-            }
+            } catch { /* fall through to localStorage */ }
+          }
+
+          // Backward-compat: image may still be in localStorage for existing users
+          if (!cancelled) {
+            const local = localStorage.getItem('profileImage');
+            if (local) setProfileImageUrl(local);
+          }
+        } else {
+          // No registration — still try localStorage for the avatar
+          if (!cancelled) {
+            const local = localStorage.getItem('profileImage');
+            if (local) setProfileImageUrl(local);
           }
         }
       } catch {
-        // not registered yet — leave reg as null
+        // Network error — try localStorage
+        if (!cancelled) {
+          const local = localStorage.getItem('profileImage');
+          if (local) setProfileImageUrl(local);
+        }
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -57,6 +71,21 @@ export default function Profile({ onSignOut }) {
     load();
     return () => { cancelled = true; };
   }, []);
+
+  /* ── Open a submitted document in a new tab at a clean URL ── */
+  const DOC_FILENAMES = {
+    tenthCertificate:          'ssc-certificate.pdf',
+    intermediateCertificate:   'intermediate-certificate.pdf',
+    diplomaCertificate:        'diploma-certificate.pdf',
+    undergraduateCertificate:  'undergraduate-certificate.pdf',
+    postGraduationCertificate: 'postgraduate-certificate.pdf',
+    resume:                    'resume.pdf',
+  };
+
+  const viewDocument = (type) => {
+    const filename = DOC_FILENAMES[type] || `${type}.pdf`;
+    window.open(`/profile/${filename}`, '_blank', 'noopener,noreferrer');
+  };
 
   const handleLogout = async () => {
     if (onSignOut) { onSignOut(); return; }
@@ -98,9 +127,9 @@ export default function Profile({ onSignOut }) {
       abbr: 'M', color: '#7C3AED',
       title: degree,
       details: [
-        val(reg.postGraduationUniversity) && `University: ${reg.postGraduationUniversity}`,
+        val(reg.postGraduationUniversity)    && `University: ${reg.postGraduationUniversity}`,
         val(reg.postGraduationYearOfPassing) && `Year: ${reg.postGraduationYearOfPassing}`,
-        val(reg.postGraduationGpa)           && `Score: ${reg.postGraduationGpa}%`
+        val(reg.postGraduationGpa)           && `Score: ${reg.postGraduationGpa}%`,
       ].filter(Boolean),
     });
   }
@@ -109,16 +138,14 @@ export default function Profile({ onSignOut }) {
     const degree = reg.undergraduateDegree === 'Other'
       ? (reg.undergraduateOtherDegree || 'Under Graduation')
       : reg.undergraduateDegree;
-    const branch = reg.undergraduateDegree === 'B.Tech' && reg.btechBranch
-      ? reg.btechBranch
-      : null;
+    const branch = reg.undergraduateDegree === 'B.Tech' && reg.btechBranch ? reg.btechBranch : null;
     educationRows.push({
       abbr: 'U', color: '#2563EB',
       title: branch ? `${degree} — ${branch}` : degree,
       details: [
-        val(reg.undergraduateUniversity) && `University: ${reg.undergraduateUniversity}`,
+        val(reg.undergraduateUniversity)    && `University: ${reg.undergraduateUniversity}`,
         val(reg.undergraduateYearOfPassing) && `Year: ${reg.undergraduateYearOfPassing}`,
-        val(reg.undergraduateGpa)           && `Score: ${reg.undergraduateGpa}%`
+        val(reg.undergraduateGpa)           && `Score: ${reg.undergraduateGpa}%`,
       ].filter(Boolean),
     });
   }
@@ -128,9 +155,9 @@ export default function Profile({ onSignOut }) {
       abbr: 'I', color: '#0891B2',
       title: `Intermediate${reg.stream ? ` (${reg.stream})` : ''}`,
       details: [
-        val(reg.intermediateCollege)         && `College: ${reg.intermediateCollege}`,
-        val(reg.intermediateYearOfPassing)   && `Year: ${reg.intermediateYearOfPassing}`,
-        val(reg.intermediateGpa)             && `Score: ${reg.intermediateGpa}%`,
+        val(reg.intermediateCollege)       && `College: ${reg.intermediateCollege}`,
+        val(reg.intermediateYearOfPassing) && `Year: ${reg.intermediateYearOfPassing}`,
+        val(reg.intermediateGpa)           && `Score: ${reg.intermediateGpa}%`,
       ].filter(Boolean),
     });
   } else if (reg?.qualificationAfter10th === 'diploma') {
@@ -138,22 +165,32 @@ export default function Profile({ onSignOut }) {
       abbr: 'D', color: '#0891B2',
       title: `Diploma${reg.diplomaBranch ? ` — ${reg.diplomaBranch}` : ''}`,
       details: [
-        val(reg.diplomaCollege)              && `College: ${reg.diplomaCollege}`,
-        val(reg.diplomaYearOfPassing)        && `Year: ${reg.diplomaYearOfPassing}`,
-        val(reg.diplomaGpa)                  && `Score: ${reg.diplomaGpa}%`,
+        val(reg.diplomaCollege)       && `College: ${reg.diplomaCollege}`,
+        val(reg.diplomaYearOfPassing) && `Year: ${reg.diplomaYearOfPassing}`,
+        val(reg.diplomaGpa)           && `Score: ${reg.diplomaGpa}%`,
       ].filter(Boolean),
     });
   }
 
   educationRows.push({
     abbr: '10', color: '#6B7280',
-  title: 'Secondary Education (SSC)',
+    title: 'Secondary Education (SSC)',
     details: [
-      val(reg?.school) && `School: ${reg.school}`,
-      val(reg?.tenthYearOfPassing) && `Year: ${reg.tenthYearOfPassing}`,
-      val(reg?.tenthGpa)           && `Score: ${reg.tenthGpa}%`,
+      val(reg?.school)              && `School: ${reg.school}`,
+      val(reg?.tenthYearOfPassing)  && `Year: ${reg.tenthYearOfPassing}`,
+      val(reg?.tenthGpa)            && `Score: ${reg.tenthGpa}%`,
     ].filter(Boolean),
   });
+
+  /* ── Document links ── */
+  const docItems = !reg ? [] : [
+    reg.hasTenthCertificate         && { label: 'SSC Certificate',            type: 'tenthCertificate',          filename: reg.tenthCertificateFileName },
+    reg.hasIntermediateCertificate  && { label: 'Intermediate Certificate',   type: 'intermediateCertificate',   filename: reg.intermediateCertificateFileName },
+    reg.hasDiplomaCertificate       && { label: 'Diploma Certificate',        type: 'diplomaCertificate',        filename: reg.diplomaCertificateFileName },
+    reg.hasUndergraduateCertificate && { label: 'Undergraduate Certificate',  type: 'undergraduateCertificate',  filename: reg.undergraduateCertificateFileName },
+    reg.hasPostGraduationCertificate&& { label: 'Post Graduation Certificate',type: 'postGraduationCertificate', filename: reg.postGraduationCertificateFileName },
+    reg.hasResume                   && { label: 'Resume',                     type: 'resume',                    filename: reg.resumeFileName },
+  ].filter(Boolean);
 
   const projects  = (reg?.projects  ?? []).filter((p) => p.title);
   const positions = (reg?.positions ?? []).filter((p) => p.companyName);
@@ -231,7 +268,7 @@ export default function Profile({ onSignOut }) {
             </div>
           )}
 
-          {/* ── Profile sections (only when registration data is loaded) ── */}
+          {/* ── Profile sections ── */}
           {!loading && reg && (
             <>
               {/* Personal Information */}
@@ -255,6 +292,21 @@ export default function Profile({ onSignOut }) {
                 </ProfileSection>
               )}
 
+              {/* Documents */}
+              {docItems.length > 0 && (
+                <ProfileSection title="Documents">
+                  {docItems.map((doc, i) => (
+                    <DocRow
+                      key={doc.type}
+                      label={doc.label}
+                      filename={doc.filename}
+                      last={i === docItems.length - 1}
+                      onView={() => viewDocument(doc.type)}
+                    />
+                  ))}
+                </ProfileSection>
+              )}
+
               {/* Projects */}
               {reg.hasProjects && projects.length > 0 && (
                 <ProfileSection title="Academic Projects">
@@ -272,7 +324,6 @@ export default function Profile({ onSignOut }) {
                           {p.isTechnical && <span className="profile-badge-tech">Technical</span>}
                         </div>
                       </div>
-
                       {p.projectType === 'external' && val(p.collegeName) && (
                         <div className="profile-project-detail">
                           <span className="profile-project-detail-label">Company / College</span>
@@ -331,25 +382,16 @@ export default function Profile({ onSignOut }) {
               )}
 
               {/* Resume / Profile */}
-              {(reg.wantsAiProfile != null || reg.resumeFileName) && (
+              {reg.wantsAiProfile != null && (
                 <ProfileSection title="Profile">
-                  {reg.wantsAiProfile != null && (
-                    <InfoField
-                      icon={<FiFileText />}
-                      label="AI Generated Profile"
-                      value={reg.wantsAiProfile
-                        ? 'Yes — AI profile requested'
-                        : 'No — Manual resume uploaded'}
-                    />
-                  )}
-                  {reg.resumeFileName && (
-                    <InfoField
-                      icon={<FiFileText />}
-                      label="Resume File"
-                      value={reg.resumeFileName}
-                      last
-                    />
-                  )}
+                  <InfoField
+                    icon={<FiFileText />}
+                    label="AI Generated Profile"
+                    value={reg.wantsAiProfile
+                      ? 'Yes — AI profile requested'
+                      : 'No — Manual resume uploaded'}
+                    last
+                  />
                 </ProfileSection>
               )}
             </>
@@ -401,6 +443,22 @@ function EduRow({ abbr, color, title, details, last, onEdit }) {
       </div>
       <button type="button" className="profile-edu-edit" onClick={onEdit}>
         <FiEdit2 size={13} />
+      </button>
+    </div>
+  );
+}
+
+function DocRow({ label, filename, onView, last }) {
+  return (
+    <div className={`profile-doc-row${last ? '' : ' bordered'}`}>
+      <div className="profile-doc-icon"><FiFileText size={16} /></div>
+      <div className="profile-doc-body">
+        <div className="profile-doc-label">{label}</div>
+        {filename && <div className="profile-doc-filename">{filename}</div>}
+      </div>
+      <button type="button" className="profile-doc-view" onClick={onView}>
+        <FiExternalLink size={13} />
+        View
       </button>
     </div>
   );

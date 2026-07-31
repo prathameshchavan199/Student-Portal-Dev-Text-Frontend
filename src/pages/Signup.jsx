@@ -293,7 +293,7 @@ const handleVerifyOtp = async (event) => {
 )}
 
         <GradientButton type="submit" disabled={loading} style={{ width: '100%', marginTop: 10 }}>
-          Sign Up →
+          {loading ? 'Signing up…' : 'Sign Up →'}
         </GradientButton>
       </form>
 

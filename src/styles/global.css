@@ -6352,6 +6352,62 @@ body.mcq-active .dash-wrap { overflow: visible !important; }
 .profile-settings-row.danger .profile-settings-icon,
 .profile-settings-row.danger .profile-settings-label { color: #ef4444; }
 
+/* Documents */
+.profile-doc-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+}
+.profile-doc-row.bordered { border-bottom: 1px solid var(--border-color); }
+.profile-doc-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--brand-blue) 12%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--brand-blue);
+  flex-shrink: 0;
+}
+.profile-doc-body { flex: 1; min-width: 0; }
+.profile-doc-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-heading);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.profile-doc-filename {
+  font-size: 11px;
+  color: var(--text-subtle);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.profile-doc-view {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--brand-blue);
+  background: none;
+  color: var(--brand-blue);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+.profile-doc-view:hover {
+  background: color-mix(in srgb, var(--brand-blue) 12%, transparent);
+}
+
 /* ── Writing Test ──────────────────────────────────────────────── */
 .wrt-timer-warn {
   color: #ef4444 !important;

@@ -285,6 +285,13 @@ const appendFiles = (fd, d) => {
   if (d.undergraduateMarksheetFile instanceof File)  fd.append('undergraduateMarksheetFile',  d.undergraduateMarksheetFile);
   if (d.postGraduationMarksheetFile instanceof File) fd.append('postGraduationMarksheetFile', d.postGraduationMarksheetFile);
   if (d.resumeFile instanceof File)                  fd.append('resumeFile',                  d.resumeFile);
+  // Profile image is stored as a base64 data URL — convert to File before sending
+  if (d.profileImage && typeof d.profileImage === 'string' && d.profileImage.startsWith('data:')) {
+    const [header] = d.profileImage.split(',');
+    const mime = header.match(/data:(.*?);base64/)?.[1] || 'image/jpeg';
+    const ext  = mime.split('/')[1]?.replace('jpeg', 'jpg') || 'jpg';
+    fd.append('profileImage', dataUrlToFile(d.profileImage, `profile_image.${ext}`, mime));
+  }
 };
 
 const buildDraftPayload = async (draftData = {}) => ({
