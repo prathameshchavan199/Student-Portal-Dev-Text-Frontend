@@ -175,9 +175,11 @@ export default function Profile({ onSignOut }) {
             </button>
           </div>
           <h2 className="profile-fullname">{fullName}</h2>
-          <div className="profile-role-tag">{role}</div>
-          <div className="profile-uid">{deriveUid(fullName)}</div>
-        </div>
+          {/* <div className="profile-role-tag">{role}</div> */}
+          {/* <div className="profile-uid">{deriveUid(fullName)}</div> */}
+<div className="profile-uid">
+  {`#STU-${String(user.id).padStart(6, '0')}`}
+</div>        </div>
 
         {/* ── Personal Information ── */}
         <ProfileSection title="Personal Information">

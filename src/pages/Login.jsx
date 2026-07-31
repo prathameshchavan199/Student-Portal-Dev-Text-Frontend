@@ -27,15 +27,18 @@ const onSubmit = async (data) => {
     setLoading(true);
     setLoginError('');
 
+    const payload = { ...data, email: data.email.trim().toLowerCase() };
+
     const response = await axios.post(
       `${API_BASE_URL}/api/users/login`,
-      data,
+      payload,
       { withCredentials: true }
     );
 
     localStorage.setItem("name", response.data.name);
     localStorage.setItem("email", response.data.email);
     localStorage.setItem("user", JSON.stringify(response.data));
+    localStorage.setItem("id", JSON.stringify(response.data.id));
     if (response.data.idToken) localStorage.setItem("idToken", response.data.idToken);
     if (response.data.refreshToken) localStorage.setItem("refreshToken", response.data.refreshToken);
 
@@ -77,7 +80,13 @@ const onSubmit = async (data) => {
           label="Email Address"
           placeholder="student@university.edu"
           error={errors.email?.message}
-          register={register('email', { required: 'Email is required', pattern: { value: /^\S+@\S+$/, message: 'Invalid email' } })}
+          register={register('email', {
+            required: 'Email is required',
+            pattern: { value: /^\S+@\S+$/, message: 'Invalid email' },
+            validate: (value) =>
+              !/[A-Z]/.test(value) || /[a-z]/.test(value) ||
+              'Email address must be entered in lowercase letters.',
+          })}
         />
         <PasswordField
           label="Password"

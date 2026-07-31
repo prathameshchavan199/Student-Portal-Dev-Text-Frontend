@@ -47,7 +47,8 @@ export default function Signup() {
     try {
       setLoading(true);
       setSignupError('');
-      const { name, email, password } = data;
+      const { name, password } = data;
+      const email = data.email.trim().toLowerCase();
 
       const payload = {
         name,
@@ -240,6 +241,10 @@ const handleVerifyOtp = async (event) => {
               value: /^\S+@\S+\.\S+$/,
               message: 'Invalid email address',
             },
+
+            validate: (value) =>
+              !/[A-Z]/.test(value) || /[a-z]/.test(value) ||
+              'Email address must be entered in lowercase letters.',
           })}
         />
 

@@ -61,12 +61,13 @@ export default function ForgotPassword() {
     try {
       setLoading(true);
       setServerError('');
+      const normalizedEmail = data.email.trim().toLowerCase();
       await axios.post(
         `${API_BASE_URL}/api/users/forgot-password`,
-        { email: data.email },
+        { email: normalizedEmail },
         { withCredentials: true },
       );
-      setEmail(data.email);
+      setEmail(normalizedEmail);
       setOtp(['', '', '', '', '', '']);
       setOtpError('');
       setOtpVerified(false);
@@ -216,6 +217,9 @@ export default function ForgotPassword() {
                   value: /^\S+@\S+\.\S+$/,
                   message: 'Invalid email address',
                 },
+                validate: (value) =>
+                  !/[A-Z]/.test(value) || /[a-z]/.test(value) ||
+                  'Email address must be entered in lowercase letters.',
               })}
             />
 
