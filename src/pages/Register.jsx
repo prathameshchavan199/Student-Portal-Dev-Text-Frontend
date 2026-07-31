@@ -138,9 +138,13 @@ const createEmptyDraft = () => ({
   undergraduateDegree: '',
   undergraduateOtherDegree: '',
   undergraduateUniversity: '',
+  undergraduateGpa: '',
+  undergraduateYearOfPassing: String(new Date().getFullYear()),
   postGraduationDegree: '',
   postGraduationOtherDegree: '',
   postGraduationUniversity: '',
+  postGraduationGpa: '',
+  postGraduationYearOfPassing: String(new Date().getFullYear()),
   marksheetFile: null,
   intermediateMarksheetFile: null,
   diplomaMarksheetFile: null,
@@ -259,10 +263,14 @@ const buildJsonFields = (d, email) => ({
   undergraduateOtherDegree: d.undergraduateOtherDegree,
   btechDegree: d.btechDegree,
   undergraduateUniversity: d.undergraduateUniversity,
+  undergraduateGpa: d.undergraduateGpa,
+  undergraduateYearOfPassing: d.undergraduateYearOfPassing,
   hasPostGraduation: d.hasPostGraduation,
   postGraduationDegree: d.postGraduationDegree,
   postGraduationOtherDegree: d.postGraduationOtherDegree,
   postGraduationUniversity: d.postGraduationUniversity,
+  postGraduationGpa: d.postGraduationGpa,
+  postGraduationYearOfPassing: d.postGraduationYearOfPassing,
   hasProjects: d.hasProjects,
   projects: d.projects,
   hasWorkExperience: d.hasWorkExperience,
@@ -350,10 +358,14 @@ const mapServerDraftToForm = (s) => ({
   // Backend: btechBranch → form: btechDegree
   btechDegree:               s.btechBranch               || '',
   undergraduateUniversity:   s.undergraduateUniversity   || '',
+  undergraduateGpa:          s.undergraduateGpa          || '',
+  undergraduateYearOfPassing: s.undergraduateYearOfPassing || String(new Date().getFullYear()),
   hasPostGraduation:         s.hasPostGraduation         ?? null,
   postGraduationDegree:      s.postGraduationDegree      || '',
   postGraduationOtherDegree: s.postGraduationOtherDegree || '',
   postGraduationUniversity:  s.postGraduationUniversity  || '',
+  postGraduationGpa:        s.postGraduationGpa         || '',
+  postGraduationYearOfPassing: s.postGraduationYearOfPassing || String(new Date().getFullYear()),
   hasProjects:               s.hasProjects               ?? true,
   projects:   Array.isArray(s.projects)  && s.projects.length  > 0 ? s.projects  : [createEmptyProject()],
   hasWorkExperience:         s.hasWorkExperience         ?? true,
@@ -1153,10 +1165,10 @@ function StepDetails({ data, setData, onNext }) {
 
               <div className="col-6">
                 <DarkInput  label="GPA/Percentage" placeholder="9.0 or 90%"
-                  error={errors.gpa?.message}
-                  register={register('gpa', {
-                    required: 'Required',
+                  error={errors.undergraduateGpa?.message}
+                  register={register('undergraduateGpa', {
                     validate: value => {
+                      if (!value || !value.trim()) return true;
                       const normalized = value.trim().replace('%', '');
                       const score = parseFloat(normalized);
                       return (!Number.isNaN(score) && score >= 0 && score <= 100) || 'Enter a valid GPA or percentage';
@@ -1171,14 +1183,14 @@ function StepDetails({ data, setData, onNext }) {
                     const years = Array.from({ length: 10 }, (_, i) => currentYear - i);
                     return (
                       <div className="select-field-wrap">
-                        <select className="form-select dark-input select-with-icon" defaultValue={String(currentYear)} {...register('yearOfPassing', { required: 'Required' })}>
+                        <select className="form-select dark-input select-with-icon" defaultValue={String(currentYear)} {...register('undergraduateYearOfPassing')}>
                           {years.map(y => <option key={y} value={String(y)}>{y}</option>)}
                         </select>
                         <span className="select-field-icon"><FiChevronDown /></span>
                       </div>
                     );
                   })()}
-                  {errors.yearOfPassing && <div className="text-danger small mt-1">{errors.yearOfPassing.message}</div>}
+                  {errors.undergraduateYearOfPassing && <div className="text-danger small mt-1">{errors.undergraduateYearOfPassing.message}</div>}
                 </div>
               </div>
               <div className="col-12">
@@ -1303,10 +1315,10 @@ function StepDetails({ data, setData, onNext }) {
               </div>
               <div className="col-6">
                 <DarkInput  label="GPA/Percentage" placeholder="9.0 or 90%"
-                  error={errors.gpa?.message}
-                  register={register('gpa', {
-                    required: 'Required',
+                  error={errors.postGraduationGpa?.message}
+                  register={register('postGraduationGpa', {
                     validate: value => {
+                      if (!value || !value.trim()) return true;
                       const normalized = value.trim().replace('%', '');
                       const score = parseFloat(normalized);
                       return (!Number.isNaN(score) && score >= 0 && score <= 100) || 'Enter a valid GPA or percentage';
@@ -1321,14 +1333,14 @@ function StepDetails({ data, setData, onNext }) {
                     const years = Array.from({ length: 10 }, (_, i) => currentYear - i);
                     return (
                       <div className="select-field-wrap">
-                        <select className="form-select dark-input select-with-icon" defaultValue={String(currentYear)} {...register('yearOfPassing', { required: 'Required' })}>
+                        <select className="form-select dark-input select-with-icon" defaultValue={String(currentYear)} {...register('postGraduationYearOfPassing')}>
                           {years.map(y => <option key={y} value={String(y)}>{y}</option>)}
                         </select>
                         <span className="select-field-icon"><FiChevronDown /></span>
                       </div>
                     );
                   })()}
-                  {errors.yearOfPassing && <div className="text-danger small mt-1">{errors.yearOfPassing.message}</div>}
+                  {errors.postGraduationYearOfPassing && <div className="text-danger small mt-1">{errors.postGraduationYearOfPassing.message}</div>}
                 </div>
               </div>
               <div className="col-12">
@@ -1865,8 +1877,8 @@ function StepPreview({ data, onBack, onSubmitSuccess, setStep }) {
           ...(data.undergraduateDegree === 'B.Tech' ? [['Branch', data.btechDegree || '—']] : []),
           ...(data.undergraduateDegree === 'Other' ? [['Other Degree', data.undergraduateOtherDegree || '—']] : []),
           ['University', data.undergraduateUniversity || '—'],
-          ['GPA/Percentage', data.gpa || '—'],
-          ['Year of Passing', data.yearOfPassing || '—'],
+          ['GPA/Percentage', data.undergraduateGpa || '—'],
+          ['Year of Passing', data.undergraduateYearOfPassing || '—'],
           ['Certificate', formatFile(data.undergraduateMarksheetFile)],
         ] : []),
       ]} />
@@ -1878,8 +1890,8 @@ function StepPreview({ data, onBack, onSubmitSuccess, setStep }) {
           ['Degree', data.postGraduationDegree || '—'],
           ...(data.postGraduationDegree === 'Other' ? [['Other Degree', data.postGraduationOtherDegree || '—']] : []),
           ['University', data.postGraduationUniversity || '—'],
-          ['GPA/Percentage', data.gpa || '—'],
-          ['Year of Passing', data.yearOfPassing || '—'],
+          ['GPA/Percentage', data.postGraduationGpa || '—'],
+          ['Year of Passing', data.postGraduationYearOfPassing || '—'],
           ['Certificate', formatFile(data.postGraduationMarksheetFile)],
         ] : []),
       ]} />
