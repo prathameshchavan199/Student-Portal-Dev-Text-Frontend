@@ -6,8 +6,9 @@ import {
   FiDownload, FiMic, FiMicOff,
 } from 'react-icons/fi';
 import * as faceapi from 'face-api.js';
+import axios from 'axios';
+import { API_BASE_URL } from '../api/axiosSetup.js';
 import StudentShell from '../components/StudentShell.jsx';
-import { assessmentQuestions } from './assessmentQuestions.js';
 import { getCourseById } from './courseData.js';
 import { downloadAssessmentCertificate } from '../utils/certificate.js';
 
@@ -124,7 +125,15 @@ export default function McqTest({ onSignOut }) {
   const analyserRef    = useRef(null);
   const audioLoudRef   = useRef(0);             // consecutive loud-audio ticks
 
-  const data = assessmentQuestions[category];
+  const [data, setData]           = useState(null);
+  const [questionsLoading, setQuestionsLoading] = useState(true);
+
+  useEffect(() => {
+    axios.get(`${API_BASE_URL}/api/assessments/${category}/questions`)
+      .then(res => { if (res.data?.success) setData(res.data.data); })
+      .catch(() => {})
+      .finally(() => setQuestionsLoading(false));
+  }, [category]);
 
   const fsSupported = !!(
     document.documentElement.requestFullscreen ||
@@ -522,6 +531,7 @@ export default function McqTest({ onSignOut }) {
     return () => document.removeEventListener('visibilitychange', onVis);
   }, [camStatus, submitted]);
 
+  if (questionsLoading) return <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'100vh', color:'#888' }}>Loading questions…</div>;
   if (!data) return <Navigate to="/assessment" replace />;
 
   const { testTitle, sections } = data;
@@ -539,10 +549,9 @@ export default function McqTest({ onSignOut }) {
     setResumeNeeded(false);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     let correct = 0;
     sections.forEach(sec => sec.questions.forEach(q => { if (answers[q.id] === q.correct) correct++; }));
-    let attemptNo = 1;
     setScore(correct);
     submittedRef.current = true;
     setSubmitted(true);
@@ -554,23 +563,15 @@ export default function McqTest({ onSignOut }) {
     const attemptKey = moduleId ?? category;
     if (attemptKey) {
       try {
-        const raw = localStorage.getItem('assessment-attempts');
-        const all = raw ? JSON.parse(raw) : {};
-        const prev = all[attemptKey] ?? [];
-        attemptNo = prev.length + 1;
-        if (prev.length < 3) {
-          const now = new Date();
-          all[attemptKey] = [...prev, {
-            correct,
-            totalQuestions,
-            date: now.toISOString().split('T')[0],
-            time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          }];
-          localStorage.setItem('assessment-attempts', JSON.stringify(all));
+        const res = await axios.post(
+          `${API_BASE_URL}/api/assessments/attempts/${attemptKey}`,
+          { score: correct, total: totalQuestions },
+        );
+        if (res.data?.success && res.data?.data?.attemptNumber) {
+          setCertificateAttemptNo(res.data.data.attemptNumber);
         }
       } catch {}
     }
-    setCertificateAttemptNo(attemptNo);
   };
 
   const handleDownloadCertificate = () => {

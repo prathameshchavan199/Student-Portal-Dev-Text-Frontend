@@ -4,6 +4,8 @@ import {
   FiArrowLeft, FiArrowRight, FiRefreshCw,
   FiBold, FiDownload, FiItalic, FiList, FiLink, FiFileText,
 } from 'react-icons/fi';
+import axios from 'axios';
+import { API_BASE_URL } from '../api/axiosSetup.js';
 import StudentShell from '../components/StudentShell.jsx';
 import { downloadAssessmentCertificate } from '../utils/certificate.js';
 
@@ -274,23 +276,16 @@ export default function WritingTest({ onSignOut }) {
     return () => clearInterval(timerRef.current);
   }, []);
 
-  const saveAttempt = (r) => {
+  const saveAttempt = async (r) => {
     const moduleId = location.state?.moduleId ?? 'writing-test';
     let attemptNo = 1;
     try {
-      const raw = localStorage.getItem('assessment-attempts');
-      const all = raw ? JSON.parse(raw) : {};
-      const prev = all[moduleId] ?? [];
-      attemptNo = prev.length + 1;
-      if (prev.length < 3) {
-        const now = new Date();
-        all[moduleId] = [...prev, {
-          correct: r.score,
-          totalQuestions: 100,
-          date: now.toISOString().split('T')[0],
-          time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        }];
-        localStorage.setItem('assessment-attempts', JSON.stringify(all));
+      const res = await axios.post(
+        `${API_BASE_URL}/api/assessments/attempts/${moduleId}`,
+        { score: Math.round(r.score), total: 100 },
+      );
+      if (res.data?.success && res.data?.data?.attemptNumber) {
+        attemptNo = res.data.data.attemptNumber;
       }
     } catch {}
     return attemptNo;
@@ -299,9 +294,10 @@ export default function WritingTest({ onSignOut }) {
   const handleSubmitAuto = () => {
     setText(prev => {
       const r = evaluateWriting(prev);
-      const attemptNo = saveAttempt(r);
-      setResult({ ...r, attemptNo });
-      setPhase('result');
+      saveAttempt(r).then(attemptNo => {
+        setResult({ ...r, attemptNo });
+        setPhase('result');
+      });
       return prev;
     });
   };
@@ -350,10 +346,10 @@ export default function WritingTest({ onSignOut }) {
     }, 0);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     clearInterval(timerRef.current);
     const r = evaluateWriting(text);
-    const attemptNo = saveAttempt(r);
+    const attemptNo = await saveAttempt(r);
     setResult({ ...r, attemptNo });
     setPhase('result');
   };

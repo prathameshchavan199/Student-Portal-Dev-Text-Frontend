@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { FiArrowLeft, FiArrowRight, FiDownload, FiMic, FiRefreshCw, FiPlay, FiPause } from 'react-icons/fi';
+import axios from 'axios';
+import { API_BASE_URL } from '../api/axiosSetup.js';
 import StudentShell from '../components/StudentShell.jsx';
 import { downloadAssessmentCertificate } from '../utils/certificate.js';
 
@@ -402,25 +404,18 @@ export default function SpeakingTest({ onSignOut }) {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const elapsed = MAX_SECS - timeLeft;
     const r = evaluateSpeech(transcript, elapsed);
     const moduleId = location.state?.moduleId ?? 'speaking-test';
     let attemptNo = 1;
     try {
-      const raw = localStorage.getItem('assessment-attempts');
-      const all = raw ? JSON.parse(raw) : {};
-      const prev = all[moduleId] ?? [];
-      attemptNo = prev.length + 1;
-      if (prev.length < 3) {
-        const now = new Date();
-        all[moduleId] = [...prev, {
-          correct: r.score,
-          totalQuestions: 100,
-          date: now.toISOString().split('T')[0],
-          time: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        }];
-        localStorage.setItem('assessment-attempts', JSON.stringify(all));
+      const res = await axios.post(
+        `${API_BASE_URL}/api/assessments/attempts/${moduleId}`,
+        { score: Math.round(r.score), total: 100 },
+      );
+      if (res.data?.success && res.data?.data?.attemptNumber) {
+        attemptNo = res.data.data.attemptNumber;
       }
     } catch {}
     setResult({ ...r, attemptNo });

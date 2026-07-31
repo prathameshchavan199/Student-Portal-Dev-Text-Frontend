@@ -1,48 +1,26 @@
+import { useEffect, useState } from 'react';
 import { FiAward, FiCode, FiDatabase, FiEdit3, FiPlay, FiShield } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { API_BASE_URL } from '../api/axiosSetup.js';
 import StudentShell from '../components/StudentShell.jsx';
 
-const assessmentCards = [
-  {
-    tag: 'Coding',
-    title: 'Technical Skills',
-    description: 'Solve complex algorithmic problems and demonstrate your coding proficiency across multiple languages.',
-    meta: '12 tasks',
-    score: '8.4',
-    icon: FiCode,
-    path: '/assessment/technical-skills',
-  },
-  {
-    tag: 'Aptitude',
-    title: 'Problem Solving',
-    description: 'Measure logical reasoning, pattern recognition, quantitative thinking, and decision speed.',
-    meta: '8 tasks',
-    score: '7.8',
-    icon: FiEdit3,
-    path: '/assessment/problem-solving',
-  },
-  {
-    tag: 'Communication',
-    title: 'Communication',
-    description: 'Validate fundamentals in secure development, threat awareness, and defensive practices.',
-    meta: '6 tasks',
-    score: '8.1',
-    icon: FiShield,
-    path: '/assessment/communication',
-  },
-  {
-    tag: 'Data',
-    title: 'Data Skills',
-    description: 'Test SQL, analytics, visualization judgment, and practical data interpretation skills.',
-    meta: '10 tasks',
-    score: '8.6',
-    icon: FiDatabase,
-    path: '/assessment/data-skills',
-  },
-];
+const ICON_MAP = { FiCode, FiEdit3, FiShield, FiDatabase };
 
 export default function Assessment({ onSignOut }) {
   const navigate = useNavigate();
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    axios.get(`${API_BASE_URL}/api/assessments`)
+      .then(res => {
+        if (res.data?.success) setCategories(res.data.data);
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
   return (
     <StudentShell onSignOut={onSignOut}>
       <main className="course-shell assessment-shell">
@@ -83,42 +61,47 @@ export default function Assessment({ onSignOut }) {
             </div>
           </div>
 
-          <div className="assessment-grid">
-            {assessmentCards.map(({ tag, title, description, meta, score, icon: Icon, path }) => (
-              <article className="assessment-card" key={title}>
-                <div className="assessment-card-visual">
-                  <div className="assessment-orbit" />
-                  <span>{tag}</span>
-                </div>
-
-                <div className="assessment-card-body">
-                  <div className="assessment-card-heading">
-                    <div className="assessment-card-icon">
-                      <Icon />
+          {loading ? (
+            <div style={{ textAlign: 'center', padding: '2rem', color: '#888' }}>Loading assessments…</div>
+          ) : (
+            <div className="assessment-grid">
+              {categories.map((cat) => {
+                const Icon = ICON_MAP[cat.icon] || FiAward;
+                const path = `/assessment/${cat.id}`;
+                return (
+                  <article className="assessment-card" key={cat.id}>
+                    <div className="assessment-card-visual">
+                      <div className="assessment-orbit" />
+                      <span>{cat.tag}</span>
                     </div>
-                    <div>
-                      <h2>{title}</h2>
-                      <p>{description}</p>
+
+                    <div className="assessment-card-body">
+                      <div className="assessment-card-heading">
+                        <div className="assessment-card-icon">
+                          <Icon />
+                        </div>
+                        <div>
+                          <h2>{cat.title}</h2>
+                          <p>{cat.subtitle}</p>
+                        </div>
+                      </div>
+
+                      <div className="assessment-card-meta">
+                        <span>{cat.tag}</span>
+                        <span>{cat.badge}</span>
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="assessment-card-meta">
-                    <span>{meta}</span>
-                    <span>Score {score}/10</span>
-                  </div>
-                </div>
-
-                <div className="assessment-card-cta">
-                  <button
-                    type="button"
-                    onClick={() => navigate(path)}
-                  >
-                    Start Task <FiPlay />
-                  </button>
-                </div>
-              </article>
-            ))}
-          </div>
+                    <div className="assessment-card-cta">
+                      <button type="button" onClick={() => navigate(path)}>
+                        Start Task <FiPlay />
+                      </button>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          )}
         </section>
       </main>
     </StudentShell>
