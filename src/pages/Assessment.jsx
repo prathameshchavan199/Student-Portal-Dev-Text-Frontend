@@ -11,14 +11,17 @@ export default function Assessment({ onSignOut }) {
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [progress, setProgress] = useState({ completed: 0, avgScore: 0, overallPct: 0 });
 
   useEffect(() => {
     axios.get(`${API_BASE_URL}/api/assessments`)
-      .then(res => {
-        if (res.data?.success) setCategories(res.data.data);
-      })
+      .then(res => { if (res.data?.success) setCategories(res.data.data); })
       .catch(() => {})
       .finally(() => setLoading(false));
+
+    axios.get(`${API_BASE_URL}/api/assessments/progress`)
+      .then(res => { if (res.data?.success) setProgress(res.data.data); })
+      .catch(() => {});
   }, []);
 
   return (
@@ -44,19 +47,19 @@ export default function Assessment({ onSignOut }) {
           <div className="assessment-progress-card">
             <div className="assessment-progress-head">
               <span>Overall Progress</span>
-              <strong>65%</strong>
+              <strong>{progress.overallPct}%</strong>
             </div>
             <div className="assessment-progress-track">
-              <div style={{ width: '65%' }} />
+              <div style={{ width: `${progress.overallPct}%` }} />
             </div>
             <div className="assessment-stat-grid">
               <div>
                 <span>Completed</span>
-                <strong>12 Tasks</strong>
+                <strong>{progress.completed} Task{progress.completed !== 1 ? 's' : ''}</strong>
               </div>
               <div>
                 <span>Avg. Score</span>
-                <strong>8.4<small>/10</small></strong>
+                <strong>{progress.avgScore.toFixed(1)}<small>/10</small></strong>
               </div>
             </div>
           </div>

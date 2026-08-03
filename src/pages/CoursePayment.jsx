@@ -47,7 +47,6 @@ export default function CoursePayment({ onSignOut }) {
     courseId: course.id,
     courseName: course.title,
   };
-console.log('Payment Payload:', paymentPayload);
   const handlePay = async () => {
     if (processing) return;
     setError('');
@@ -60,17 +59,16 @@ console.log('Payment Payload:', paymentPayload);
     setProcessing(true);
     try {
       // 1. Create an order on the backend (amount in rupees, backend handles paise conversion)
+      const idToken = localStorage.getItem('idToken');
+      const authHeader = idToken ? { 'Authorization': `Bearer ${idToken}` } : {};
       const order = await fetch(`${PAYMENT_API}/create-order`, {
         method: 'POST',
         credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...authHeader },
         body: JSON.stringify(paymentPayload),
-
       }).then((r) => {
-        console.log('Create Order Response:', r);
         if (!r.ok) throw new Error('Failed to create order');
         return r.json();
-       
       });
 
 
@@ -88,7 +86,7 @@ console.log('Payment Payload:', paymentPayload);
             const verifyRes = await fetch(`${PAYMENT_API}/verify`, {
               method: 'POST',
               credentials: 'include',
-              headers: { 'Content-Type': 'application/json' },
+              headers: { 'Content-Type': 'application/json', ...authHeader },
               body: JSON.stringify({
                 razorpayOrderId: res.razorpay_order_id,
                 razorpayPaymentId: res.razorpay_payment_id,
@@ -96,7 +94,14 @@ console.log('Payment Payload:', paymentPayload);
               }),
             });
             if (!verifyRes.ok) throw new Error('Payment verification failed');
-            navigate(`/courses/${course.id}/payment-success`);
+            navigate(`/courses/${course.id}/payment-success`, {
+              state: {
+                razorpayPaymentId: res.razorpay_payment_id,
+                razorpayOrderId:   res.razorpay_order_id,
+                coursePrice: total,
+                discount:    deposit,
+              },
+            });
           } catch (err) {
             setError(err.message || 'Payment verification failed. Please contact support.');
             setProcessing(false);

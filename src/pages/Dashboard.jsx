@@ -1,11 +1,9 @@
-import { useContext } from 'react';
-import { FiArrowRight, FiBriefcase, FiBook, FiAward, FiCheckCircle, FiClock, FiPlay, FiMonitor, FiMapPin } from 'react-icons/fi';
+import { useState, useEffect } from 'react';
+import { FiArrowRight, FiBook, FiAward, FiCheckCircle, FiClock, FiPlay, FiMonitor, FiMapPin } from 'react-icons/fi';
 import StudentShell from '../components/StudentShell.jsx';
 import { Link } from 'react-router-dom';
-import { AuthContext } from "../context/AuthContext";
-
-
-const DRAFT_KEY = 'student-portal-registration-draft';
+import axios from 'axios';
+import { API_BASE_URL } from '../api/axiosSetup.js';
 
 function getStoredName() {
   const name = localStorage.getItem('name');
@@ -14,78 +12,18 @@ function getStoredName() {
 }
 
 function getProfileMeta() {
-  const raw = localStorage.getItem('name');
-  const fullName = raw ? ((() => { try { return JSON.parse(raw); } catch { return raw; } })()) : '';
-  const parts = fullName.trim().split(/\s+/).filter(Boolean);
+  const raw      = localStorage.getItem('name');
+  const fullName = raw
+    ? ((() => { try { return JSON.parse(raw); } catch { return raw; } })())
+    : '';
+  const parts    = fullName.trim().split(/\s+/).filter(Boolean);
   const initials = parts.length >= 2
     ? `${parts[0][0]}${parts[1][0]}`.toUpperCase()
     : (parts[0]?.[0] ?? 'S').toUpperCase();
-  const profileImage = localStorage.getItem('profileImage') || null;
-  return { initials, profileImage };
+  return { initials };
 }
 
-function getRegistrationDraft() {
-  try {
-    const raw = localStorage.getItem(DRAFT_KEY);
-    return raw ? JSON.parse(raw) : {};
-  } catch { return {}; }
-}
-
-function getRegistrationProgress() {
-  const draft = getRegistrationDraft();
-  const steps = [
-    {
-      label: 'Basic Data',
-      done: !!(draft.fullName?.trim() && draft.email?.trim() && draft.phone?.trim()),
-    },
-    {
-      label: 'Education',
-      done: !!(draft.qualificationAfter10th || draft.undergraduateDegree?.trim() || draft.has12th || draft.hasdiploma),
-    },
-    {
-      label: 'Projects',
-      done: draft.hasProjects === false || (Array.isArray(draft.projects) && draft.projects.some(p => p.title?.trim())),
-    },
-    {
-      label: 'Experience',
-      done: draft.hasWorkExperience === false || (Array.isArray(draft.positions) && draft.positions.some(p => p.company?.trim() || p.title?.trim())),
-    },
-  ];
-  const completed = steps.filter(s => s.done).length;
-  const pct = Math.round((completed / steps.length) * 100);
-  return { steps, pct };
-}
-
-function getProfileTags(draft) {
-  const ts = draft.projects?.[0]?.techStack || '';
-  if (!ts) return [];
-  if (ts === 'Full Stack')          return ['Full-Stack'];
-  if (ts === 'Data Science / ML')   return ['Data Science', 'AI/ML'];
-  if (ts === 'DevOps / Cloud')      return ['DevOps', 'Cloud'];
-  if (ts === 'Front-end Only')      return ['Front-end'];
-  if (ts === 'Back-end Only')       return ['Back-end'];
-  if (ts === 'Mobile App')          return ['Mobile'];
-  if (ts === 'Embedded Systems')    return ['Embedded'];
-  return [ts.split('/')[0].trim()];
-}
-
-const courseCounters = [
-  { label: 'Registered',  value: 2, icon: FiBook,        tone: 'blue'   },
-  { label: 'In Progress', value: 2, icon: FiClock,       tone: 'orange' },
-  { label: 'Completed',   value: 1, icon: FiCheckCircle, tone: 'green'  },
-  { label: 'Certified',   value: 1, icon: FiAward,       tone: 'purple' },
-];
-
-const ENROLLED_COURSES = [
-  { id: 'web-dev',      title: 'Full Stack Web Development', tag: 'Development', progress: 65,  status: 'In Progress', tone: 'blue'   },
-  { id: 'data-science', title: 'Data Science Fundamentals',  tag: 'Analytics',   progress: 30,  status: 'In Progress', tone: 'purple' },
-  { id: 'cloud-arch',   title: 'Cloud Architecture',         tag: 'DevOps',      progress: 100, status: 'Completed',   tone: 'green'  },
-];
-
-const WHATS_NEW = [
-  { title: 'Advanced AI Analytics'     },
-  { title: 'Cloud Security Essentials' },
-];
+const TONE_CYCLE = ['blue', 'purple', 'green', 'orange'];
 
 function GaugeMeter({ pct }) {
   const r = 102, cx = 100, cy = 120;
@@ -120,20 +58,35 @@ function GaugeMeter({ pct }) {
 }
 
 export default function Dashboard({ onSignOut }) {
-
-  const { registered } = useContext(AuthContext);
   const displayName  = getStoredName();
-  const { initials, profileImage } = getProfileMeta();
-  const draft        = getRegistrationDraft();
-  const { steps, pct } = getRegistrationProgress();
-  const isRegistered = registered;
-  
-  
+  const { initials } = getProfileMeta();
 
-  const technicalScore  = Math.min(95, Math.max(30, Math.round(pct * 0.9  + 10)));
-  const analyticalScore = Math.min(92, Math.max(28, Math.round(pct * 0.85 + 5)));
-  const commScore       = Math.min(88, Math.max(25, Math.round(pct * 0.75)));
-  const masteryScore    = Math.round((technicalScore + analyticalScore + commScore) / 3);
+  const [summary, setSummary] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    axios.get(`${API_BASE_URL}/api/dashboard/summary`)
+      .then(res => { if (res.data?.success) setSummary(res.data.data); })
+      .catch(err => console.error('Dashboard summary error:', err))
+      .finally(() => setLoading(false));
+  }, []);
+
+  // ── Derived values with safe defaults ────────────────────────────────────
+  const registration   = summary?.registration   ?? { pct: 0, registered: false, steps: [] };
+  const assessment     = summary?.assessment     ?? { technical: 0, analytical: 0, communication: 0, masteryScore: 0 };
+  const enrollment     = summary?.enrollment     ?? { registered: 0, inProgress: 0, completed: 0, certified: 0 };
+  const enrolledCourses = summary?.courses?.enrolled ?? [];
+  const whatsNew       = summary?.courses?.whatsNew  ?? [];
+  const sessions       = summary?.sessions       ?? { onDemand: 0, online: 0, offline: 0 };
+
+  const courseCounters = [
+    { label: 'Registered',  value: enrollment.registered,  icon: FiBook,        tone: 'blue'   },
+    { label: 'In Progress', value: enrollment.inProgress,  icon: FiClock,       tone: 'orange' },
+    { label: 'Completed',   value: enrollment.completed,   icon: FiCheckCircle, tone: 'green'  },
+    { label: 'Certified',   value: enrollment.certified,   icon: FiAward,       tone: 'purple' },
+  ];
+
+  const barColors = { blue: '#2563eb', orange: '#f97316', green: '#22c55e', purple: '#7c3aed' };
 
   return (
     <StudentShell onSignOut={onSignOut}>
@@ -149,12 +102,12 @@ export default function Dashboard({ onSignOut }) {
           <div className="db-card db-reg-card">
             <div className="db-reg-title-row">
               <h3 className="db-card-title" style={{ margin: 0 }}>Registration Progress</h3>
-              <span className="db-reg-pct-label">{pct}%</span>
+              <span className="db-reg-pct-label">{registration.pct}%</span>
             </div>
             <div className="db-reg-track" style={{ margin: '10px 0 12px' }}>
-              <div className="db-reg-fill" style={{ width: `${pct}%` }} />
+              <div className="db-reg-fill" style={{ width: `${registration.pct}%` }} />
             </div>
-            {isRegistered ? (
+            {registration.registered ? (
               <div className="reg-verification-badge" style={{ marginBottom: 12 }}>
                 <span className="reg-verification-dot" />
                 Verification in Progress
@@ -166,7 +119,7 @@ export default function Dashboard({ onSignOut }) {
               </div>
             )}
             <ul className="db-reg-steps-list">
-              {steps.map(s => (
+              {registration.steps.map(s => (
                 <li key={s.label} className={`db-reg-step-item${s.done ? ' done' : ''}`}>
                   <span className="db-reg-step-bullet" />
                   {s.label}
@@ -176,53 +129,51 @@ export default function Dashboard({ onSignOut }) {
           </div>
         </div>
 
-        {/* ── Quick Stats Strip ── */}
-        
-
         {/* ── Skills Row ── */}
         <div className="db-skills-row">
+
           {/* Gauge */}
           <div className="db-card db-gauge-card">
             <p className="db-section-label">SKILLS OVERVIEW</p>
-            <h3 className="db-card-title">Overall Proficiency</h3>
-            
-            <GaugeMeter pct={masteryScore} />
+            <h3 className="db-card-title" style={{ marginBottom: "30px" }}>Overall Proficiency</h3>
+            <GaugeMeter pct={assessment.masteryScore} />
             <div className="db-metrics-row">
               <div className="db-metric">
                 <span className="db-metric-dot db-dot-green" />
-                <span className="db-metric-pct">{technicalScore}%</span>
+                <span className="db-metric-pct">{assessment.technical}%</span>
                 <span className="db-metric-label">Technical</span>
               </div>
               <div className="db-metric">
                 <span className="db-metric-dot db-dot-green" />
-                <span className="db-metric-pct">{analyticalScore}%</span>
+                <span className="db-metric-pct">{assessment.analytical}%</span>
                 <span className="db-metric-label">Analytical</span>
               </div>
               <div className="db-metric">
                 <span className="db-metric-dot db-dot-orange" />
-                <span className="db-metric-pct">{commScore}%</span>
+                <span className="db-metric-pct">{assessment.communication}%</span>
                 <span className="db-metric-label">Comm.</span>
               </div>
             </div>
           </div>
 
-          {/* Course Overview bars */}
+          {/* Enrollment Breakdown bars */}
           <div className="db-card" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             <div className="db-card-top">
               <div>
                 <p className="db-section-label">COURSE OVERVIEW</p>
                 <h3 className="db-card-title">Enrollment Breakdown</h3>
               </div>
-              <span className="db-avg-badge">{courseCounters.reduce((s, c) => s + c.value, 0)} Total</span>
+              <span className="db-avg-badge">
+                {courseCounters.reduce((s, c) => s + c.value, 0)} Total
+              </span>
             </div>
             {(() => {
-              const maxVal = Math.max(...courseCounters.map(c => c.value));
-              const barColors = { blue: '#2563eb', orange: '#f97316', green: '#22c55e', purple: '#7c3aed' };
+              const maxVal = Math.max(...courseCounters.map(c => c.value), 1);
               return courseCounters.map(({ label, value, tone }) => (
                 <div key={label} className="db-perf-row">
                   <div className="db-perf-header">
                     <span className="db-perf-label">{label}</span>
-                    <span className="db-perf-pct" style={{  }}>{value}</span>
+                    <span className="db-perf-pct">{value}</span>
                   </div>
                   <div className="db-perf-bar-bg">
                     <div
@@ -236,113 +187,109 @@ export default function Dashboard({ onSignOut }) {
                 </div>
               ));
             })()}
-
-            {/* Job matches chip */}
-            {/* <div className="db-job-chip">
-              <div className="db-job-chip-icon"><FiBriefcase /></div>
-              <div>
-                <p className="db-job-chip-title">24 Job Matches</p>
-                <p className="db-job-chip-sub">Tailored to your tech stack</p>
-              </div>
-              <FiArrowRight className="db-job-chip-arrow" />
-            </div> */}
           </div>
         </div>
 
-        {/* ── Course Progress ── */}
-        <div className="db-new-cards">
-        <div className="db-section-header-row">
-          <h3 className="db-section-heading" style={{ marginBottom: 10 }}>My Courses</h3>
-          <Link to="/courses" className="db-see-all">See all <FiArrowRight /></Link>
-        </div>
-        <div className="db-course-list">
-          {ENROLLED_COURSES.map(({ id, title, tag, progress, status, tone }) => (
-            <Link key={id} to="/courses-progress" className="db-course-card">
-              <div className="db-course-card-top">
-                <div>
-                  <span className={`db-course-tag db-course-tag-${tone}`}>{tag}</span>
-                  <p className="db-course-title">{title}</p>
-                </div>
-                <span className={`db-course-status db-course-status-${tone}`}>{status}</span>
-              </div>
-              <div className="db-course-progress-row">
-                <div className="db-course-bar-bg">
-                  <div className={`db-course-bar-fill db-course-bar-${tone}`} style={{ width: `${progress}%` }} />
-                </div>
-                <span className="db-course-pct">{progress}%</span>
-              </div>
-            </Link>
-          ))}
-        </div>
-        </div>
-
-        {/* <div className="db-new-card">
-        <div className="db-section-header-row">
-          <h3 className="db-section-heading" style={{ marginBottom: 10 }}>Course Overview</h3>
-          <Link to="/courses-progress" className="db-see-all">View all <FiArrowRight /></Link>
-        </div>
-        <div className="db-stats-strip">
-          {courseCounters.map(({ label, value, icon: Icon, tone }) => (
-            <Link key={label} to="/courses-progress" className={`db-stat-chip db-stat-${tone}`}>
-              <div className="db-stat-icon"><Icon /></div>
-              <div className="db-stat-body">
-                <span className="db-stat-value">{value}</span>
-                <span className="db-stat-label">{label}</span>
-              </div>
-            </Link>
-          ))}
-        </div>
-        </div> */}
-
-        {/* ── What's New ── */}
+        {/* ── My Courses ── */}
         <div className="db-new-cards">
           <div className="db-section-header-row">
-            <h3 className="db-section-heading" style={{ marginBottom: 10 }}>What's New</h3>
+            <h3 className="db-section-heading" style={{ marginBottom: 10 }}>My Courses</h3>
+            <Link to="/courses" className="db-see-all">See all <FiArrowRight /></Link>
           </div>
-          <div className="db-whats-new">
-            {WHATS_NEW.map(({ title }) => (
-              <div key={title} className="db-new-card">
-                <span className="db-new-badge">NEW</span>
-                <p className="db-new-title">{title}</p>
-                <button className="db-new-link">View Details <FiArrowRight /></button>
-              </div>
-            ))}
+          <div className="db-course-list">
+            {enrolledCourses.length === 0 && !loading ? (
+              <p style={{ color: 'var(--text-subtle)', fontSize: 14 }}>
+                No enrolled courses yet.{' '}
+                <Link to="/courses" style={{ color: 'var(--accent)' }}>Browse courses →</Link>
+              </p>
+            ) : enrolledCourses.map((c, i) => {
+              const tone   = TONE_CYCLE[i % TONE_CYCLE.length];
+              const status = c.progress >= 100 ? 'Completed' : 'In Progress';
+              return (
+                <Link key={c.id} to="/courses-progress" className="db-course-card">
+                  <div className="db-course-card-top">
+                    <div>
+                      <span className={`db-course-tag db-course-tag-${tone}`}>
+                        {c.category || 'Course'}
+                      </span>
+                      <p className="db-course-title">{c.title}</p>
+                    </div>
+                    <span className={`db-course-status db-course-status-${tone}`}>{status}</span>
+                  </div>
+                  <div className="db-course-progress-row">
+                    <div className="db-course-bar-bg">
+                      <div
+                        className={`db-course-bar-fill db-course-bar-${tone}`}
+                        style={{ width: `${c.progress}%` }}
+                      />
+                    </div>
+                    <span className="db-course-pct">{c.progress}%</span>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </div>
+
+        {/* ── What's New ── */}
+        {whatsNew.length > 0 && (
+          <div className="db-new-cards">
+            <div className="db-section-header-row">
+              <h3 className="db-section-heading" style={{ marginBottom: 10 }}>What's New</h3>
+            </div>
+            <div className="db-whats-new">
+              {whatsNew.map(c => (
+                <div key={c.id} className="db-new-card">
+                  <span className="db-new-badge">NEW</span>
+                  <p className="db-new-title">{c.title}</p>
+                  <Link to={`/courses`} className="db-new-link" style={{ cursor: 'pointer' }}>
+                    View Details <FiArrowRight />
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* ── Registered Sessions ── */}
         <div className="db-new-card">
-        <div className="db-section-header-row">
-          <h3 className="db-section-heading" style={{ marginBottom: 10 }}>Registered Sessions</h3>
-          {/* <Link to="/courses-progress" className="db-see-all">View all <FiArrowRight /></Link> */}
+          <div className="db-section-header-row">
+            <h3 className="db-section-heading" style={{ marginBottom: 10 }}>Registered Sessions</h3>
+          </div>
+          <div className="db-sessions">
+            <Link to="/courses-progress" className="db-session-row db-session-blue">
+              <div className="db-session-icon"><FiPlay /></div>
+              <div className="db-session-body">
+                <p className="db-session-title">On-Demand</p>
+                <p className="db-session-sub">Self-paced courses. Learn anytime.</p>
+              </div>
+              <span className="db-session-count" style={{ color: '#f97316' }}>
+                {sessions.onDemand}
+              </span>
+            </Link>
+            <Link to="/courses-progress" className="db-session-row db-session-dark">
+              <div className="db-session-icon"><FiMonitor /></div>
+              <div className="db-session-body">
+                <p className="db-session-title">Online Programs</p>
+                <p className="db-session-sub">Live sessions &amp; webinars. Join virtually.</p>
+              </div>
+              <span className="db-session-count" style={{ color: '#f97316' }}>
+                {sessions.online}
+              </span>
+            </Link>
+            <Link to="/courses-progress" className="db-session-row db-session-orange">
+              <div className="db-session-icon"><FiMapPin /></div>
+              <div className="db-session-body">
+                <p className="db-session-title">Offline Programs</p>
+                <p className="db-session-sub">In-person workshops. At campus.</p>
+              </div>
+              <span className="db-session-count db-session-count-orange" style={{ color: '#f97316' }}>
+                {sessions.offline}
+              </span>
+            </Link>
+          </div>
         </div>
-        <div className="db-sessions">
-          <Link to="/courses-progress" className="db-session-row db-session-blue">
-            <div className="db-session-icon"><FiPlay /></div>
-            <div className="db-session-body">
-              <p className="db-session-title">On-Demand</p>
-              <p className="db-session-sub">Self-paced courses. Learn anytime.</p>
-            </div>
-            <span className="db-session-count" style={{color:'#f97316'}}>12</span>
-          </Link>
-          <Link to="/courses-progress" className="db-session-row db-session-dark">
-            <div className="db-session-icon"><FiMonitor /></div>
-            <div className="db-session-body">
-              <p className="db-session-title">Online Programs</p>
-              <p className="db-session-sub">Live sessions &amp; webinars. Join virtually.</p>
-            </div>
-            <span className="db-session-count" style={{color:'#f97316'}}>8</span>
-          </Link>
-          <Link to="/courses-progress" className="db-session-row db-session-orange">
-            <div className="db-session-icon"><FiMapPin /></div>
-            <div className="db-session-body">
-              <p className="db-session-title">Offline Programs</p>
-              <p className="db-session-sub">In-person workshops. At campus.</p>
-            </div>
-            <span className="db-session-count db-session-count-orange" style={{color:'#f97316'}}>5</span>
-          </Link>
-        </div>
-            </div>
+
       </div>
     </StudentShell>
   );

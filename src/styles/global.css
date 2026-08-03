@@ -1107,6 +1107,49 @@ a:hover { color: #ffb558; }
 .course-progress-tabs {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
+
+/* ── Course card progress bar (in-progress state) ─────────────────── */
+.course-card-progress-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+.course-card-progress-bar-bg {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--border-color);
+  overflow: hidden;
+}
+.course-card-progress-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: var(--accent);
+  transition: width 0.4s ease;
+}
+.course-card-progress-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-subtle);
+  white-space: nowrap;
+}
+
+/* ── Tab badge ───────────────────────────────────────────────────────── */
+.cp-tab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  margin-left: 5px;
+}
 .course-mode-tabs button {
   min-height: 40px;
   border: 1px solid var(--border-color);
@@ -5268,6 +5311,24 @@ body.mcq-active .dash-wrap { overflow: visible !important; }
   transition: opacity 0.18s;
 }
 .ps-cta:hover { opacity: 0.88; }
+.ps-cta-secondary {
+  width: 100%;
+  min-height: 48px;
+  margin-top: 10px;
+  border: 2px solid var(--accent);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+}
+.ps-cta-secondary:hover { background: var(--accent); color: #f97316; }
 
 /* ── CourseSuccess / PaymentSuccess dark theme ───────────────── */
 .main:has(.cs-page) { background: #0c0c14; }
@@ -6855,7 +6916,7 @@ body.mcq-active .dash-wrap { overflow: visible !important; }
 .db-gauge-card {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  /* justify-content: space-between; */
 }
 
 

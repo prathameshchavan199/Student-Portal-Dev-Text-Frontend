@@ -6,165 +6,15 @@ import { API_BASE_URL } from '../api/axiosSetup.js';
 import StudentShell from '../components/StudentShell.jsx';
 import { downloadAssessmentCertificate } from '../utils/certificate.js';
 
-const TOPIC      = 'The Future of Artificial Intelligence';
 const MAX_SECS   = 120;
-const CHALLENGE  = '"Describe a time you solved a difficult technical problem."';
 const GUIDELINES = 'Maximum 2 minutes. Focus on articulation, technical vocabulary, and clear structural flow.';
 
 const WAVE_HEIGHTS = Array.from({ length: 22 }, (_, i) =>
   8 + Math.abs(Math.sin(i * 0.9 + 0.3)) * 16
 );
 
-const FILLERS = new Set([
-  'um','uh','like','basically','literally','actually','right','okay','so','well','hmm','you know',
-]);
-const TECH_WORDS = new Set([
-  'algorithm','implementation','architecture','database','system','solution','framework','api',
-  'server','client','deploy','debug','optimize','performance','scalable','integration','component',
-  'module','function','variable','interface','protocol','network','security','authentication',
-  'encryption','cache','query','endpoint','code','software','hardware','data','logic','error',
-  'bug','feature','testing','pipeline','model','cloud','repository','sprint','agile','stack',
-  'frontend','backend','microservice','docker','kubernetes','devops','runtime','latency','throughput',
-]);
-const TRANSITIONS = [
-  'however','therefore','furthermore','additionally','moreover','consequently',
-  'in contrast','as a result','for example','in conclusion','on the other hand',
-];
-const STAR_GROUPS = [
-  ['situation','context','when','working on','during','at the time','we were'],
-  ['task','challenge','problem','issue','needed to','had to','required','my role'],
-  ['action','decided','implemented','developed','i used','i applied','i created','i fixed','approached','i wrote'],
-  ['result','outcome','finally','eventually','achieved','resolved','improved','success','as a result','it worked'],
-];
-
 function fmtTime(s) {
   return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
-}
-
-function evaluateSpeech(text, elapsedSecs) {
-  const clean = text.trim();
-
-  if (!clean || clean.split(/\s+/).length < 5) {
-    return {
-      score: 0, badge: 'NO SPEECH DETECTED',
-      badgeDesc: 'No speech was captured. Check your microphone and try again.',
-      skills: [
-        { label: 'ARTICULATION & CLARITY', pct: 0 },
-        { label: 'TECHNICAL VOCABULARY',   pct: 0 },
-        { label: 'STRUCTURAL FLOW',        pct: 0 },
-      ],
-      strengths: [],
-      areas: [{ bold: 'No speech detected', rest: ' — please allow microphone access and speak clearly.' }],
-      wordCount: 0, wpm: 0,
-      duration: fmtTime(elapsedSecs),
-      date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-    };
-  }
-
-  const words        = clean.split(/\s+/);
-  const wordCount    = words.length;
-  const lower        = clean.toLowerCase();
-  const sentences    = clean.split(/[.!?]+/).map(s => s.trim()).filter(Boolean);
-  const sentCount    = Math.max(sentences.length, 1);
-  const avgSentLen   = wordCount / sentCount;
-  const wpm          = elapsedSecs > 0 ? Math.round((wordCount / elapsedSecs) * 60) : 0;
-
-  // Filler words
-  const fillerCount = words.filter(w =>
-    FILLERS.has(w.toLowerCase().replace(/[^a-z]/g, ''))
-  ).length;
-  const fillerRatio = fillerCount / wordCount;
-
-  // Repeated consecutive words (grammar)
-  const repeatCount = words.filter((w, i) =>
-    i > 0 && w.toLowerCase() === words[i - 1].toLowerCase()
-  ).length;
-
-  // Technical vocabulary
-  const techCount = words.filter(w =>
-    TECH_WORDS.has(w.toLowerCase().replace(/[^a-z]/g, ''))
-  ).length;
-
-  // Vocabulary richness
-  const uniqueRatio = new Set(words.map(w => w.toLowerCase().replace(/[^a-z]/g, ''))).size / wordCount;
-
-  // Transition phrases
-  const transCount = TRANSITIONS.filter(t => lower.includes(t)).length;
-
-  // STAR method coverage (0–4)
-  const starHits = STAR_GROUPS.filter(group => group.some(kw => lower.includes(kw))).length;
-
-  // ── Scores ─────────────────────────────────────────────────────
-  let clarity = 65;
-  clarity -= fillerRatio * 160;
-  clarity -= repeatCount * 4;
-  if (avgSentLen >= 8 && avgSentLen <= 22) clarity += 15;
-  else if (avgSentLen < 5 || avgSentLen > 32) clarity -= 12;
-  if (wpm >= 110 && wpm <= 160) clarity += 12;
-  else if (wpm > 170 || (wpm > 0 && wpm < 80)) clarity -= 8;
-  clarity = Math.min(100, Math.max(28, Math.round(clarity)));
-
-  let vocab = 48;
-  vocab += Math.min(techCount * 7, 36);
-  vocab += Math.min(uniqueRatio * 35, 18);
-  if (transCount >= 1) vocab += 8;
-  if (transCount >= 2) vocab += 6;
-  vocab = Math.min(100, Math.max(28, Math.round(vocab)));
-
-  let structure = 38;
-  structure += starHits * 13;
-  if (sentCount >= 4)    structure += 8;
-  if (wordCount >= 60)   structure += 8;
-  if (transCount >= 1)   structure += 6;
-  structure = Math.min(100, Math.max(28, Math.round(structure)));
-
-  const score = Math.round((clarity + vocab + structure) / 3);
-
-  // Badge
-  let badge, badgeDesc;
-  if (score >= 82) {
-    badge     = 'FLUENT ENGINEER';
-    badgeDesc = 'You demonstrate strong technical command and confident articulation.';
-  } else if (score >= 65) {
-    badge     = 'DEVELOPING SPEAKER';
-    badgeDesc = 'A solid foundation — keep refining structure and vocabulary.';
-  } else {
-    badge     = 'EMERGING VOICE';
-    badgeDesc = 'Great start! Focus on structure, pace, and reducing filler words.';
-  }
-
-  // Strengths
-  const strengths = [];
-  if (fillerRatio < 0.04)  strengths.push('Clean delivery with minimal filler words — very professional.');
-  if (starHits >= 3)       strengths.push('Strong STAR method structure — Situation, Task, Action & Result clearly present.');
-  if (techCount >= 3)      strengths.push(`Good technical vocabulary — ${techCount} domain-specific terms used effectively.`);
-  if (transCount >= 1)     strengths.push('Effective transition phrases that improve flow and coherence.');
-  if (wpm >= 110 && wpm <= 160) strengths.push(`Excellent speaking pace at approximately ${wpm} words per minute.`);
-  if (uniqueRatio >= 0.65) strengths.push('Rich and varied vocabulary throughout your response.');
-  if (strengths.length === 0) strengths.push('You completed the full assessment — a great first step toward fluency.');
-
-  // Areas
-  const areas = [];
-  if (fillerRatio >= 0.04) areas.push({ bold: 'Reduce filler words', rest: ` — ${fillerCount} detected (um, uh, like, basically…).` });
-  if (starHits < 2)        areas.push({ bold: 'Apply the STAR method', rest: ' — clearly cover Situation, Task, Action, and Result.' });
-  if (techCount < 2)       areas.push({ bold: 'Use more technical terms', rest: ' — demonstrate domain knowledge with specific vocabulary.' });
-  if (wpm > 170)           areas.push({ bold: 'Slow down slightly', rest: ` — at ${wpm} wpm it may be difficult to follow (ideal: 110–160).` });
-  if (wpm > 0 && wpm < 90) areas.push({ bold: 'Pick up the pace', rest: ` — at ${wpm} wpm the delivery feels slow (ideal: 110–160).` });
-  if (avgSentLen > 28)     areas.push({ bold: 'Break up long sentences', rest: ` — avg ${Math.round(avgSentLen)} words/sentence is too long.` });
-  if (repeatCount > 1)     areas.push({ bold: 'Avoid repeated consecutive words', rest: ` — ${repeatCount} repetition(s) detected.` });
-  if (areas.length === 0)  areas.push({ bold: 'Keep practising', rest: ' — consistency is the key to becoming a confident communicator.' });
-
-  return {
-    score, badge, badgeDesc,
-    skills: [
-      { label: 'ARTICULATION & CLARITY', pct: clarity },
-      { label: 'TECHNICAL VOCABULARY',   pct: vocab },
-      { label: 'STRUCTURAL FLOW',        pct: structure },
-    ],
-    strengths, areas, wordCount, wpm,
-    duration: fmtTime(elapsedSecs),
-    date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-  };
 }
 
 const PLAYER_STATIC = Array.from({ length: 40 }, (_, i) =>
@@ -306,6 +156,11 @@ export default function SpeakingTest({ onSignOut }) {
   const navigate    = useNavigate();
   const location    = useLocation();
   const moduleTitle = location.state?.moduleTitle ?? 'Speaking Task';
+  const moduleId    = location.state?.moduleId ?? 'speaking-test';
+
+  const [topicData,    setTopicData]    = useState(null);
+  const [topicLoading, setTopicLoading] = useState(true);
+  const [submitting,   setSubmitting]   = useState(false);
 
   const [phase,       setPhase]       = useState('test');
   const [isRecording, setIsRecording] = useState(false);
@@ -314,12 +169,30 @@ export default function SpeakingTest({ onSignOut }) {
   const [transcript,  setTranscript]  = useState('');
   const [audioUrl,    setAudioUrl]    = useState(null);
   const [result,      setResult]      = useState(null);
-  const timerRef         = useRef(null);
-  const srRef            = useRef(null);
-  const mrRef            = useRef(null);   // MediaRecorder
-  const chunksRef        = useRef([]);
-  const streamRef        = useRef(null);
-  const baseTranscriptRef = useRef('');    // text accumulated from prior recording segments
+
+  const timerRef          = useRef(null);
+  const srRef             = useRef(null);
+  const mrRef             = useRef(null);
+  const chunksRef         = useRef([]);
+  const streamRef         = useRef(null);
+  const baseTranscriptRef = useRef('');
+
+  // Fetch a random topic on mount
+  useEffect(() => {
+    axios.get(`${API_BASE_URL}/api/communication/speaking/topic/random`)
+      .then(res => {
+        if (res.data?.success) setTopicData(res.data.data);
+      })
+      .catch(() => {
+        // Fallback topic if backend unreachable
+        setTopicData({
+          id: null,
+          topicText: 'The Future of Artificial Intelligence',
+          challenge: 'Describe a time you solved a difficult technical problem.',
+        });
+      })
+      .finally(() => setTopicLoading(false));
+  }, []);
 
   useEffect(() => {
     if (isRecording) {
@@ -406,20 +279,26 @@ export default function SpeakingTest({ onSignOut }) {
 
   const handleSubmit = async () => {
     const elapsed = MAX_SECS - timeLeft;
-    const r = evaluateSpeech(transcript, elapsed);
-    const moduleId = location.state?.moduleId ?? 'speaking-test';
-    let attemptNo = 1;
+    setSubmitting(true);
     try {
       const res = await axios.post(
-        `${API_BASE_URL}/api/assessments/attempts/${moduleId}`,
-        { score: Math.round(r.score), total: 100 },
+        `${API_BASE_URL}/api/communication/speaking/submit?moduleId=${moduleId}`,
+        {
+          topicId: topicData?.id ?? null,
+          transcript,
+          elapsedSecs: elapsed,
+        },
       );
-      if (res.data?.success && res.data?.data?.attemptNumber) {
-        attemptNo = res.data.data.attemptNumber;
+      if (res.data?.success) {
+        const data = res.data.data;
+        setResult({ ...data, attemptNo: data.attemptNumber });
+        setPhase('result');
       }
-    } catch {}
-    setResult({ ...r, attemptNo });
-    setPhase('result');
+    } catch (err) {
+      console.error('Speaking submit error:', err);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleRedo = () => {
@@ -434,6 +313,12 @@ export default function SpeakingTest({ onSignOut }) {
     setTranscript('');
     setAudioUrl(null);
     setResult(null);
+    // Fetch a fresh random topic on redo
+    setTopicLoading(true);
+    axios.get(`${API_BASE_URL}/api/communication/speaking/topic/random`)
+      .then(res => { if (res.data?.success) setTopicData(res.data.data); })
+      .catch(() => {})
+      .finally(() => setTopicLoading(false));
   };
 
   /* ── Result Screen ──────────────────────────────────────────── */
@@ -458,7 +343,9 @@ export default function SpeakingTest({ onSignOut }) {
             <span>Result</span>
           </div>
 
-          <h1 className="spk-result-title">{moduleTitle}: {TOPIC.split(' ').slice(0, 4).join(' ')}…</h1>
+          <h1 className="spk-result-title">
+            {moduleTitle}: {topicData?.topicText?.split(' ').slice(0, 4).join(' ')}…
+          </h1>
           <p className="spk-result-meta">
             Completed on {date}&nbsp;•&nbsp;Duration: {duration}&nbsp;•&nbsp;{wordCount} words&nbsp;{wpm > 0 ? `• ${wpm} wpm` : ''}
           </p>
@@ -477,11 +364,13 @@ export default function SpeakingTest({ onSignOut }) {
               <span className="spk-card-icon">📊</span>
               <span className="spk-card-title">Skill Breakdown</span>
             </div>
-            {skills.map(({ label, pct }) => (
+            {skills.map(({ label, pct, raw, max }) => (
               <div className="spk-skill-row" key={label}>
                 <div className="spk-skill-top">
                   <span className="spk-skill-label">{label}</span>
-                  <span className="spk-skill-pct">{pct}%</span>
+                  <span className="spk-skill-pct">
+                    {raw != null ? `${raw} / ${max}` : `${pct}%`}
+                  </span>
                 </div>
                 <div className="spk-skill-bar-bg">
                   <div className="spk-skill-bar-fill" style={{ width: `${pct}%` }} />
@@ -546,6 +435,8 @@ export default function SpeakingTest({ onSignOut }) {
   }
 
   /* ── Test Screen ────────────────────────────────────────────── */
+  const challenge = topicLoading ? 'Loading your challenge…' : (topicData?.challenge ?? '');
+
   return (
     <StudentShell onSignOut={onSignOut}>
       <main className="course-shell techskills-shell">
@@ -557,33 +448,27 @@ export default function SpeakingTest({ onSignOut }) {
           <span>Speaking Task</span>
         </div>
 
-        {/* <h1 className="spk-heading">Speaking Task</h1> */}
-
         <div className="spk-challenge-card">
           <p className="spk-challenge-label">💡 COMMUNICATION CHALLENGE</p>
-          <p className="spk-challenge-text">{CHALLENGE}</p>
+          <p className="spk-challenge-text">"{challenge}"</p>
           <div className="spk-guidelines-box">
             <p className="spk-guidelines-label">ℹ️ RECORDING GUIDELINES</p>
             <p className="spk-guidelines-text">{GUIDELINES}</p>
           </div>
         </div>
 
-        
-    
         <div className="spk-timer-row">
-            <p className="spk-status-text">
-          {isRecording ? 'L I S T E N I N G' : hasRecorded ? 'S T A R T' : 'S T A R T'}
-        </p>
-          
+          <p className="spk-status-text">
+            {isRecording ? 'L I S T E N I N G' : 'S T A R T'}
+          </p>
           <span className="spk-timer">⏱ {fmtTime(timeLeft)}</span>
         </div>
-
-      
 
         <div className="spk-mic-wrap">
           <button
             className={`spk-mic-btn${isRecording ? ' spk-mic-active' : ''}`}
             onClick={handleMic}
+            disabled={topicLoading}
             aria-label={isRecording ? 'Stop recording' : 'Start recording'}
           >
             <FiMic />
@@ -610,10 +495,10 @@ export default function SpeakingTest({ onSignOut }) {
 
         <button
           className="spk-submit-btn"
-          disabled={!hasRecorded}
+          disabled={!hasRecorded || submitting}
           onClick={handleSubmit}
         >
-          ☁️ SUBMIT
+          {submitting ? '⏳ Evaluating…' : '☁️ SUBMIT'}
         </button>
       </section>
       </main>

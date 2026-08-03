@@ -23,6 +23,7 @@ export default function CourseCard({
   isRecommended = false,
   actionLabel = 'Reserve Seat',
   onAction,
+  progressPct,
 }) {
   const isOnDemand = category === 'onDemand';
   const PlatformIcon = isOnDemand ? FiMonitor : FiMapPin;
@@ -61,6 +62,18 @@ export default function CourseCard({
         </div>
 
         <p className="course-booking-description">{description}</p>
+
+        {progressPct !== undefined && (
+          <div className="course-card-progress-wrap">
+            <div className="course-card-progress-bar-bg">
+              <div
+                className="course-card-progress-bar-fill"
+                style={{ width: `${progressPct}%` }}
+              />
+            </div>
+            <span className="course-card-progress-label">{progressPct}% complete</span>
+          </div>
+        )}
       </div>
 
       <div className="course-booking-meta">
