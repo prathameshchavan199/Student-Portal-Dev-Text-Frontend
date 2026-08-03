@@ -164,28 +164,33 @@ export default function Dashboard({ onSignOut }) {
                 <h3 className="db-card-title">Enrollment Breakdown</h3>
               </div>
               <span className="db-avg-badge">
-                {courseCounters.reduce((s, c) => s + c.value, 0)} Total
+                {enrollment.registered} Total
               </span>
             </div>
             {(() => {
-              const maxVal = Math.max(...courseCounters.map(c => c.value), 1);
-              return courseCounters.map(({ label, value, tone }) => (
-                <div key={label} className="db-perf-row">
-                  <div className="db-perf-header">
-                    <span className="db-perf-label">{label}</span>
-                    <span className="db-perf-pct">{value}</span>
+              const total = Math.max(enrollment.registered, 1);
+              return courseCounters.map(({ label, value, tone }) => {
+                const isTotal  = label === 'Registered';
+                const barWidth = isTotal ? 100 : Math.round((value / total) * 100);
+                const display  = isTotal ? value : `${value} / ${total}`;
+                return (
+                  <div key={label} className="db-perf-row">
+                    <div className="db-perf-header">
+                      <span className="db-perf-label">{label}</span>
+                      <span className="db-perf-pct">{display}</span>
+                    </div>
+                    <div className="db-perf-bar-bg">
+                      <div
+                        className="db-perf-bar-fill"
+                        style={{
+                          width: `${barWidth}%`,
+                          background: barColors[tone],
+                        }}
+                      />
+                    </div>
                   </div>
-                  <div className="db-perf-bar-bg">
-                    <div
-                      className="db-perf-bar-fill"
-                      style={{
-                        width: `${(value / maxVal) * 100}%`,
-                        background: barColors[tone],
-                      }}
-                    />
-                  </div>
-                </div>
-              ));
+                );
+              });
             })()}
           </div>
         </div>
