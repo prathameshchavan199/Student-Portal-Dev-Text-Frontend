@@ -769,7 +769,7 @@ function StepDetails({ data, setData, onNext }) {
                 />
               </div>
             <div className="col-6">
-              <DarkInput  label="GPA/Percentage" placeholder="9.0 or 90%"
+              <DarkInput  label="Percentage" placeholder="90"
                 error={errors.gpa?.message}
                 register={register('gpa', {
                   required: 'Required',
@@ -910,7 +910,7 @@ function StepDetails({ data, setData, onNext }) {
                 />
               </div>
             <div className="col-6">
-              <DarkInput label="GPA/Percentage" placeholder="9.0 or 90%"
+              <DarkInput label="Percentage" placeholder="90"
                 error={errors.intermediateGpa?.message}
                 register={register('intermediateGpa', {
                   required: 'Required',
@@ -929,7 +929,12 @@ function StepDetails({ data, setData, onNext }) {
                   const years = Array.from({ length: 10 }, (_, i) => currentYear - i);
                   return (
                     <div className="select-field-wrap">
-                      <select className="form-select dark-input select-with-icon" defaultValue={String(currentYear)} {...register('intermediateYearOfPassing', { required: 'Required' })}>
+                      <select className="form-select dark-input select-with-icon" defaultValue={String(currentYear)} {...register('intermediateYearOfPassing', {
+                        required: 'Required',
+                        validate: (value, formValues) =>
+                          Number(value) > Number(formValues.yearOfPassing) ||
+                          '12th passing year must be greater than the 10th passing year.',
+                      })}>
                         {years.map(y => <option key={y} value={String(y)}>{y}</option>)}
                       </select>
                       <span className="select-field-icon"><FiChevronDown /></span>
@@ -1009,7 +1014,7 @@ function StepDetails({ data, setData, onNext }) {
                 />
               </div>
             <div className="col-6">
-              <DarkInput label="GPA/Percentage" placeholder="9.0 or 90%"
+              <DarkInput label="Percentage" placeholder="90"
                 error={errors.diplomaGpa?.message}
                 register={register('diplomaGpa', {
                   required: 'Required',
@@ -1028,7 +1033,12 @@ function StepDetails({ data, setData, onNext }) {
                   const years = Array.from({ length: 10 }, (_, i) => currentYear - i);
                   return (
                     <div className="select-field-wrap">
-                      <select className="form-select dark-input select-with-icon" defaultValue={String(currentYear)} {...register('diplomaYearOfPassing', { required: 'Required' })}>
+                      <select className="form-select dark-input select-with-icon" defaultValue={String(currentYear)} {...register('diplomaYearOfPassing', {
+                        required: 'Required',
+                        validate: (value, formValues) =>
+                          Number(value) > Number(formValues.yearOfPassing) ||
+                          'Diploma passing year must be greater than the 10th passing year.',
+                      })}>
                         {years.map(y => <option key={y} value={String(y)}>{y}</option>)}
                       </select>
                       <span className="select-field-icon"><FiChevronDown /></span>
@@ -1171,7 +1181,7 @@ function StepDetails({ data, setData, onNext }) {
               </div>
 
               <div className="col-6">
-                <DarkInput  label="GPA/Percentage" placeholder="9.0 or 90%"
+                <DarkInput  label="Percentage" placeholder="90"
                   error={errors.undergraduateGpa?.message}
                   register={register('undergraduateGpa', {
                     validate: value => {
@@ -1190,7 +1200,17 @@ function StepDetails({ data, setData, onNext }) {
                     const years = Array.from({ length: 10 }, (_, i) => currentYear - i);
                     return (
                       <div className="select-field-wrap">
-                        <select className="form-select dark-input select-with-icon" defaultValue={String(currentYear)} {...register('undergraduateYearOfPassing')}>
+                        <select className="form-select dark-input select-with-icon" defaultValue={String(currentYear)} {...register('undergraduateYearOfPassing', {
+                          validate: (value, formValues) => {
+                            if (hasUndergraduate !== 'true') return true;
+                            const priorYear = formValues.qualificationAfter10th === 'diploma'
+                              ? formValues.diplomaYearOfPassing
+                              : formValues.intermediateYearOfPassing;
+                            if (!priorYear) return true;
+                            return Number(value) > Number(priorYear) ||
+                              'Undergraduate passing year must be greater than the 12th/Diploma passing year.';
+                          },
+                        })}>
                           {years.map(y => <option key={y} value={String(y)}>{y}</option>)}
                         </select>
                         <span className="select-field-icon"><FiChevronDown /></span>
@@ -1321,7 +1341,7 @@ function StepDetails({ data, setData, onNext }) {
                   })} />
               </div>
               <div className="col-6">
-                <DarkInput  label="GPA/Percentage" placeholder="9.0 or 90%"
+                <DarkInput  label="Percentage" placeholder="90"
                   error={errors.postGraduationGpa?.message}
                   register={register('postGraduationGpa', {
                     validate: value => {
@@ -1340,7 +1360,22 @@ function StepDetails({ data, setData, onNext }) {
                     const years = Array.from({ length: 10 }, (_, i) => currentYear - i);
                     return (
                       <div className="select-field-wrap">
-                        <select className="form-select dark-input select-with-icon" defaultValue={String(currentYear)} {...register('postGraduationYearOfPassing')}>
+                        <select className="form-select dark-input select-with-icon" defaultValue={String(currentYear)} {...register('postGraduationYearOfPassing', {
+                          validate: (value, formValues) => {
+                            if (hasPostGraduation !== 'true') return true;
+                            if (formValues.hasUndergraduate === 'true') {
+                              if (!formValues.undergraduateYearOfPassing) return true;
+                              return Number(value) > Number(formValues.undergraduateYearOfPassing) ||
+                                'Postgraduate passing year must be greater than the Undergraduate passing year.';
+                            }
+                            const priorYear = formValues.qualificationAfter10th === 'diploma'
+                              ? formValues.diplomaYearOfPassing
+                              : formValues.intermediateYearOfPassing;
+                            if (!priorYear) return true;
+                            return Number(value) > Number(priorYear) ||
+                              'Postgraduate passing year must be greater than the 12th/Diploma passing year.';
+                          },
+                        })}>
                           {years.map(y => <option key={y} value={String(y)}>{y}</option>)}
                         </select>
                         <span className="select-field-icon"><FiChevronDown /></span>
