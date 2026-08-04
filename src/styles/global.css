@@ -2203,6 +2203,13 @@ a:hover { color: #ffb558; }
   opacity: 0.65;
   cursor: not-allowed;
 }
+.payment-already-registered {
+  background: #16a34a !important;
+  box-shadow: none !important;
+  opacity: 1 !important;
+  cursor: not-allowed !important;
+  gap: 8px;
+}
 .payment-error-note {
   margin: 0 0 12px;
   padding: 10px 12px;

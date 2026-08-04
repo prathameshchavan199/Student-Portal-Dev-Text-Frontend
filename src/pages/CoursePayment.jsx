@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
+import axios from 'axios';
 import {
   FiArrowLeft,
   FiArrowRight,
@@ -23,6 +24,14 @@ export default function CoursePayment({ onSignOut }) {
   const course = getCourseById(courseId);
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState('');
+  const [alreadyPurchased, setAlreadyPurchased] = useState(false);
+
+  useEffect(() => {
+    if (!courseId) return;
+    axios.get(`${API_BASE_URL}/api/payment/check/${courseId}`)
+      .then(res => { if (res.data?.success) setAlreadyPurchased(res.data.alreadyPurchased); })
+      .catch(() => {});
+  }, [courseId]);
 
   if (loading) {
     return (
@@ -180,14 +189,24 @@ export default function CoursePayment({ onSignOut }) {
 
               {error && <p className="payment-error-note" role="alert">{error}</p>}
 
-              <button
-                type="button"
-                className="course-booking-action payment-pay-button"
-                onClick={handlePay}
-                disabled={processing}
-              >
-                {processing ? 'Processing…' : <>Pay &amp; Secure Seat <FiArrowRight /></>}
-              </button>
+              {alreadyPurchased ? (
+                <button
+                  type="button"
+                  className="course-booking-action payment-pay-button payment-already-registered"
+                  disabled
+                >
+                  <FiCheckCircle /> Already Registered
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className="course-booking-action payment-pay-button"
+                  onClick={handlePay}
+                  disabled={processing}
+                >
+                  {processing ? 'Processing…' : <>Pay &amp; Secure Seat <FiArrowRight /></>}
+                </button>
+              )}
             </aside>
           </div>
         </section>

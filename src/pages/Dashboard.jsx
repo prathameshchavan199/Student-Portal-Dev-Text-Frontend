@@ -172,7 +172,7 @@ export default function Dashboard({ onSignOut }) {
               return courseCounters.map(({ label, value, tone }) => {
                 const isTotal  = label === 'Registered';
                 const barWidth = isTotal ? 100 : Math.round((value / total) * 100);
-                const display  = isTotal ? value : `${value} / ${total}`;
+                const display  = isTotal ? value : `${value}`;
                 return (
                   <div key={label} className="db-perf-row">
                     <div className="db-perf-header">
