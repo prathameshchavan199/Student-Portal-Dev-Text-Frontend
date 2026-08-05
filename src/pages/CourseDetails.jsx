@@ -4,11 +4,9 @@ import {
   FiArrowLeft,
   FiAward,
   FiBookOpen,
-  FiBookmark,
   FiCheckCircle,
   FiChevronDown,
   FiClock,
-  FiLayers,
   FiMapPin,
   FiMonitor,
   FiStar,
@@ -19,60 +17,7 @@ import StudentShell from '../components/StudentShell.jsx';
 import CourseCard from './CourseCard.jsx';
 import { useCourses } from '../context/CourseContext.jsx';
 
-const detailTabs = ['Overview', 'Curriculum', 'Instructor', 'Reviews'];
-
-const learningPoints = [
-  'Build practical concepts from basics to advanced patterns',
-  'Work through applied exercises and real-world examples',
-  'Understand tools, workflows, and professional best practices',
-  'Complete guided projects that strengthen your portfolio',
-];
-
-const curriculumModules = [
-  {
-    title: 'Module 1: Foundations',
-    lessons: 3,
-    details: ['Course introduction', 'Core concepts', 'Environment setup'],
-  },
-  {
-    title: 'Module 2: Applied Workflows',
-    lessons: 5,
-    details: ['Hands-on workflow', 'Guided practice', 'Common mistakes', 'Case study', 'Knowledge check'],
-  },
-  {
-    title: 'Module 3: Visualization and Tools',
-    lessons: 4,
-    details: ['Tool overview', 'Data interpretation', 'Visual examples', 'Practice task'],
-  },
-  {
-    title: 'Module 4: Advanced Practice',
-    lessons: 4,
-    details: ['Advanced patterns', 'Problem solving', 'Optimization', 'Review exercise'],
-  },
-  {
-    title: 'Module 5: Real-world Projects',
-    lessons: 2,
-    details: ['Project brief', 'Final implementation'],
-  },
-];
-
-const reviewList = [
-  {
-    name: 'Aman Verma',
-    rating: 5,
-    text: 'The sessions were clear, practical, and easy to follow. The project examples helped me understand the workflow quickly.',
-  },
-  {
-    name: 'Priya Nair',
-    rating: 4,
-    text: 'Great balance of concepts and hands-on practice. The instructor explained difficult topics in a very approachable way.',
-  },
-  {
-    name: 'Rahul Mehta',
-    rating: 5,
-    text: 'Loved the structure of the course. The curriculum felt focused and the final project was useful for my portfolio.',
-  },
-];
+const detailTabs = ['Overview', 'Curriculum', 'Instructor'];
 
 export default function CourseDetails({ onSignOut }) {
   const { courseId } = useParams();
@@ -188,7 +133,9 @@ onClick={() => {
           <div className="course-detail-stats">
             <DetailStat icon={FiTrendingUp} label="Level" value={course.level} />
             <DetailStat icon={FiClock} label="Duration" value={course.duration} />
-            <DetailStat icon={FiBookOpen} label="Lessons" value={isOnDemand ? '18' : sessions.length} />
+            <DetailStat icon={FiBookOpen} label="Lessons" value={
+              (course.curriculum || []).reduce((sum, m) => sum + (m.lessons?.length ?? 0), 0) || sessions.length
+            } />
             <DetailStat icon={FiAward} label="Certificate" value="Yes" />
           </div>
 
@@ -255,74 +202,88 @@ onClick={() => {
 
 function CourseTabContent({ activeTab, course }) {
   if (activeTab === 'Curriculum') {
-    return <CourseCurriculum modules={curriculumModules} />;
+    return <CourseCurriculum modules={course.curriculum || []} />;
   }
 
   if (activeTab === 'Instructor') {
     return <CourseInstructor course={course} />;
   }
 
-  if (activeTab === 'Reviews') {
-    return <CourseReviews reviews={reviewList} />;
-  }
-
+  // Overview tab
+  const learningPoints = course.youWillLearn || [];
   return (
     <>
       <h2>About this Course</h2>
       <p>
-        Learn {course.topic.toLowerCase()} through a structured path designed for practical skill building,
-        guided sessions, and project-focused outcomes.
+        {course.aboutCourse ||
+          `Learn ${(course.topic || 'this subject').toLowerCase()} through a structured path designed for practical skill building, guided sessions, and project-focused outcomes.`}
       </p>
 
-      <h3>You will learn</h3>
-      <ul>
-        {learningPoints.map((point) => (
-          <li key={point}>
-            <FiCheckCircle />
-            {point}
-          </li>
-        ))}
-      </ul>
+      {learningPoints.length > 0 && (
+        <>
+          <h3>You will learn</h3>
+          <ul>
+            {learningPoints.map((point) => (
+              <li key={point}>
+                <FiCheckCircle />
+                {point}
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
     </>
   );
 }
 
 function CourseCurriculum({ modules }) {
-  const [openModule, setOpenModule] = useState(modules[0]?.title);
-  const totalLessons = modules.reduce((total, module) => total + module.lessons, 0);
+  const [openModule, setOpenModule] = useState(modules[0]?.title ?? '');
+  const totalLessons = modules.reduce((sum, m) => sum + (m.lessons?.length ?? 0), 0);
+
+  if (modules.length === 0) {
+    return (
+      <div className="course-curriculum">
+        <div className="course-curriculum-header"><h2>Curriculum</h2></div>
+        <p style={{ color: 'var(--text-subtle)', padding: '1rem 0' }}>No curriculum added yet.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="course-curriculum">
       <div className="course-curriculum-header">
         <h2>Curriculum</h2>
-        <span>{totalLessons} Lessons</span>
+        <span>{totalLessons} Lesson{totalLessons !== 1 ? 's' : ''}</span>
       </div>
       <div className="course-curriculum-list">
-        {modules.map((module) => (
-          <div key={module.title} className={`course-curriculum-item ${openModule === module.title ? 'open' : ''}`}>
-            <button
-              type="button"
-              className="course-curriculum-module"
-              onClick={() => setOpenModule((current) => (current === module.title ? '' : module.title))}
-              aria-expanded={openModule === module.title}
-            >
-              <strong>{module.title}</strong>
-              <span>{module.lessons} Lessons</span>
-              <FiChevronDown />
-            </button>
-            {openModule === module.title && (
-              <div className="course-curriculum-details">
-                {module.details.map((detail, index) => (
-                  <div key={detail}>
-                    <FiCheckCircle />
-                    <span>Lesson {index + 1}</span>
-                    <strong>{detail}</strong>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
+        {modules.map((module) => {
+          const lessonList = module.lessons ?? [];
+          return (
+            <div key={module.title} className={`course-curriculum-item ${openModule === module.title ? 'open' : ''}`}>
+              <button
+                type="button"
+                className="course-curriculum-module"
+                onClick={() => setOpenModule((cur) => (cur === module.title ? '' : module.title))}
+                aria-expanded={openModule === module.title}
+              >
+                <strong>{module.title}</strong>
+                <span>{lessonList.length} Lesson{lessonList.length !== 1 ? 's' : ''}</span>
+                <FiChevronDown />
+              </button>
+              {openModule === module.title && (
+                <div className="course-curriculum-details">
+                  {lessonList.map((lessonName, index) => (
+                    <div key={`${module.title}-${index}`}>
+                      <FiCheckCircle />
+                      <span>Lesson {index + 1}</span>
+                      <strong>{lessonName}</strong>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -346,32 +307,6 @@ function CourseInstructor({ course }) {
           <span>1,240 Students</span>
           <span>12 Courses</span>
         </div>
-      </div>
-    </div>
-  );
-}
-
-function CourseReviews({ reviews }) {
-  return (
-    <div className="course-reviews">
-      <div className="course-reviews-header">
-        <h2>Student Reviews</h2>
-        <span>4.8 average rating</span>
-      </div>
-      <div className="course-review-list">
-        {reviews.map((review) => (
-          <article key={review.name} className="course-review-card">
-            <div>
-              <strong>{review.name}</strong>
-              <span>
-                {Array.from({ length: review.rating }).map((_, index) => (
-                  <FiStar key={`${review.name}-${index}`} />
-                ))}
-              </span>
-            </div>
-            <p>{review.text}</p>
-          </article>
-        ))}
       </div>
     </div>
   );
