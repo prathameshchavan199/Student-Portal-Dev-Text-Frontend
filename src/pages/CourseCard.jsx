@@ -5,14 +5,15 @@ import {
   FiMapPin,
   FiMonitor,
 } from 'react-icons/fi';
-
-
+import { API_BASE_URL } from '../api/axiosSetup.js';
 
 export default function CourseCard({
+  id,
   title,
   instructor,
   description,
   imageUrl,
+  imageKey,
   date,
   time,
   platform,
@@ -29,12 +30,13 @@ export default function CourseCard({
   const PlatformIcon = isOnDemand ? FiMonitor : FiMapPin;
   const originalPrice = price ? Math.round(price * 1.35) : null;
   const formatPrice = (value) => `${value.toLocaleString()}`;
+  const imageSrc = imageKey ? `${API_BASE_URL}/api/courses/${id}/image` : imageUrl;
 
   return (
     <div className={`course-booking-card course-booking-card-horizontal ${isOnDemand ? 'with-media' : ''}`}>
       <div className="course-booking-media">
-        {imageUrl ? (
-          <img src={imageUrl} alt={title} />
+        {imageSrc ? (
+          <img src={imageSrc} alt={title} />
         ) : (
           <div className="course-booking-media-fallback">
             <PlatformIcon />

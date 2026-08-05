@@ -19,6 +19,9 @@ import CourseCard from './CourseCard.jsx';
 import { useCourses } from '../context/CourseContext.jsx';
 import { API_BASE_URL } from '../api/axiosSetup.js';
 
+const courseImageSrc = (course) =>
+  course?.imageKey ? `${API_BASE_URL}/api/courses/${course.id}/image` : course?.imageUrl;
+
 const detailTabs = ['Overview', 'Curriculum', 'Instructor', 'Reviews'];
 
 export default function CourseDetails({ onSignOut }) {
@@ -92,8 +95,8 @@ export default function CourseDetails({ onSignOut }) {
 
           <div className="course-detail-hero">
             <div className="course-detail-media">
-              {course.imageUrl ? (
-                <img src={course.imageUrl} alt={course.title} />
+              {courseImageSrc(course) ? (
+                <img src={courseImageSrc(course)} alt={course.title} />
               ) : (
                 <div className="course-detail-media-fallback">
                   <FormatIcon />

@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 // export const API_BASE_URL = 'https://13.235.67.169'; // Replace with your backend API base URL
- export const API_BASE_URL = 'https://api.cyfenix.com'
-// export const API_BASE_URL = 'http://localhost:8081'; // Replace with your backend API base URL
+//  export const API_BASE_URL = 'https://api.cyfenix.com'
+export const API_BASE_URL = 'http://localhost:8081'; // Replace with your backend API base URL
 
 
 // Attach stored idToken as Bearer on every outgoing request

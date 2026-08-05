@@ -38,7 +38,7 @@ const CATEGORY_COLORS = {
 
 const emptyForm = {
   id: '', title: '', category: 'onlineProgram', price: '', duration: '',
-  level: 'Beginner', imageUrl: '', instructor: '', description: '',
+  level: 'Beginner', imageUrl: '', imageKey: '', instructor: '', description: '',
   courseArea: 'Development', topic: 'Frontend', format: 'Live Online',
   date: '', time: '', platform: '', location: '', startsIn: '', seatsLeft: '', accent: 'blue',
 };
@@ -58,6 +58,10 @@ export default function AddCourse() {
   const [form, setForm]         = useState(emptyForm);
   const [sessions, setSessions] = useState([]);
   const [editId, setEditId]     = useState(null);   // ID being edited
+
+  // image upload state
+  const [imageFile, setImageFile]       = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
 
   // operation state
   const [submitting, setSubmitting]   = useState(false);
@@ -86,12 +90,19 @@ export default function AddCourse() {
   useEffect(() => { fetchCourses(); }, [fetchCourses]);
 
   /* ── helpers ── */
+  const resetImage = () => {
+    setImageFile(null);
+    if (imagePreview) URL.revokeObjectURL(imagePreview);
+    setImagePreview(null);
+  };
+
   const openAdd = () => {
     setForm(emptyForm);
     setSessions([]);
     setEditId(null);
     setFormError('');
     setFormSuccess('');
+    resetImage();
     setView('add');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -105,6 +116,7 @@ export default function AddCourse() {
       duration:    course.duration    ?? '',
       level:       course.level       ?? 'Beginner',
       imageUrl:    course.imageUrl    ?? '',
+      imageKey:    course.imageKey    ?? '',
       instructor:  course.instructor  ?? '',
       description: course.description ?? '',
       courseArea:  course.courseArea  ?? 'Development',
@@ -122,6 +134,7 @@ export default function AddCourse() {
     setEditId(course.id);
     setFormError('');
     setFormSuccess('');
+    resetImage();
     setView('edit');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -130,6 +143,7 @@ export default function AddCourse() {
     setView('list');
     setDeleteTarget(null);
     setDeleteError('');
+    resetImage();
   };
 
   const setField = (field) => (e) => {
@@ -158,6 +172,14 @@ export default function AddCourse() {
   const updateSession = (i, field) => (e) =>
     setSessions((s) => s.map((sess, idx) => idx === i ? { ...sess, [field]: e.target.value } : sess));
 
+  const handleImageFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (imagePreview) URL.revokeObjectURL(imagePreview);
+    setImageFile(file);
+    setImagePreview(URL.createObjectURL(file));
+  };
+
   /* ── submit (add / edit) ── */
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -177,15 +199,26 @@ export default function AddCourse() {
 
     setSubmitting(true);
     try {
+      let savedId;
       if (view === 'add') {
         await axios.post(`${API_BASE_URL}/api/courses`, payload);
-        setFormSuccess('Course created successfully!');
-        setForm(emptyForm);
-        setSessions([]);
+        savedId = payload.id;
       } else {
         await axios.put(`${API_BASE_URL}/api/courses/${editId}`, payload);
-        setFormSuccess('Course updated successfully!');
+        savedId = editId;
       }
+
+      if (imageFile) {
+        const fd = new FormData();
+        fd.append('file', imageFile);
+        await axios.post(`${API_BASE_URL}/api/courses/${savedId}/image`, fd);
+        resetImage();
+        setFormSuccess(view === 'add' ? 'Course created and image uploaded to S3!' : 'Course updated and image uploaded to S3!');
+      } else {
+        setFormSuccess(view === 'add' ? 'Course created successfully!' : 'Course updated successfully!');
+      }
+
+      if (view === 'add') { setForm(emptyForm); setSessions([]); }
       await fetchCourses();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
@@ -239,6 +272,9 @@ export default function AddCourse() {
               addSession={addSession}
               removeSession={removeSession}
               updateSession={updateSession}
+              imageFile={imageFile}
+              imagePreview={imagePreview}
+              onImageFileChange={handleImageFileChange}
             />
         }
 
@@ -484,6 +520,7 @@ function FormView({
   view, form, sessions, submitting, formError, formSuccess,
   onBack, onSubmit, setField, handleTitleChange,
   addSession, removeSession, updateSession,
+  imageFile, imagePreview, onImageFileChange,
 }) {
   const isEdit = view === 'edit';
 
@@ -624,17 +661,45 @@ function FormView({
               </div>
             </Field>
           </Row>
-          <Field label="Image URL">
-            <div style={{ position: 'relative' }}>
-              <FiImage style={{
-                position: 'absolute', left: 12, top: '50%',
-                transform: 'translateY(-50%)', color: 'var(--text-subtle)',
-              }} />
-              <input
-                className="ac-input" style={{ paddingLeft: 36 }}
-                placeholder="https://cdn.example.com/course-image.jpg"
-                value={form.imageUrl} onChange={setField('imageUrl')}
-              />
+          <Field label="Course Banner Image">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {/* Preview: selected file beats existing S3 image beats external URL */}
+              {(imagePreview || form.imageKey || form.imageUrl) && (
+                <img
+                  src={imagePreview
+                    || (form.imageKey ? `${API_BASE_URL}/api/courses/${form.id}/image` : null)
+                    || form.imageUrl}
+                  alt="Course banner preview"
+                  style={{ width: '100%', height: 140, objectFit: 'cover', borderRadius: 10, border: '1px solid var(--border-color)' }}
+                />
+              )}
+              {/* Current S3 key shown as clean path */}
+              {form.imageKey && !imageFile && (
+                <div style={{ fontSize: 12, color: 'var(--text-subtle)', padding: '4px 2px', wordBreak: 'break-all' }}>
+                  S3: {form.imageKey}
+                </div>
+              )}
+              {/* File picker — uploads to S3 on form submit */}
+              <label style={{
+                display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer',
+                padding: '9px 14px', borderRadius: 10, fontSize: 14,
+                border: '1px dashed var(--border-color)', background: 'var(--input-bg)',
+                color: imageFile ? 'var(--brand-blue)' : 'var(--text-subtle)',
+              }}>
+                <FiImage size={15} />
+                <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {imageFile ? imageFile.name : 'Choose image file (uploads to S3)'}
+                </span>
+                <input type="file" accept="image/*" style={{ display: 'none' }} onChange={onImageFileChange} />
+              </label>
+              {/* Fallback: manual external URL */}
+              {!form.imageKey && (
+                <input
+                  className="ac-input"
+                  placeholder="Or paste an external image URL"
+                  value={form.imageUrl} onChange={setField('imageUrl')}
+                />
+              )}
             </div>
           </Field>
         </Section>

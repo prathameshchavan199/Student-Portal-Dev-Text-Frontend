@@ -4,7 +4,7 @@ import axios from 'axios';
 import {   } from '../api/axiosSetup.js';
 import { FiBriefcase, FiBook, FiClipboard, FiFolder, FiGrid, FiLogOut, FiMenu, FiPlusCircle, FiSearch, FiTrendingUp, FiVideo, FiX } from 'react-icons/fi';
 import { AuthContext } from '../context/AuthContext.jsx';
-import { courseType, courses } from '../pages/courseData.js';
+import { useCourses } from '../context/CourseContext.jsx';
 import CyfenixLogo from "../assets/images/Cyfenix-Logo.png";
 
 const mainNavItems = [
@@ -52,6 +52,7 @@ export default function StudentShell({
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [courseQuery, setCourseQuery] = useState('');
   const { registered, setUser } = useContext(AuthContext);
+  const { courses, courseTypes } = useCourses();
   const registrationStatus = registered;
 
   const { firstName, initials, profileImage } = getProfileInfo();
@@ -61,11 +62,11 @@ export default function StudentShell({
 
   const categoryLabels = useMemo(
     () =>
-      courseType.reduce((labels, category) => {
+      courseTypes.reduce((labels, category) => {
         labels[category.id] = category.label;
         return labels;
       }, {}),
-    [],
+    [courseTypes],
   );
 
   const courseResults = useMemo(() => {
