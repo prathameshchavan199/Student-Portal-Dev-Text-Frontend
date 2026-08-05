@@ -1,5 +1,6 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
+import axios from 'axios';
 import {
   FiArrowLeft,
   FiAward,
@@ -16,15 +17,24 @@ import {
 import StudentShell from '../components/StudentShell.jsx';
 import CourseCard from './CourseCard.jsx';
 import { useCourses } from '../context/CourseContext.jsx';
+import { API_BASE_URL } from '../api/axiosSetup.js';
 
-const detailTabs = ['Overview', 'Curriculum', 'Instructor'];
+const detailTabs = ['Overview', 'Curriculum', 'Instructor', 'Reviews'];
 
 export default function CourseDetails({ onSignOut }) {
   const { courseId } = useParams();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('Overview');
+  const [reviews, setReviews] = useState([]);
   const { courses, getCourseById, loading } = useCourses();
   const course = getCourseById(courseId);
+
+  useEffect(() => {
+    if (!courseId) return;
+    axios.get(`${API_BASE_URL}/api/courses/${courseId}/reviews`)
+      .then(res => { if (res.data?.success) setReviews(res.data.data); })
+      .catch(() => {});
+  }, [courseId]);
   const sessions = useMemo(
     () =>
       course?.sessions || [
@@ -154,7 +164,7 @@ onClick={() => {
 
           <div className="course-detail-content">
             <section className="course-detail-copy">
-              <CourseTabContent activeTab={activeTab} course={course} />
+              <CourseTabContent activeTab={activeTab} course={course} reviews={reviews} />
             </section>
 
             <aside className="course-detail-sessions">
@@ -200,13 +210,17 @@ onClick={() => {
   );
 }
 
-function CourseTabContent({ activeTab, course }) {
+function CourseTabContent({ activeTab, course, reviews }) {
   if (activeTab === 'Curriculum') {
     return <CourseCurriculum modules={course.curriculum || []} />;
   }
 
   if (activeTab === 'Instructor') {
     return <CourseInstructor course={course} />;
+  }
+
+  if (activeTab === 'Reviews') {
+    return <CourseReviews reviews={reviews} />;
   }
 
   // Overview tab
@@ -307,6 +321,39 @@ function CourseInstructor({ course }) {
           <span>1,240 Students</span>
           <span>12 Courses</span>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function CourseReviews({ reviews }) {
+  const avgRating = reviews.length
+    ? (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1)
+    : '—';
+
+  return (
+    <div className="course-reviews">
+      <div className="course-reviews-header">
+        <h2>Student Reviews</h2>
+        <span>{avgRating} average rating</span>
+      </div>
+      <div className="course-review-list">
+        {reviews.length === 0 && (
+          <p style={{ color: 'var(--text-subtle)', padding: '1rem 0' }}>No reviews yet.</p>
+        )}
+        {reviews.map((review) => (
+          <article key={review.id ?? review.reviewerName} className="course-review-card">
+            <div>
+              <strong>{review.reviewerName}</strong>
+              <span>
+                {Array.from({ length: review.rating }).map((_, index) => (
+                  <FiStar key={`${review.reviewerName}-${index}`} />
+                ))}
+              </span>
+            </div>
+            <p>{review.reviewText}</p>
+          </article>
+        ))}
       </div>
     </div>
   );
