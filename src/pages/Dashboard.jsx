@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { FiArrowRight, FiBook, FiAward, FiCheckCircle, FiClock, FiPlay, FiMonitor, FiMapPin } from 'react-icons/fi';
 import StudentShell from '../components/StudentShell.jsx';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { API_BASE_URL } from '../api/axiosSetup.js';
+import { AuthContext } from '../context/AuthContext.jsx';
 
 function getStoredName() {
   const name = localStorage.getItem('name');
@@ -21,6 +22,36 @@ function getProfileMeta() {
     ? `${parts[0][0]}${parts[1][0]}`.toUpperCase()
     : (parts[0]?.[0] ?? 'S').toUpperCase();
   return { initials };
+}
+
+function getRegistrationProgress(draft) {
+  const steps = [
+    {
+      label: 'Personal Details',
+      done: !!(draft.fullName?.trim() && draft.email?.trim() && draft.phone?.trim()),
+    },
+    {
+      label: 'Education',
+      done: !!(
+        draft.qualificationAfter10th === 'intermediate' ? draft.intermediateYearOfPassing
+        : draft.qualificationAfter10th === 'diploma' ? draft.diplomaYearOfPassing
+        : false
+      ),
+    },
+    {
+      label: 'Projects',
+      done: draft.hasProjects === false
+        || (Array.isArray(draft.projects) && draft.projects.some(p => p.title?.trim())),
+    },
+    {
+      label: 'Work Experience',
+      done: draft.hasWorkExperience === false
+        || (Array.isArray(draft.positions) && draft.positions.some(p => p.companyName?.trim() || p.role?.trim())),
+    },
+  ];
+  const completed = steps.filter(s => s.done).length;
+  const pct = Math.round((completed / steps.length) * 100);
+  return { steps, pct };
 }
 
 const TONE_CYCLE = ['blue', 'purple', 'green', 'orange'];
@@ -60,9 +91,11 @@ function GaugeMeter({ pct }) {
 export default function Dashboard({ onSignOut }) {
   const displayName  = getStoredName();
   const { initials } = getProfileMeta();
+  const { registered } = useContext(AuthContext);
 
   const [summary, setSummary] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [registrationDraft, setRegistrationDraft] = useState(null);
 
   useEffect(() => {
     axios.get(`${API_BASE_URL}/api/dashboard/summary`)
@@ -71,8 +104,19 @@ export default function Dashboard({ onSignOut }) {
       .finally(() => setLoading(false));
   }, []);
 
+  useEffect(() => {
+    axios.get(`${API_BASE_URL}/api/registration/draft/me`, { withCredentials: true })
+      .then(res => { if (res.data?.success && res.data?.data) setRegistrationDraft(res.data.data); })
+      .catch(err => console.error('Registration draft fetch error:', err));
+  }, []);
+
   // ── Derived values with safe defaults ────────────────────────────────────
-  const registration   = summary?.registration   ?? { pct: 0, registered: false, steps: [] };
+  const registrationDraftProgress = getRegistrationProgress(registrationDraft ?? {});
+  const registration = {
+    pct: registrationDraftProgress.pct,
+    registered: !!registered,
+    steps: registrationDraftProgress.steps,
+  };
   const assessment     = summary?.assessment     ?? { technical: 0, analytical: 0, communication: 0, masteryScore: 0 };
   const enrollment     = summary?.enrollment     ?? { registered: 0, inProgress: 0, completed: 0, certified: 0 };
   const enrolledCourses = summary?.courses?.enrolled ?? [];

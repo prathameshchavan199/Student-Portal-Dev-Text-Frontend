@@ -452,6 +452,7 @@ export default function Register({ onSignOut }) {
                         localStorage.setItem('profileImage', data.profileImage);
                       }
                       setRegistered(true);
+                      localStorage.setItem('registered', 'true');
                       const storedUser = localStorage.getItem('user');
                       if (storedUser) {
                         const parsed = JSON.parse(storedUser);
@@ -1643,10 +1644,11 @@ function StepProjects({ data, setData, onNext, onBack }) {
     await saveDraft(next);
   };
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
     const next = buildData();
     setData(next);
+    await saveDraft(next);
     onNext();
   };
 
@@ -1835,6 +1837,10 @@ function StepPreview({ data, onBack, onSubmitSuccess, setStep }) {
         fd,
         { withCredentials: true },
       );
+      if (typeof window !== 'undefined') {
+        const payload = await buildDraftPayload(data);
+        window.localStorage.setItem(DRAFT_KEY, JSON.stringify(payload));
+      }
       onSubmitSuccess();
     } catch (error) {
       console.error('Error submitting registration:', error);

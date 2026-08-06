@@ -25,7 +25,7 @@ export const registrationNavItems = [
   { icon: FiBook,        label: 'Courses',         path: '/courses' },
   { icon: FiTrendingUp,  label: 'Course Progress', path: '/course-progress' },
   { icon: FiClipboard,   label: 'Assessment',      path: '/assessment' },
-  { icon: FiPlusCircle,  label: 'Manage Courses',  path: '/admin/add-course' },
+  // { icon: FiPlusCircle,  label: 'Manage Courses',  path: '/admin/add-course' },
 ];
 
 function getProfileInfo() {
