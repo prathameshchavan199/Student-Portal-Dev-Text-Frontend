@@ -1,8 +1,12 @@
 import axios from 'axios';
 
-// export const API_BASE_URL = 'https://13.235.67.169'; // Replace with your backend API base URL
- export const API_BASE_URL = 'https://api.cyfenix.com'
-// export const API_BASE_URL = 'http://localhost:8081'; // Replace with your backend API base URL
+// export const API_BASE_URL = 'http://localhost:8081'; // local dev
+export const API_BASE_URL = 'https://api.cyfenix.com'; // production
+
+// Cognito Hosted UI config — used for Google sign-in redirect
+// Set these to match your AWS Cognito App Client settings
+export const COGNITO_DOMAIN = 'https://ap-south-1feqdepmnn.auth.ap-south-1.amazoncognito.com';
+export const COGNITO_CLIENT_ID = '52f6t4i0fmo7ru164k89mktfqf';
 
 
 // Attach stored idToken as Bearer on every outgoing request

@@ -111,7 +111,11 @@ export default function Dashboard({ onSignOut }) {
   }, []);
 
   // ── Derived values with safe defaults ────────────────────────────────────
-  const registrationDraftProgress = getRegistrationProgress(registrationDraft ?? {});
+  // A registered user has, by definition, completed registration — regardless
+  // of what the in-progress draft record looks like.
+  const registrationDraftProgress = registered
+    ? { pct: 100, steps: getRegistrationProgress(registrationDraft ?? {}).steps.map(s => ({ ...s, done: true })) }
+    : getRegistrationProgress(registrationDraft ?? {});
   const registration = {
     pct: registrationDraftProgress.pct,
     registered: !!registered,

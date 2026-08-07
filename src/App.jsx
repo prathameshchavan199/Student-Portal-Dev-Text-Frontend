@@ -23,6 +23,7 @@ import Profile from './pages/Profile.jsx';
 import DocViewer from './pages/DocViewer.jsx';
 import AddCourse from './pages/AddCourse.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
+import AuthCallback from './pages/AuthCallback.jsx';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -41,6 +42,7 @@ export default function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/auth/callback" element={<AuthCallback />} />
       <Route path="/register" element={
         <ProtectedRoute>
           {registered ? <Navigate to="/dashboard" replace /> : <Register />}

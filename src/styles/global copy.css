@@ -272,6 +272,20 @@ a:hover { color: #ffb558; }
 }
 .social-btn:hover{ background:#1c1c26; }
 
+.auth-divider {
+  display: flex; align-items: center; gap: 12px; color: #6b7180; font-size: 12px; margin: 18px 0;
+}
+.auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+.google-signin-btn {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; padding: 11px 16px; border-radius: 10px;
+  background: #14141c; border: 1px solid var(--border);
+  color: #fff; font-size: 14px; font-weight: 500; cursor: pointer;
+  transition: background 0.18s, border-color 0.18s;
+}
+.google-signin-btn:hover { background: #1c1c26; border-color: #9aa0ad; }
+
 .footer-mini { color: #6b7180; font-size: 12px; text-align:center; margin-top: 18px; }
 .footer-mini a { color: #9aa0ad; margin: 0 8px; }
 
