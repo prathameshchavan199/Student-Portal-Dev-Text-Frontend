@@ -1,4 +1,4 @@
-import { useEffect, useContext, useRef } from 'react';
+import { useEffect, useContext, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext.jsx';
@@ -8,6 +8,7 @@ export default function AuthCallback() {
   const navigate = useNavigate();
   const { setUser, setAuthenticated, setRegistered } = useContext(AuthContext);
   const handled = useRef(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     if (handled.current) return;
@@ -47,9 +48,24 @@ export default function AuthCallback() {
       })
       .catch((err) => {
         console.error('Google sign-in failed:', err);
-        navigate('/login', { replace: true });
+        const msg = err.response?.data?.message
+          || err.response?.data
+          || err.message
+          || 'Unknown error';
+        setError(`Sign-in failed (${err.response?.status ?? 'network'}): ${msg}`);
       });
   }, []);
+
+  if (error) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', flexDirection: 'column', gap: 16, padding: 24 }}>
+        <p style={{ color: 'red', fontSize: 14, maxWidth: 500, textAlign: 'center', wordBreak: 'break-word' }}>{error}</p>
+        <button onClick={() => navigate('/login', { replace: true })} style={{ padding: '8px 20px', cursor: 'pointer' }}>
+          Back to Login
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', flexDirection: 'column', gap: 12 }}>
