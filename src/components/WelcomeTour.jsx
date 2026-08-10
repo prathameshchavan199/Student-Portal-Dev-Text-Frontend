@@ -214,7 +214,7 @@ export default function WelcomeTour() {
 
         <div className="tour-nav">
           {isFirst ? (
-            <button type="button" className="tour-skip" onClick={finishTour}>
+            <button type="button" className="reg-btn reg-btn-sm" onClick={finishTour}>
               Skip
             </button>
           ) : (
@@ -223,7 +223,7 @@ export default function WelcomeTour() {
             </button>
           )}
           <GradientButton
-            style={{ maxWidth: 150 }}
+            style={{ maxWidth: 150, padding: '5px 16px', fontSize: 14 }}
             onClick={() => (isLast ? finishTour() : setStepIndex((i) => i + 1))}
           >
             {isLast ? 'Done' : (<>Next <FiArrowRight /></>)}
