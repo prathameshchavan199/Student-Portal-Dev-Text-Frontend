@@ -22,8 +22,6 @@ const emptyFilters = {
   location: '',
 };
 
-const courseAreaOptions = ['Cloud','Devops','Excel Workshop','Data Science','AI/ML','SQL','Java','Web Development'];
-
 const priceFilterLabels = {
   'under-500': 'Under $500',
   '500-1000': '$500 - $1,000',
@@ -175,6 +173,7 @@ export default function Course({ onSignOut }) {
       topic: [...new Set(categoryCourses.map((course) => course.topic))],
       date: [...new Set(categoryCourses.map((course) => course.date))],
       location: [...new Set(categoryCourses.map((course) => course.location).filter(Boolean))],
+      courseArea: [...new Set(categoryCourses.map((course) => course.courseArea).filter(Boolean))],
     }),
     [categoryCourses],
   );
@@ -335,7 +334,7 @@ export default function Course({ onSignOut }) {
             label="Course Category"
             value={filters.courseArea}
             onChange={(value) => updateFilter('courseArea', value)}
-            options={[{ value: '', label: 'Any category' }, ...courseAreaOptions.map((value) => ({ value, label: value }))]}
+            options={[{ value: '', label: 'Any category' }, ...filterOptions.courseArea.map((value) => ({ value, label: value }))]}
           />
           
           <FilterSelect

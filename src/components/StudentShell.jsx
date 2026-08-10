@@ -6,6 +6,7 @@ import { FiBriefcase, FiBook, FiClipboard, FiFolder, FiGrid, FiLogOut, FiMenu, F
 import { AuthContext } from '../context/AuthContext.jsx';
 import { useCourses } from '../context/CourseContext.jsx';
 import CyfenixLogo from "../assets/images/Cyfenix-Logo.png";
+import WelcomeTour from './WelcomeTour.jsx';
 
 const mainNavItems = [
   { icon: FiGrid,        label: 'Dashboard',                path: '/dashboard' },
@@ -18,6 +19,13 @@ const mainNavItems = [
 ];
 
 const registerNavItem = { icon: FiFolder, label: 'Registration', path: '/register' };
+
+const NAV_TOUR_IDS = {
+  Registration: 'nav-registration',
+  Courses: 'nav-courses',
+  'Course Progress': 'nav-course-progress',
+  Assessment: 'nav-assessment',
+};
 
 export const registrationNavItems = [
   { ...registerNavItem, active: true },
@@ -156,6 +164,7 @@ export default function StudentShell({
               className={`nav-item ${isActive ? 'active' : ''}`}
               onClick={() => handleNav(path)}
               style={{ cursor: 'pointer' }}
+              data-tour={NAV_TOUR_IDS[label]}
             >
               <Icon />
               {label}
@@ -221,7 +230,7 @@ export default function StudentShell({
             </div>
           )}
 
-          <div className={profileClassName} style={{ cursor: 'pointer' }} onClick={() => navigate('/profile')}>
+          <div className={profileClassName} style={{ cursor: 'pointer' }} onClick={() => navigate('/profile')} data-tour="profile-chip">
             <div className="brand-logo" style={{ width: 36, height: 36, background: profileImage ? 'transparent' : 'var(--grad-btn)', border: 0, overflow: 'hidden', flexShrink: 0 }}>
               {profileImage ? (
                 <img src={profileImage} alt={firstName} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
@@ -236,6 +245,8 @@ export default function StudentShell({
 
         {children}
       </div>
+
+      <WelcomeTour />
     </div>
   );
 }

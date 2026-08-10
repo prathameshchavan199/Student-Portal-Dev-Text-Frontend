@@ -147,7 +147,7 @@ export default function Dashboard({ onSignOut }) {
             <h2 className="db-profile-name">👋 {displayName}</h2>
           </div>
 
-          <div className="db-card db-reg-card">
+          <div className="db-card db-reg-card" data-tour="reg-progress-card">
             <div className="db-reg-title-row">
               <h3 className="db-card-title" style={{ margin: 0 }}>Registration Progress</h3>
               <span className="db-reg-pct-label">{registration.pct}%</span>

@@ -2,12 +2,13 @@ import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import {
-  FiArrowLeft, FiBell, FiBriefcase, FiChevronRight,
+  FiArrowLeft, FiBell, FiBriefcase, FiChevronRight, FiCompass,
   FiEdit2, FiExternalLink, FiFileText, FiLogOut, FiMail, FiMapPin, FiPhone, FiShield,
 } from 'react-icons/fi';
 import { AuthContext } from '../context/AuthContext.jsx';
 import StudentShell from '../components/StudentShell.jsx';
 import { API_BASE_URL } from '../api/axiosSetup.js';
+import { TOUR_OPEN_EVENT } from '../components/WelcomeTour.jsx';
 
 const val = (v) => (v && v !== 'Other' && String(v).trim() ? v : null);
 
@@ -399,9 +400,10 @@ export default function Profile({ onSignOut }) {
 
           {/* ── Account Settings (always visible) ── */}
           <ProfileSection title="Account Settings">
-            <SettingsRow icon={<FiBell size={16} />}   label="Notifications" onClick={() => {}} />
-            <SettingsRow icon={<FiShield size={16} />} label="Privacy"       onClick={() => {}} />
-            <SettingsRow icon={<FiLogOut size={16} />} label="Log Out"       onClick={handleLogout} danger last />
+            <SettingsRow icon={<FiBell size={16} />}    label="Notifications" onClick={() => {}} />
+            <SettingsRow icon={<FiShield size={16} />}  label="Privacy"       onClick={() => {}} />
+            <SettingsRow icon={<FiCompass size={16} />} label="Take a Tour"   onClick={() => window.dispatchEvent(new Event(TOUR_OPEN_EVENT))} />
+            <SettingsRow icon={<FiLogOut size={16} />}  label="Log Out"       onClick={handleLogout} danger last />
           </ProfileSection>
 
         </section>

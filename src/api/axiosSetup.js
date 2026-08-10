@@ -1,12 +1,10 @@
 import axios from 'axios';
 
-// export const API_BASE_URL = 'http://localhost:8081'; // local dev
-export const API_BASE_URL = 'https://api.cyfenix.com'; // production
+export const API_BASE_URL = 'http://localhost:8081'; // local dev
+// export const API_BASE_URL = 'https://api.cyfenix.com'; // production
 
-// Cognito Hosted UI config — used for Google sign-in redirect
-// Set these to match your AWS Cognito App Client settings
-export const COGNITO_DOMAIN = 'https://ap-south-1feqdepmnn.auth.ap-south-1.amazoncognito.com';
-export const COGNITO_CLIENT_ID = '52f6t4i0fmo7ru164k89mktfqf';
+// Google OAuth2 client ID — get this from Google Cloud Console → Clients
+export const GOOGLE_CLIENT_ID = '77085865510-ra9jjmlc59c5ia7eqhs6ler10u266fhf.apps.googleusercontent.com';
 
 
 // Attach stored idToken as Bearer on every outgoing request
@@ -32,9 +30,10 @@ axios.interceptors.response.use(
       try {
         const email = localStorage.getItem('email');
         const refreshToken = localStorage.getItem('refreshToken');
+        const provider = localStorage.getItem('provider') || 'LOCAL';
         const res = await axios.post(
           `${API_BASE_URL}/api/users/refresh`,
-          { email, refreshToken },
+          { email, refreshToken, provider },
           { withCredentials: true }
         );
         if (res.data.idToken) {
@@ -47,6 +46,7 @@ axios.interceptors.response.use(
         localStorage.removeItem('name');
         localStorage.removeItem('idToken');
         localStorage.removeItem('refreshToken');
+        localStorage.removeItem('provider');
         window.location.href = '/login';
       }
     }

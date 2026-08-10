@@ -37,6 +37,7 @@ export default function AuthCallback() {
         localStorage.setItem('email', data.email);
         localStorage.setItem('user', JSON.stringify(data));
         localStorage.setItem('id', JSON.stringify(data.id));
+        localStorage.setItem('provider', 'GOOGLE');
         if (data.idToken) localStorage.setItem('idToken', data.idToken);
         if (data.refreshToken) localStorage.setItem('refreshToken', data.refreshToken);
 

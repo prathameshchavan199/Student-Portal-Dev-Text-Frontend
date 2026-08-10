@@ -2,7 +2,7 @@
 import { useContext, useState } from "react";
 import {AuthContext } from "../context/AuthContext";
 import CyfenixLogo from "../assets/images/Cyfenix-Logo.png";
-import { API_BASE_URL, COGNITO_DOMAIN, COGNITO_CLIENT_ID } from '../api/axiosSetup.js';
+import { API_BASE_URL, GOOGLE_CLIENT_ID } from '../api/axiosSetup.js';
 
 import {useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
@@ -23,12 +23,12 @@ export default function Login() {
   const handleGoogleLogin = () => {
     const redirectUri = encodeURIComponent(window.location.origin + '/auth/callback');
     window.location.href =
-      `${COGNITO_DOMAIN}/oauth2/authorize` +
+      `https://accounts.google.com/o/oauth2/v2/auth` +
       `?response_type=code` +
-      `&client_id=${COGNITO_CLIENT_ID}` +
+      `&client_id=${GOOGLE_CLIENT_ID}` +
       `&redirect_uri=${redirectUri}` +
-      `&identity_provider=Google` +
       `&scope=email+openid+profile` +
+      `&access_type=offline` +
       `&prompt=select_account`;
   };
 
@@ -50,6 +50,7 @@ const onSubmit = async (data) => {
     localStorage.setItem("email", response.data.email);
     localStorage.setItem("user", JSON.stringify(response.data));
     localStorage.setItem("id", JSON.stringify(response.data.id));
+    localStorage.setItem("provider", "LOCAL");
     if (response.data.idToken) localStorage.setItem("idToken", response.data.idToken);
     if (response.data.refreshToken) localStorage.setItem("refreshToken", response.data.refreshToken);
 

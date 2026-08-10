@@ -171,8 +171,9 @@ const handleVerifyOtp = async (event) => {
 
     setOtpVerified(true);
     window.setTimeout(() => navigate('/login'), 700);
-    
+
     localStorage.setItem('registered', 'false');
+    localStorage.setItem('sp-new-signup', 'true');
     // console.log(localStorage.getItem('registered'));
 
   } catch (error) {
