@@ -394,17 +394,18 @@ export default function Register({ onSignOut }) {
   useEffect(() => {
     const loggedInEmail = localStorage.getItem('email') || '';
     const loggedInName  = localStorage.getItem('name')  || '';
+    const savedProfileImage = localStorage.getItem('profileImage');
     axios.get(`${API_BASE_URL}/api/registration/draft/me`, { withCredentials: true })
       .then(res => {
         if (res.data.success && res.data.data) {
           const mapped = mapServerDraftToForm(res.data.data);
-          setData({ ...mapped, email: loggedInEmail || mapped.email, fullName: loggedInName || mapped.fullName });
+          setData({ ...mapped, email: loggedInEmail || mapped.email, fullName: loggedInName || mapped.fullName, profileImage: savedProfileImage || null });
         } else {
-          setData({ ...createEmptyDraft(), email: loggedInEmail, fullName: loggedInName });
+          setData({ ...createEmptyDraft(), email: loggedInEmail, fullName: loggedInName, profileImage: savedProfileImage || null });
         }
       })
       .catch(() => {
-        setData({ ...createEmptyDraft(), email: loggedInEmail, fullName: loggedInName });
+        setData({ ...createEmptyDraft(), email: loggedInEmail, fullName: loggedInName, profileImage: savedProfileImage || null });
       })
       .finally(() => setDraftLoading(false));
   }, []);
@@ -565,6 +566,7 @@ function StepDetails({ data, setData, onNext }) {
   const ugRef = useRef(null);
   const pgRef = useRef(null);
   const [toggleErrors, setToggleErrors] = useState({});
+  const [draftSaved, setDraftSaved] = useState(false);
 
   const { register, handleSubmit, watch, setValue, clearErrors, getValues, reset, formState: { errors } } = useForm({
     defaultValues: {
@@ -648,7 +650,12 @@ function StepDetails({ data, setData, onNext }) {
   const saveDraftNow = async () => {
     const nextData = buildDetailsData(getValues());
     setData(nextData);
+    if (nextData.profileImage) {
+      localStorage.setItem('profileImage', nextData.profileImage);
+    }
     await saveDraft(nextData);
+    setDraftSaved(true);
+    setTimeout(() => setDraftSaved(false), 2000);
   };
 
   const deleteAttachment = () => {
@@ -676,8 +683,16 @@ function StepDetails({ data, setData, onNext }) {
     clearErrors('undergraduateMarksheetFile');
     setData((current) => ({ ...current, undergraduateMarksheetFile: null }));
   };
+  const onError = (errs) => {
+    const firstKey = Object.keys(errs)[0];
+    if (firstKey) {
+      const el = document.querySelector(`[name="${firstKey}"]`);
+      if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.focus?.(); }
+    }
+  };
+
   return (
-    <form className="registration-form" onSubmit={handleSubmit(submit)}>
+    <form className="registration-form" onSubmit={handleSubmit(submit, onError)}>
       {/* basic details */}
       <div className="glass-card mt-3 p-3" style={{ borderRadius: 12}}>
         <ProfileImagePicker
@@ -690,7 +705,7 @@ function StepDetails({ data, setData, onNext }) {
           <div className="col-md-6">
             <div className="mb-3">
               <div className="d-flex justify-content-between align-items-center">
-                <div className="label-sm">Full Name</div>
+                <div className="label-sm">Full Name <span style={{ color: '#ef4444' }}>*</span></div>
                 <span style={{ fontSize: 11, color: 'var(--text-subtle)' }}>auto-filled from login</span>
               </div>
               <div className="input-icon-wrap">
@@ -711,7 +726,7 @@ function StepDetails({ data, setData, onNext }) {
           <div className="col-md-6">
             <div className="mb-3">
               <div className="d-flex justify-content-between align-items-center">
-                <div className="label-sm">Email Address</div>
+                <div className="label-sm">Email Address <span style={{ color: '#ef4444' }}>*</span></div>
                 <span style={{ fontSize: 11, color: 'var(--text-subtle)' }}>auto-filled from login</span>
               </div>
               <div className="input-icon-wrap">
@@ -741,12 +756,17 @@ function StepDetails({ data, setData, onNext }) {
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <DarkInput icon={FiPhone} label="Phone Number" placeholder="123 456 7890"
-                  error={errors.phone?.message} register={register('phone', { required: 'Required' })} />
+                  type="tel" required
+                  error={errors.phone?.message}
+                  register={register('phone', {
+                    required: 'Required',
+                    pattern: { value: /^[0-9\s\-\+\(\)]{7,15}$/, message: 'Enter a valid phone number' },
+                  })} />
               </div>
             </div>
           </div>
            <div className="col-md-12">
-            <DarkInput label="Address" placeholder=""
+            <DarkInput label="Address" placeholder="" required
               error={errors.address?.message} register={register('address', { required: 'Required' })} />
           </div>
         </div>
@@ -765,12 +785,13 @@ function StepDetails({ data, setData, onNext }) {
                 <DarkInput
                   label="School"
                   placeholder="School Name"
+                  required
                   error={errors.undergraduateUniversity?.message}
                   register={register('school', { required: 'Required' })}
                 />
               </div>
             <div className="col-6">
-              <DarkInput  label="Percentage" placeholder="90"
+              <DarkInput label="Percentage" placeholder="90" required
                 error={errors.gpa?.message}
                 register={register('gpa', {
                   required: 'Required',
@@ -906,12 +927,13 @@ function StepDetails({ data, setData, onNext }) {
                 <DarkInput
                   label="College/University Name"
                   placeholder=""
+                  required
                   error={errors.undergraduateUniversity?.message}
                   register={register('gratudatecollege', { required: 'Required' })}
                 />
               </div>
             <div className="col-6">
-              <DarkInput label="Percentage" placeholder="90"
+              <DarkInput label="Percentage" placeholder="90" required
                 error={errors.intermediateGpa?.message}
                 register={register('intermediateGpa', {
                   required: 'Required',
@@ -1010,12 +1032,13 @@ function StepDetails({ data, setData, onNext }) {
                 <DarkInput
                   label="College/University Name"
                   placeholder=""
+                  required
                   error={errors.undergraduateUniversity?.message}
                   register={register('diplomacollege', { required: 'Required' })}
                 />
               </div>
             <div className="col-6">
-              <DarkInput label="Percentage" placeholder="90"
+              <DarkInput label="Percentage" placeholder="90" required
                 error={errors.diplomaGpa?.message}
                 register={register('diplomaGpa', {
                   required: 'Required',
@@ -1452,7 +1475,7 @@ function StepDetails({ data, setData, onNext }) {
           className="reg-btn"
           onClick={saveDraftNow}
         >
-          Save as Draft
+          {draftSaved ? '✓ Data Saved' : 'Save as Draft'}
         </button>
         <GradientButton className='gradient-btn' type="submit" style={{ maxWidth: 265   }}>Next: Project and Experience →</GradientButton>
       </div>
@@ -1620,6 +1643,7 @@ function StepProjects({ data, setData, onNext, onBack }) {
   );
   const [resumeFile, setResumeFile] = useState(data.resumeFile ?? null);
   const [wantsAiProfile, setWantsAiProfile] = useState(data.wantsAiProfile ?? null);
+  const [draftSaved, setDraftSaved] = useState(false);
 
   const updateProject = (index, field, value) =>
     setProjects(prev => prev.map((p, i) => i === index ? { ...p, [field]: value } : p));
@@ -1642,6 +1666,8 @@ function StepProjects({ data, setData, onNext, onBack }) {
     const next = buildData();
     setData(next);
     await saveDraft(next);
+    setDraftSaved(true);
+    setTimeout(() => setDraftSaved(false), 2000);
   };
 
   const submit = async (e) => {
@@ -1801,7 +1827,7 @@ function StepProjects({ data, setData, onNext, onBack }) {
       <div className="d-flex justify-content-between mt-2 gap-2">
         <button type="button" className="reg-btn" onClick={onBack}> Back</button>
         <div className="d-flex gap-2">
-          <button type="button" className="reg-btn" onClick={saveDraftNow}>Save as Draft</button>
+          <button type="button" className="reg-btn" onClick={saveDraftNow}>{draftSaved ? '✓ Data Saved' : 'Save as Draft'}</button>
           <GradientButton type="submit" style={{ maxWidth: 220 }}>Continue →</GradientButton>
         </div>
       </div>
@@ -1814,11 +1840,14 @@ function StepPreview({ data, onBack, onSubmitSuccess, setStep }) {
   const formatFile = file => file?.name || '—';
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSavingDraft, setIsSavingDraft] = useState(false);
+  const [draftSaved, setDraftSaved] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const handleSaveDraft = async () => {
     setIsSavingDraft(true);
     try {
       await saveDraft(data);
+      setDraftSaved(true);
+      setTimeout(() => setDraftSaved(false), 2000);
     } finally {
       setIsSavingDraft(false);
     }
@@ -2019,7 +2048,7 @@ function StepPreview({ data, onBack, onSubmitSuccess, setStep }) {
 
         <div className="d-flex gap-2">
           <button type="button" className="reg-btn" onClick={handleSaveDraft} disabled={isSavingDraft || isSubmitting}>
-            {isSavingDraft ? 'Saving…' : 'Save as Draft'}
+            {isSavingDraft ? 'Saving…' : draftSaved ? '✓ Data Saved' : 'Save as Draft'}
           </button>
           <GradientButton onClick={handleSubmit} style={{ maxWidth: 220 }} disabled={isSubmitting}>
             {isSubmitting ? 'Submitting…' : 'Submit→'}

@@ -23,18 +23,20 @@ const emptyFilters = {
 };
 
 const priceFilterLabels = {
-  'under-500': 'Under $500',
-  '500-1000': '$500 - $1,000',
-  'above-1000': 'Above $1,000',
+  'under-1000': 'Under ₹1,000',
+  '1,000-3,000': '₹1,000 - ₹3,000',
+  '3,000-6,000': '₹3,000 - ₹6,000',
+  'above-6000': 'Above ₹6,000',
 };
 
 const DATE_FILTER_OPTIONS = ['This Week', 'Next Week', 'This Month', 'Next Month'];
 
 function matchesPrice(course, price) {
   if (!price) return true;
-  if (price === 'under-500') return course.price < 500;
-  if (price === '500-1000') return course.price >= 500 && course.price <= 1000;
-  return course.price > 1000;
+  if (price === 'under-1000') return course.price < 1000;
+  if (price === '1,000-3,000') return course.price >= 1000 && course.price <= 3000;
+  if (price === '3,000-6,000') return course.price > 3000 && course.price <= 6000;
+  return course.price > 6000;
 }
 
 function parseCourseStartDate(dateStr) {

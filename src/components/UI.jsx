@@ -13,11 +13,15 @@ export function GlassCard({ children, className = '', ...props }) {
 import { FiMail, FiLock, FiUser, FiPhone, FiEye, FiEyeOff } from 'react-icons/fi';
 import { useState } from 'react';
 
-export function DarkInput({ icon = null, label, error, register, ...props }) {
+export function DarkInput({ icon = null, label, required = false, error, register, ...props }) {
   const Icon = icon;
   return (
     <div className="mb-3">
-      {label && <div className="label-sm">{label}</div>}
+      {label && (
+        <div className="label-sm">
+          {label}{required && <span style={{ color: '#ef4444', marginLeft: 2 }}>*</span>}
+        </div>
+      )}
       <div className="input-icon-wrap">
         {Icon && <span className="icon-left"><Icon /></span>}
         <input className="form-control dark-input" {...register} {...props} />
