@@ -23,6 +23,7 @@ import Profile from './pages/Profile.jsx';
 import DocViewer from './pages/DocViewer.jsx';
 import AddCourse from './pages/AddCourse.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
+import GuestRoute from './components/GuestRoute.jsx';
 import AuthCallback from './pages/AuthCallback.jsx';
 
 function ScrollToTop() {
@@ -39,10 +40,10 @@ export default function App() {
       <ScrollToTop />
       <Routes>
       <Route path="/" element={<Navigate to="/login" replace />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<Signup />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/auth/callback" element={<AuthCallback />} />
+      <Route path="/login" element={<GuestRoute><Login /></GuestRoute>} />
+      <Route path="/signup" element={<GuestRoute><Signup /></GuestRoute>} />
+      <Route path="/forgot-password" element={<GuestRoute><ForgotPassword /></GuestRoute>} />
+      <Route path="/auth/callback" element={<GuestRoute><AuthCallback /></GuestRoute>} />
       <Route path="/register" element={
         <ProtectedRoute>
           {registered ? <Navigate to="/dashboard" replace /> : <Register />}
