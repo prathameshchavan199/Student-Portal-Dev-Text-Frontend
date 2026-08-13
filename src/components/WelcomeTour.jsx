@@ -75,6 +75,7 @@ function closeMobileNavIfOpen() {
 export default function WelcomeTour() {
   const location = useLocation();
   const [open, setOpen] = useState(false);
+  const [steps, setSteps] = useState(STEPS);
   const [stepIndex, setStepIndex] = useState(0);
   const [rect, setRect] = useState(null);
   const [tooltipPos, setTooltipPos] = useState(null);
@@ -84,6 +85,10 @@ export default function WelcomeTour() {
     const isNewUser = localStorage.getItem(NEW_USER_KEY) === 'true';
     const tourSeen = localStorage.getItem(TOUR_SEEN_KEY) === 'true';
     if (isNewUser && !tourSeen && location.pathname === '/dashboard') {
+      // Only include steps whose target elements are actually in the DOM
+      const available = STEPS.filter(s => !!document.querySelector(s.selector));
+      if (available.length === 0) return;
+      setSteps(available);
       setStepIndex(0);
       setOpen(true);
     }
@@ -91,6 +96,9 @@ export default function WelcomeTour() {
 
   useEffect(() => {
     const handleManualOpen = () => {
+      const available = STEPS.filter(s => !!document.querySelector(s.selector));
+      if (available.length === 0) return;
+      setSteps(available);
       setStepIndex(0);
       setOpen(true);
     };
@@ -103,6 +111,7 @@ export default function WelcomeTour() {
     localStorage.removeItem(NEW_USER_KEY);
     closeMobileNavIfOpen();
     setOpen(false);
+    setSteps(STEPS);
     setRect(null);
     setTooltipPos(null);
   };
@@ -114,7 +123,7 @@ export default function WelcomeTour() {
     let cancelled = false;
 
     const run = async () => {
-      const step = STEPS[stepIndex];
+      const step = steps[stepIndex];
       const needsMobileNav = step.selector.includes('"nav-');
       const isMobile = window.innerWidth <= MOBILE_BREAKPOINT;
 
@@ -133,7 +142,7 @@ export default function WelcomeTour() {
 
       const el = document.querySelector(step.selector);
       if (!isOnScreen(el)) {
-        setStepIndex((i) => (i < STEPS.length - 1 ? i + 1 : i));
+        setStepIndex((i) => (i < steps.length - 1 ? i + 1 : i));
         return;
       }
 
@@ -148,7 +157,7 @@ export default function WelcomeTour() {
       cancelled = true;
       window.removeEventListener('resize', run);
     };
-  }, [open, stepIndex]);
+  }, [open, stepIndex, steps]);
 
   // Position the tooltip once both the target rect and tooltip size are known.
   useLayoutEffect(() => {
@@ -170,10 +179,10 @@ export default function WelcomeTour() {
 
   if (!open || !rect) return null;
 
-  const step = STEPS[stepIndex];
+  const step = steps[stepIndex];
   const Icon = step.icon;
   const isFirst = stepIndex === 0;
-  const isLast = stepIndex === STEPS.length - 1;
+  const isLast = stepIndex === steps.length - 1;
   const ringPadding = 8;
 
   return (
@@ -207,7 +216,7 @@ export default function WelcomeTour() {
         <p>{step.body}</p>
 
         <div className="tour-dots">
-          {STEPS.map((_, i) => (
+          {steps.map((_, i) => (
             <span key={i} className={`tour-dot${i === stepIndex ? ' active' : ''}`} />
           ))}
         </div>

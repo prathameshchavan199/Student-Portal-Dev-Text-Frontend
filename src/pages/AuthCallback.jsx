@@ -40,6 +40,7 @@ export default function AuthCallback() {
         localStorage.setItem('provider', 'GOOGLE');
         if (data.idToken) localStorage.setItem('idToken', data.idToken);
         if (data.refreshToken) localStorage.setItem('refreshToken', data.refreshToken);
+        if (!data.registered) localStorage.setItem('sp-new-signup', 'true');
 
         setUser(data);
         setAuthenticated(true);
