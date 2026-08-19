@@ -151,7 +151,63 @@ const createEmptyDraft = () => ({
   postGraduationMarksheetFile: null,
   undergraduateMarksheetFile: null,
   qualificationAfter10th: '',
+  // Certificates already on file from a previous submission (edit mode).
+  // The actual file bytes are never sent back by the backend — only these
+  // flags + filenames, used to show "already uploaded" instead of forcing
+  // a re-upload. See mapServerDraftToForm().
+  registrationId: null,
+  hasTenthCertificate: false,          tenthCertificateFileName: '',
+  hasIntermediateCertificate: false,   intermediateCertificateFileName: '',
+  hasDiplomaCertificate: false,        diplomaCertificateFileName: '',
+  hasUndergraduateCertificate: false,  undergraduateCertificateFileName: '',
+  hasPostGraduationCertificate: false, postGraduationCertificateFileName: '',
+  hasResume: false,                    resumeFileName: '',
 });
+
+// Maps a certificate/resume "type" key to the same synthetic filename
+// DocViewer.jsx and Profile.jsx already use, so viewing an already-uploaded
+// document from the edit form reuses the existing /profile/:docFile route
+// and /api/registration/file/{id}/{type} endpoint — no new backend needed.
+const EXISTING_DOC_ROUTES = {
+  tenthCertificate:          'ssc-certificate.pdf',
+  intermediateCertificate:   'intermediate-certificate.pdf',
+  diplomaCertificate:        'diploma-certificate.pdf',
+  undergraduateCertificate:  'undergraduate-certificate.pdf',
+  postGraduationCertificate: 'postgraduate-certificate.pdf',
+  resume:                    'resume.pdf',
+};
+
+const viewExistingDocument = (type) => {
+  const filename = EXISTING_DOC_ROUTES[type];
+  if (!filename) return;
+  window.open(`/profile/${filename}`, '_blank', 'noopener,noreferrer');
+};
+
+// Shown in place of the upload box when a certificate/resume was already
+// submitted previously and the user hasn't attached a replacement yet.
+function ExistingDocBadge({ filename, docType }) {
+  return (
+    <div className="attached-doc mt-3">
+      <div className="attached-doc-icon"><FiFileText /></div>
+      <div className="attached-doc-content">
+        <div className="attached-doc-name">{filename || 'Document on file'}</div>
+        <div className="attached-doc-meta">Already uploaded</div>
+      </div>
+      <div className="d-flex gap-2 ms-auto align-items-center">
+        <button
+          type="button"
+          className="reg-btn reg-btn-sm"
+          onClick={() => viewExistingDocument(docType)}
+        >
+          View
+        </button>
+        <span style={{ fontSize: 11, color: 'var(--text-subtle)' }}>
+          Upload a new file to replace it
+        </span>
+      </div>
+    </div>
+  );
+}
 
 const dataUrlToFile = (dataUrl, name, type, lastModified) => {
   const [header, base64] = dataUrl.split(',');
@@ -381,6 +437,21 @@ const mapServerDraftToForm = (s) => ({
   // Files are never returned by the backend list endpoint — always start null
   marksheetFile: null, intermediateMarksheetFile: null, diplomaMarksheetFile: null,
   undergraduateMarksheetFile: null, postGraduationMarksheetFile: null, resumeFile: null,
+  // Certificates already on file — flags + filenames only (no bytes), used
+  // to show an "already uploaded" badge instead of a blank upload box.
+  registrationId:                     s.id                              ?? null,
+  hasTenthCertificate:                !!s.hasTenthCertificate,
+  tenthCertificateFileName:           s.tenthCertificateFileName        || '',
+  hasIntermediateCertificate:         !!s.hasIntermediateCertificate,
+  intermediateCertificateFileName:    s.intermediateCertificateFileName || '',
+  hasDiplomaCertificate:              !!s.hasDiplomaCertificate,
+  diplomaCertificateFileName:         s.diplomaCertificateFileName      || '',
+  hasUndergraduateCertificate:        !!s.hasUndergraduateCertificate,
+  undergraduateCertificateFileName:   s.undergraduateCertificateFileName || '',
+  hasPostGraduationCertificate:       !!s.hasPostGraduationCertificate,
+  postGraduationCertificateFileName:  s.postGraduationCertificateFileName || '',
+  hasResume:                          !!s.hasResume,
+  resumeFileName:                     s.resumeFileName                  || '',
 });
 
 export default function Register({ onSignOut }) {
@@ -862,19 +933,19 @@ function StepDetails({ data, setData, onNext }) {
                     style={{ display: 'none' }}
                     {...register('marksheetFile', {
   validate: value => {
-    const existingFile = data.marksheetFile;
+    const newFile = value?.[0];
+    const attachedFile = newFile || data.marksheetFile;
+    const hasExistingOnServer = data.hasTenthCertificate;
 
-    if ((!value || value.length === 0) && !existingFile) {
+    if (!attachedFile && !hasExistingOnServer) {
       return 'Required';
     }
 
-    const file = value?.[0] || existingFile;
-
-    if (!file) return 'Required';
+    if (!attachedFile) return true; // relying on the certificate already on file
 
     return (
-      file?.type === 'application/pdf' ||
-      file?.name?.toLowerCase()?.endsWith('.pdf') ||
+      attachedFile?.type === 'application/pdf' ||
+      attachedFile?.name?.toLowerCase()?.endsWith('.pdf') ||
       'Only PDF files are allowed'
     );
   }
@@ -903,6 +974,9 @@ function StepDetails({ data, setData, onNext }) {
                       </button>
                     </div>
                   </div>
+                )}
+                {!selectedFile && data.hasTenthCertificate && (
+                  <ExistingDocBadge filename={data.tenthCertificateFileName} docType="tenthCertificate" />
                 )}
               </div>
             </div>
@@ -1006,11 +1080,12 @@ function StepDetails({ data, setData, onNext }) {
                     className="upload-input" style={{ display: 'none' }}
                     {...register('intermediateMarksheetFile', {
                       validate: value => {
-                        const existingFile = data.intermediateMarksheetFile;
-                        if ((!value || value.length === 0) && !existingFile) return 'Required';
-                        const file = value?.[0] || existingFile;
-                        if (!file) return 'Required';
-                        return file?.type === 'application/pdf' || file?.name?.toLowerCase()?.endsWith('.pdf') || 'Only PDF files are allowed';
+                        const newFile = value?.[0];
+                        const attachedFile = newFile || data.intermediateMarksheetFile;
+                        const hasExistingOnServer = data.hasIntermediateCertificate;
+                        if (!attachedFile && !hasExistingOnServer) return 'Required';
+                        if (!attachedFile) return true; // relying on the certificate already on file
+                        return attachedFile?.type === 'application/pdf' || attachedFile?.name?.toLowerCase()?.endsWith('.pdf') || 'Only PDF files are allowed';
                       }
                     })} />
                 </label>
@@ -1027,6 +1102,9 @@ function StepDetails({ data, setData, onNext }) {
                       <button type="button" className="reg-btn reg-btn-sm" onClick={deleteIntermediateAttachment}>Delete</button>
                     </div>
                   </div>
+                )}
+                {!intermediateSelectedFile && data.hasIntermediateCertificate && (
+                  <ExistingDocBadge filename={data.intermediateCertificateFileName} docType="intermediateCertificate" />
                 )}
               </div>
             </div>
@@ -1111,11 +1189,12 @@ function StepDetails({ data, setData, onNext }) {
                     className="upload-input" style={{ display: 'none' }}
                     {...register('diplomaMarksheetFile', {
                       validate: value => {
-                        const existingFile = data.diplomaMarksheetFile;
-                        if ((!value || value.length === 0) && !existingFile) return 'Required';
-                        const file = value?.[0] || existingFile;
-                        if (!file) return 'Required';
-                        return file?.type === 'application/pdf' || file?.name?.toLowerCase()?.endsWith('.pdf') || 'Only PDF files are allowed';
+                        const newFile = value?.[0];
+                        const attachedFile = newFile || data.diplomaMarksheetFile;
+                        const hasExistingOnServer = data.hasDiplomaCertificate;
+                        if (!attachedFile && !hasExistingOnServer) return 'Required';
+                        if (!attachedFile) return true; // relying on the certificate already on file
+                        return attachedFile?.type === 'application/pdf' || attachedFile?.name?.toLowerCase()?.endsWith('.pdf') || 'Only PDF files are allowed';
                       }
                     })} />
                 </label>
@@ -1132,6 +1211,9 @@ function StepDetails({ data, setData, onNext }) {
                       <button type="button" className="reg-btn reg-btn-sm" onClick={deleteDiplomaAttachment}>Delete</button>
                     </div>
                   </div>
+                )}
+                {!diplomaSelectedFile && data.hasDiplomaCertificate && (
+                  <ExistingDocBadge filename={data.diplomaCertificateFileName} docType="diplomaCertificate" />
                 )}
               </div>
             </div>
@@ -1287,11 +1369,12 @@ function StepDetails({ data, setData, onNext }) {
                       {...register('undergraduateMarksheetFile', {
   validate: value => {
     if (hasUndergraduate !== 'true') return true;
-    const existingFile = data.undergraduateMarksheetFile;
-    if ((!value || value.length === 0) && !existingFile) return 'Required';
-    const file = value?.[0] || existingFile;
-    if (!file) return 'Required';
-    return file?.type === 'application/pdf' || file?.name?.toLowerCase()?.endsWith('.pdf') || 'Only PDF files are allowed';
+    const newFile = value?.[0];
+    const attachedFile = newFile || data.undergraduateMarksheetFile;
+    const hasExistingOnServer = data.hasUndergraduateCertificate;
+    if (!attachedFile && !hasExistingOnServer) return 'Required';
+    if (!attachedFile) return true; // relying on the certificate already on file
+    return attachedFile?.type === 'application/pdf' || attachedFile?.name?.toLowerCase()?.endsWith('.pdf') || 'Only PDF files are allowed';
   }
 })}
                     />
@@ -1318,6 +1401,9 @@ function StepDetails({ data, setData, onNext }) {
                         </button>
                       </div>
                     </div>
+                  )}
+                  {!undergraduateSelectedFile && data.hasUndergraduateCertificate && (
+                    <ExistingDocBadge filename={data.undergraduateCertificateFileName} docType="undergraduateCertificate" />
                   )}
                 </div>
               </div>
@@ -1452,11 +1538,12 @@ function StepDetails({ data, setData, onNext }) {
                       {...register('postGraduationMarksheetFile', {
   validate: value => {
     if (hasPostGraduation !== 'true') return true;
-    const existingFile = data.postGraduationMarksheetFile;
-    if ((!value || value.length === 0) && !existingFile) return 'Required';
-    const file = value?.[0] || existingFile;
-    if (!file) return 'Required';
-    return file?.type === 'application/pdf' || file?.name?.toLowerCase()?.endsWith('.pdf') || 'Only PDF files are allowed';
+    const newFile = value?.[0];
+    const attachedFile = newFile || data.postGraduationMarksheetFile;
+    const hasExistingOnServer = data.hasPostGraduationCertificate;
+    if (!attachedFile && !hasExistingOnServer) return 'Required';
+    if (!attachedFile) return true; // relying on the certificate already on file
+    return attachedFile?.type === 'application/pdf' || attachedFile?.name?.toLowerCase()?.endsWith('.pdf') || 'Only PDF files are allowed';
   }
 })}
                     />
@@ -1483,6 +1570,9 @@ function StepDetails({ data, setData, onNext }) {
                         </button>
                       </div>
                     </div>
+                  )}
+                  {!postGraduationSelectedFile && data.hasPostGraduationCertificate && (
+                    <ExistingDocBadge filename={data.postGraduationCertificateFileName} docType="postGraduationCertificate" />
                   )}
                 </div>
               </div>
@@ -1831,6 +1921,15 @@ function StepProjects({ data, setData, onNext, onBack }) {
                   </button>
                 </div>
               </div>
+            ) : data.hasResume ? (
+              <>
+                <ExistingDocBadge filename={data.resumeFileName} docType="resume" />
+                <label className="upload-area w-100 d-flex flex-column align-items-center justify-content-center mt-2"
+                  style={{ cursor: 'pointer', minHeight: 80 }} onClick={() => resumeInputRef.current?.click()}>
+                  <span style={{ fontWeight: 600, fontSize: 13, color: 'var(--text-body)' }}>Click to upload a replacement</span>
+                  <span style={{ fontSize: 12, color: 'var(--text-subtle)', marginTop: 4 }}>(PDF, Max 5MB)</span>
+                </label>
+              </>
             ) : (
               <label className="upload-area w-100 d-flex flex-column align-items-center justify-content-center"
                 style={{ cursor: 'pointer', minHeight: 120 }} onClick={() => resumeInputRef.current?.click()}>
