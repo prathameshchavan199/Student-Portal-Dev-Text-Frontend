@@ -1,6 +1,5 @@
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { useContext, useEffect } from 'react';
-import { AuthContext } from './context/AuthContext.jsx';
+import { useEffect } from 'react';
 import Login from './pages/Login.jsx';
 import Signup from './pages/Signup.jsx';
 import ForgotPassword from './pages/ForgotPassword.jsx';
@@ -33,8 +32,6 @@ function ScrollToTop() {
 }
 
 export default function App() {
-  const { registered } = useContext(AuthContext);
-
   return (
     <>
       <ScrollToTop />
@@ -44,9 +41,15 @@ export default function App() {
       <Route path="/signup" element={<GuestRoute><Signup /></GuestRoute>} />
       <Route path="/forgot-password" element={<GuestRoute><ForgotPassword /></GuestRoute>} />
       <Route path="/auth/callback" element={<GuestRoute><AuthCallback /></GuestRoute>} />
+      {/*
+        Always render Register here — for a first-time student it's the
+        registration form, for an already-registered student (registered
+        === true) it doubles as the "edit registration" form, prefilled
+        with their submitted data. See Register.jsx's data-loading effect.
+      */}
       <Route path="/register" element={
         <ProtectedRoute>
-          {registered ? <Navigate to="/dashboard" replace /> : <Register />}
+          <Register />
         </ProtectedRoute>
       } />
       <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />

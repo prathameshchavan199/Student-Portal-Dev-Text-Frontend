@@ -388,6 +388,10 @@ export default function Register({ onSignOut }) {
   const [data, setData] = useState(createEmptyDraft);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [draftLoading, setDraftLoading] = useState(true);
+  // True when the student already has a submitted registration on file —
+  // i.e. they arrived here via the Profile page's "Edit" action rather
+  // than completing registration for the first time.
+  const [isEditMode, setIsEditMode] = useState(false);
   const { setRegistered } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -395,17 +399,36 @@ export default function Register({ onSignOut }) {
     const loggedInEmail = localStorage.getItem('email') || '';
     const loggedInName  = localStorage.getItem('name')  || '';
     const savedProfileImage = localStorage.getItem('profileImage');
-    axios.get(`${API_BASE_URL}/api/registration/draft/me`, { withCredentials: true })
+    const fillLoginInfo = (mapped) => ({
+      ...mapped,
+      email: loggedInEmail || mapped.email,
+      fullName: loggedInName || mapped.fullName,
+      profileImage: savedProfileImage || null,
+    });
+
+    // Prefer the student's already-submitted registration (the canonical,
+    // most up-to-date record) so the "Edit" action from the Profile page
+    // opens the form pre-filled with what was actually submitted. Fall
+    // back to an in-progress draft, then to a blank form.
+    axios.get(`${API_BASE_URL}/api/registration/me`, { withCredentials: true })
       .then(res => {
         if (res.data.success && res.data.data) {
-          const mapped = mapServerDraftToForm(res.data.data);
-          setData({ ...mapped, email: loggedInEmail || mapped.email, fullName: loggedInName || mapped.fullName, profileImage: savedProfileImage || null });
+          setIsEditMode(true);
+          setData(fillLoginInfo(mapServerDraftToForm(res.data.data)));
+          return null;
+        }
+        return axios.get(`${API_BASE_URL}/api/registration/draft/me`, { withCredentials: true });
+      })
+      .then(res => {
+        if (!res) return; // already handled above
+        if (res.data.success && res.data.data) {
+          setData(fillLoginInfo(mapServerDraftToForm(res.data.data)));
         } else {
-          setData({ ...createEmptyDraft(), email: loggedInEmail, fullName: loggedInName, profileImage: savedProfileImage || null });
+          setData(fillLoginInfo(createEmptyDraft()));
         }
       })
       .catch(() => {
-        setData({ ...createEmptyDraft(), email: loggedInEmail, fullName: loggedInName, profileImage: savedProfileImage || null });
+        setData(fillLoginInfo(createEmptyDraft()));
       })
       .finally(() => setDraftLoading(false));
   }, []);
@@ -424,7 +447,7 @@ export default function Register({ onSignOut }) {
       <div className="dash-content">
           <div className="grad-header " style={{ borderRadius: 14,  }}
           >
-            Registration
+            {isEditMode ? 'Edit Registration' : 'Registration'}
           </div>
           <div className="glass-card registration-panel mt-3 reg-div" style={{  margin: '0 auto', padding: '24px 28px', }}>
 
@@ -476,9 +499,13 @@ export default function Register({ onSignOut }) {
             <div className="otp-icon verified ">
               <FiCheckCircle />
             </div>
-            <h3>Thank you for submitting your information.</h3>
+            <h3>
+              {isEditMode
+                ? 'Your registration has been updated.'
+                : 'Thank you for submitting your information.'}
+            </h3>
             <p>
-            
+
               <strong>Verification is in progress.</strong>
             </p>
             <GradientButton

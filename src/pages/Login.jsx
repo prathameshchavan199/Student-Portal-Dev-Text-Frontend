@@ -1,5 +1,5 @@
 
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {AuthContext } from "../context/AuthContext";
 import CyfenixLogo from "../assets/images/Cyfenix-Logo.png";
 import { API_BASE_URL, GOOGLE_CLIENT_ID } from '../api/axiosSetup.js';
@@ -17,8 +17,17 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [loginError, setLoginError] = useState('');
 
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const { register, handleSubmit, watch, formState: { errors } } = useForm();
   const navigate = useNavigate();
+
+  // Clear the login error banner as soon as the user starts editing either
+  // field again — it should only reappear after the next failed Sign In.
+  const emailValue = watch('email');
+  const passwordValue = watch('password');
+  useEffect(() => {
+    setLoginError('');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [emailValue, passwordValue]);
 
   const handleGoogleLogin = () => {
     const redirectUri = encodeURIComponent(window.location.origin + '/auth/callback');
@@ -105,7 +114,7 @@ const onSubmit = async (data) => {
           placeholder="••••••••"
           rightLink={<Link to="/forgot-password" className="small">Forgot Password?</Link>}
           error={errors.password?.message}
-          register={register('password', { required: 'Password is required', minLength: { value: 6, message: 'Min 6 chars' } })}
+          register={register('password', { required: 'Password is required' })}
         />
         {loginError && (
           <div className="text-danger small mt-1 mb-2">{loginError}</div>
