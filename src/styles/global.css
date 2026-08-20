@@ -2037,13 +2037,14 @@ a:hover { color: #ffb558; }
   align-items: center;
   gap: 14px;
   padding: 14px 20px;
-  background: var(--topnav-bg);
+  background: var(--bg-3);
+  ;
   border-bottom: 1px solid var(--border-color);
 }
 .learn-topbar .mcq-topbar-back {
-  background: var(--nav-active-bg);
+  background: #fff3  ;
   color: var(--text-heading);
-  border: 1px solid var(--border-color);
+    /* border: 1px solid var(--border-color); */
   border-radius: 8px;
   width: 34px;
   height: 34px;
@@ -2058,15 +2059,16 @@ a:hover { color: #ffb558; }
   flex-wrap: wrap;
 }
 .learn-topbar-title strong {
-  font-size: 15px;
-  font-weight: 800;
-  color: var(--text-heading);
+    font-size: 27px;
+    font-weight: 500;
+    margin-left: 2px;
+    color: #fff;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .learn-topbar-title span {
-  color: var(--text-subtle);
+  color: white;
   font-size: 12px;
   font-weight: 700;
 }
