@@ -846,29 +846,20 @@ function StepDetails({ data, setData, onNext }) {
                   <div className="label-sm">Country</div>
                   <div className="select-field-wrap">
                     <select className="form-select dark-input select-with-icon" {...register('country')}>
-                      <option>+91</option>
+                      <option>+1</option><option>+44</option><option>+91</option><option>+61</option>
                     </select>
                     <span className="select-field-icon"><FiChevronDown /></span>
                   </div>
                 </div>
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <DarkInput
-  icon={FiPhone}
-  label="Phone Number"
-  placeholder="1234567890"
-  type="tel"
-  required
-  error={errors.phone?.message}
-  register={register('phone', {
-    required: 'Required',
-    pattern: {
-      value: /^[6-9]\d{9}$/,
-      message: 'Enter a valid phone number',
-    },
-  })}
-/>
-
+                <DarkInput icon={FiPhone} label="Phone Number" placeholder="123 456 7890"
+                  type="tel" required
+                  error={errors.phone?.message}
+                  register={register('phone', {
+                    required: 'Required',
+                    pattern: { value: /^[0-9\s\-\+\(\)]{7,15}$/, message: 'Enter a valid phone number' },
+                  })} />
               </div>
             </div>
           </div>
@@ -1609,7 +1600,10 @@ function StepDetails({ data, setData, onNext }) {
   );
 }
 
-function ProjectEntry({ project, index, onChange, onRemove }) {
+const countWords = (text) => (text || '').trim().split(/\s+/).filter(Boolean).length;
+const MIN_DESCRIPTION_WORDS = 200;
+
+function ProjectEntry({ project, index, onChange, onRemove, descriptionError, descriptionRef }) {
   return (
     <div className=" mt-3 mb-3 " style={{ borderRadius: 12 }}>
       {onRemove && (
@@ -1746,9 +1740,17 @@ function ProjectEntry({ project, index, onChange, onRemove }) {
       )}
   <div className="mb-0">
             <div className="label-sm">Project Description</div>
-            <textarea rows={4} className="form-control dark-input"
+            <textarea ref={descriptionRef} rows={4} className={`form-control dark-input ${descriptionError ? 'is-invalid' : ''}`}
               placeholder="Developed an automated inventory tracking system for the university lab using computer vision."
               value={project.description} onChange={(e) => onChange(index, 'description', e.target.value)} />
+            <div className="d-flex justify-content-between mt-1">
+              {descriptionError ? (
+                <span style={{ fontSize: 12, color: 'var(--danger, #e5484d)' }}>{descriptionError}</span>
+              ) : <span />}
+              <span style={{ fontSize: 12, color: 'var(--text-subtle)' }}>
+                {countWords(project.description)} / {MIN_DESCRIPTION_WORDS} words min
+              </span>
+            </div>
           </div>
     </div>
   );
@@ -1770,9 +1772,19 @@ function StepProjects({ data, setData, onNext, onBack }) {
   const [resumeFile, setResumeFile] = useState(data.resumeFile ?? null);
   const [wantsAiProfile, setWantsAiProfile] = useState(data.wantsAiProfile ?? null);
   const [draftSaved, setDraftSaved] = useState(false);
+  const [projectErrors, setProjectErrors] = useState({});
+  const descriptionRefs = useRef({});
 
-  const updateProject = (index, field, value) =>
+  const updateProject = (index, field, value) => {
     setProjects(prev => prev.map((p, i) => i === index ? { ...p, [field]: value } : p));
+    if (field === 'description' && projectErrors[index] && countWords(value) >= MIN_DESCRIPTION_WORDS) {
+      setProjectErrors(prev => {
+        const next = { ...prev };
+        delete next[index];
+        return next;
+      });
+    }
+  };
   const addProject = () => setProjects(prev => [...prev, createEmptyProject()]);
   const removeProject = (index) => setProjects(prev => prev.filter((_, i) => i !== index));
 
@@ -1796,8 +1808,29 @@ function StepProjects({ data, setData, onNext, onBack }) {
     setTimeout(() => setDraftSaved(false), 2000);
   };
 
+  const validateProjects = () => {
+    if (!hasProjects) return {};
+    const errors = {};
+    projects.forEach((project, index) => {
+      const wordCount = countWords(project.description);
+      if (wordCount < MIN_DESCRIPTION_WORDS) {
+        errors[index] = `Description must be at least ${MIN_DESCRIPTION_WORDS} words (currently ${wordCount}).`;
+      }
+    });
+    return errors;
+  };
+
   const submit = async (e) => {
     e.preventDefault();
+    const errors = validateProjects();
+    if (Object.keys(errors).length > 0) {
+      setProjectErrors(errors);
+      const firstErrorIndex = Math.min(...Object.keys(errors).map(Number));
+      const el = descriptionRefs.current[firstErrorIndex];
+      if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.focus?.(); }
+      return;
+    }
+    setProjectErrors({});
     const next = buildData();
     setData(next);
     await saveDraft(next);
@@ -1827,7 +1860,9 @@ function StepProjects({ data, setData, onNext, onBack }) {
         <>
           {projects.map((project, index) => (
             <ProjectEntry key={index} project={project} index={index} onChange={updateProject}
-              onRemove={projects.length > 1 ? () => removeProject(index) : null} />
+              onRemove={projects.length > 1 ? () => removeProject(index) : null}
+              descriptionError={projectErrors[index]}
+              descriptionRef={(el) => { descriptionRefs.current[index] = el; }} />
           ))}
           <button type="button" className="add-project-btn mb-4" onClick={addProject}>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -2212,5 +2247,3 @@ function PreviewSection({ title, rows, icon: Icon }) {
     </div>
   );
 }
-
-
