@@ -38,7 +38,7 @@ export default function CourseProgress({ onSignOut }) {
   const handleStart = async (courseId) => {
     try {
       await axios.post(`${API_BASE_URL}/api/course-progress/${courseId}/start`);
-      fetchProgress();
+      navigate(`/courses/${courseId}/learn`);
     } catch (err) {
       console.error('Start course error:', err);
     }
@@ -110,7 +110,7 @@ export default function CourseProgress({ onSignOut }) {
                       if (course.status === 'REGISTERED') {
                         handleStart(course.courseId);
                       } else {
-                        navigate(`/courses/${course.courseId}`);
+                        navigate(`/courses/${course.courseId}/learn`);
                       }
                     }}
                   />

@@ -10,6 +10,7 @@ import {
   FiClock,
   FiMapPin,
   FiMonitor,
+  FiPlayCircle,
   FiStar,
   FiTrendingUp,
   FiUser,
@@ -167,7 +168,7 @@ onClick={() => {
 
           <div className="course-detail-content">
             <section className="course-detail-copy">
-              <CourseTabContent activeTab={activeTab} course={course} reviews={reviews} />
+              <CourseTabContent activeTab={activeTab} course={course} reviews={reviews} navigate={navigate} />
             </section>
 
             <aside className="course-detail-sessions">
@@ -213,9 +214,9 @@ onClick={() => {
   );
 }
 
-function CourseTabContent({ activeTab, course, reviews }) {
+function CourseTabContent({ activeTab, course, reviews, navigate }) {
   if (activeTab === 'Curriculum') {
-    return <CourseCurriculum modules={course.curriculum || []} />;
+    return <CourseCurriculum modules={course.curriculum || []} courseId={course.id} navigate={navigate} />;
   }
 
   if (activeTab === 'Instructor') {
@@ -253,11 +254,19 @@ function CourseTabContent({ activeTab, course, reviews }) {
   );
 }
 
-function CourseCurriculum({ modules }) {
+function CourseCurriculum({ modules, courseId, navigate }) {
   const [openModule, setOpenModule] = useState(modules[0]?.title ?? '');
-  const totalLessons = modules.reduce((sum, m) => sum + (m.lessons?.length ?? 0), 0);
+  const normalizedModules = modules.map((m) => ({
+    ...m,
+    lessons: (m.lessons ?? []).map((l) =>
+      typeof l === 'string'
+        ? { title: l, duration: null, hasVideo: false }
+        : { title: l.title, duration: l.duration, hasVideo: Boolean(l.videoUrl || l.videoKey) },
+    ),
+  }));
+  const totalLessons = normalizedModules.reduce((sum, m) => sum + m.lessons.length, 0);
 
-  if (modules.length === 0) {
+  if (normalizedModules.length === 0) {
     return (
       <div className="course-curriculum">
         <div className="course-curriculum-header"><h2>Curriculum</h2></div>
@@ -273,8 +282,8 @@ function CourseCurriculum({ modules }) {
         <span>{totalLessons} Lesson{totalLessons !== 1 ? 's' : ''}</span>
       </div>
       <div className="course-curriculum-list">
-        {modules.map((module) => {
-          const lessonList = module.lessons ?? [];
+        {normalizedModules.map((module) => {
+          const lessonList = module.lessons;
           return (
             <div key={module.title} className={`course-curriculum-item ${openModule === module.title ? 'open' : ''}`}>
               <button
@@ -289,11 +298,16 @@ function CourseCurriculum({ modules }) {
               </button>
               {openModule === module.title && (
                 <div className="course-curriculum-details">
-                  {lessonList.map((lessonName, index) => (
-                    <div key={`${module.title}-${index}`}>
-                      <FiCheckCircle />
-                      <span>Lesson {index + 1}</span>
-                      <strong>{lessonName}</strong>
+                  {lessonList.map((lesson, index) => (
+                    <div
+                      key={`${module.title}-${index}`}
+                      role={lesson.hasVideo ? 'button' : undefined}
+                      style={lesson.hasVideo ? { cursor: 'pointer' } : undefined}
+                      onClick={lesson.hasVideo ? () => navigate(`/courses/${courseId}/learn`) : undefined}
+                    >
+                      {lesson.hasVideo ? <FiPlayCircle /> : <FiCheckCircle />}
+                      <span>{lesson.duration || `Lesson ${index + 1}`}</span>
+                      <strong>{lesson.title}</strong>
                     </div>
                   ))}
                 </div>

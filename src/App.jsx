@@ -10,6 +10,7 @@ import Dashboardcopy from './pages/Dashboardcopy.jsx';
 import Course from './pages/Course.jsx';
 import CourseProgress from './pages/CourseProgress.jsx';
 import CourseDetails from './pages/CourseDetails.jsx';
+import CourseLearn from './pages/CourseLearn.jsx';
 import CoursePayment from './pages/CoursePayment.jsx';
 import CourseSuccess from './pages/CourseSuccess.jsx';
 import PaymentSuccess from './pages/PaymentSuccess.jsx';
@@ -57,6 +58,7 @@ export default function App() {
       <Route path="/courses" element={<ProtectedRoute><Course /></ProtectedRoute>} />
       <Route path="/course-progress" element={<ProtectedRoute><CourseProgress /></ProtectedRoute>} />
       <Route path="/courses/:courseId" element={<ProtectedRoute><CourseDetails /></ProtectedRoute>} />
+      <Route path="/courses/:courseId/learn" element={<ProtectedRoute><CourseLearn /></ProtectedRoute>} />
       <Route path="/courses/:courseId/payment" element={<ProtectedRoute><CoursePayment /></ProtectedRoute>} />
       <Route path="/courses/:courseId/success" element={<ProtectedRoute><CourseSuccess /></ProtectedRoute>} />
       <Route path="/courses/:courseId/payment-success" element={<ProtectedRoute><PaymentSuccess /></ProtectedRoute>} />
