@@ -1010,6 +1010,7 @@ function StepDetails({ data, setData, onNext }) {
         {/* Intermediate / 12th fields */}
       {qualificationAfter10th === 'intermediate' && (
         <div className=" mt-3 " style={{ borderRadius: 12 }}>
+        
           <SectionHeader className="mb-2" style={{ fontSize: 16 }}>Intermediate / 12th</SectionHeader>
           <div className="row g-3">
             
@@ -1056,24 +1057,41 @@ function StepDetails({ data, setData, onNext }) {
             <div className="col-6">
               <div className="mb-3">
                 <div className="label-sm">Passing Year</div>
-                {(() => {
-                  const currentYear = new Date().getFullYear();
-                  const years = Array.from({ length: 10 }, (_, i) => currentYear - i);
-                  return (
-                    <div className="select-field-wrap">
-                      <select className="form-select dark-input select-with-icon" defaultValue={String(currentYear)} {...register('intermediateYearOfPassing', {
-                        required: 'Required',
-                        validate: (value, formValues) =>
-                          Number(value) > Number(formValues.yearOfPassing) ||
-                          '12th passing year must be greater than the 10th passing year.',
-                      })}>
-                        {years.map(y => <option key={y} value={String(y)}>{y}</option>)}
-                      </select>
-                      <span className="select-field-icon"><FiChevronDown /></span>
-                    </div>
-                  );
-                })()}
-                {errors.intermediateYearOfPassing && <div className="text-danger small mt-1">{errors.intermediateYearOfPassing.message}</div>}
+{(() => {
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: 10 }, (_, i) => currentYear - i);
+
+  return (
+    <div className="select-field-wrap">
+      <select
+        className="form-select dark-input select-with-icon"
+        defaultValue={String(currentYear)}
+        {...register('intermediateYearOfPassing', {
+          required: 'Required',
+          validate: (value, formValues) =>
+            Number(value) >= Number(formValues.yearOfPassing) + 2 ||
+            '12th passing year must be at least 2 years greater than the 10th passing year.',
+        })}
+      >
+        {years.map(y => (
+          <option key={y} value={String(y)}>
+            {y}
+          </option>
+        ))}
+      </select>
+
+      <span className="select-field-icon">
+        <FiChevronDown />
+      </span>
+    </div>
+  );
+})()}
+
+{errors.intermediateYearOfPassing && (
+  <div className="text-danger small mt-1">
+    {errors.intermediateYearOfPassing.message}
+  </div>
+)}
               </div>
             </div>
             <div className="col-12">
