@@ -118,7 +118,7 @@ const createEmptyDraft = () => ({
   fullName: '',
   email: '',
   phone: '',
-  country: '+1',
+  country: '+91',
   hasProjects: true,
   projects: [createEmptyProject()],
   hasWorkExperience: true,
@@ -846,7 +846,7 @@ function StepDetails({ data, setData, onNext }) {
                   <div className="label-sm">Country</div>
                   <div className="select-field-wrap">
                     <select className="form-select dark-input select-with-icon" {...register('country')}>
-                      <option>+91</option>
+                      <option value="+91" selected>+91</option>
                     </select>
                     <span className="select-field-icon"><FiChevronDown /></span>
                   </div>
