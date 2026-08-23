@@ -846,20 +846,28 @@ function StepDetails({ data, setData, onNext }) {
                   <div className="label-sm">Country</div>
                   <div className="select-field-wrap">
                     <select className="form-select dark-input select-with-icon" {...register('country')}>
-                      <option>+1</option><option>+44</option><option>+91</option><option>+61</option>
+                      <option>+91</option>
                     </select>
                     <span className="select-field-icon"><FiChevronDown /></span>
                   </div>
                 </div>
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <DarkInput icon={FiPhone} label="Phone Number" placeholder="123 456 7890"
-                  type="tel" required
-                  error={errors.phone?.message}
-                  register={register('phone', {
-                    required: 'Required',
-                    pattern: { value: /^[0-9\s\-\+\(\)]{7,15}$/, message: 'Enter a valid phone number' },
-                  })} />
+                <DarkInput
+  icon={FiPhone}
+  label="Phone Number"
+  placeholder="1234567890"
+  type="tel"
+  required
+  error={errors.phone?.message}
+  register={register('phone', {
+    required: 'Required',
+    pattern: {
+      value: /^[0-9]{10}$/,
+      message: 'Phone number must be exactly 10 digits',
+    },
+  })}
+/>
               </div>
             </div>
           </div>
