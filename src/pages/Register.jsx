@@ -1626,8 +1626,12 @@ function StepDetails({ data, setData, onNext }) {
   );
 }
 
-const countWords = (text) => (text || '').trim().split(/\s+/).filter(Boolean).length;
-const MIN_DESCRIPTION_WORDS = 200;
+// const countCharacters = (text) => (text || '').trim().split(/\s+/).filter(Boolean).length;
+// const MIN_DESCRIPTION_CHARACTERS = 200;
+
+const countCharacters = (text) => (text || '').length;
+const MIN_DESCRIPTION_CHARACTERS = 200;
+
 
 function ProjectEntry({ project, index, onChange, onRemove, descriptionError, descriptionRef }) {
   return (
@@ -1774,7 +1778,7 @@ function ProjectEntry({ project, index, onChange, onRemove, descriptionError, de
                 <span style={{ fontSize: 12, color: 'var(--danger, #e5484d)' }}>{descriptionError}</span>
               ) : <span />}
               <span style={{ fontSize: 12, color: 'var(--text-subtle)' }}>
-                {countWords(project.description)} / {MIN_DESCRIPTION_WORDS} words min
+                {countCharacters(project.description)} / {MIN_DESCRIPTION_CHARACTERS} characters min
               </span>
             </div>
           </div>
@@ -1803,7 +1807,7 @@ function StepProjects({ data, setData, onNext, onBack }) {
 
   const updateProject = (index, field, value) => {
     setProjects(prev => prev.map((p, i) => i === index ? { ...p, [field]: value } : p));
-    if (field === 'description' && projectErrors[index] && countWords(value) >= MIN_DESCRIPTION_WORDS) {
+    if (field === 'description' && projectErrors[index] && countCharacters(value) >= MIN_DESCRIPTION_CHARACTERS) {
       setProjectErrors(prev => {
         const next = { ...prev };
         delete next[index];
@@ -1838,9 +1842,9 @@ function StepProjects({ data, setData, onNext, onBack }) {
     if (!hasProjects) return {};
     const errors = {};
     projects.forEach((project, index) => {
-      const wordCount = countWords(project.description);
-      if (wordCount < MIN_DESCRIPTION_WORDS) {
-        errors[index] = `Description must be at least ${MIN_DESCRIPTION_WORDS} words (currently ${wordCount}).`;
+      const wordCount = countCharacters(project.description);
+      if (wordCount < MIN_DESCRIPTION_CHARACTERS) {
+        errors[index] = `Description must be at least ${MIN_DESCRIPTION_CHARACTERS} characters (currently ${wordCount}).`;
       }
     });
     return errors;
