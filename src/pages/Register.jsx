@@ -180,12 +180,12 @@ const createEmptyDraft = () => ({
   // flags + filenames, used to show "already uploaded" instead of forcing
   // a re-upload. See mapServerDraftToForm().
   registrationId: null,
-  hasTenthCertificate: false,          tenthCertificateFileName: '',
-  hasIntermediateCertificate: false,   intermediateCertificateFileName: '',
-  hasDiplomaCertificate: false,        diplomaCertificateFileName: '',
-  hasUndergraduateCertificate: false,  undergraduateCertificateFileName: '',
+  hasTenthCertificate: false, tenthCertificateFileName: '',
+  hasIntermediateCertificate: false, intermediateCertificateFileName: '',
+  hasDiplomaCertificate: false, diplomaCertificateFileName: '',
+  hasUndergraduateCertificate: false, undergraduateCertificateFileName: '',
   hasPostGraduationCertificate: false, postGraduationCertificateFileName: '',
-  hasResume: false,                    resumeFileName: '',
+  hasResume: false, resumeFileName: '',
 });
 
 // Maps a certificate/resume "type" key to the same synthetic filename
@@ -193,12 +193,12 @@ const createEmptyDraft = () => ({
 // document from the edit form reuses the existing /profile/:docFile route
 // and /api/registration/file/{id}/{type} endpoint — no new backend needed.
 const EXISTING_DOC_ROUTES = {
-  tenthCertificate:          'ssc-certificate.pdf',
-  intermediateCertificate:   'intermediate-certificate.pdf',
-  diplomaCertificate:        'diploma-certificate.pdf',
-  undergraduateCertificate:  'undergraduate-certificate.pdf',
+  tenthCertificate: 'ssc-certificate.pdf',
+  intermediateCertificate: 'intermediate-certificate.pdf',
+  diplomaCertificate: 'diploma-certificate.pdf',
+  undergraduateCertificate: 'undergraduate-certificate.pdf',
   postGraduationCertificate: 'postgraduate-certificate.pdf',
-  resume:                    'resume.pdf',
+  resume: 'resume.pdf',
 };
 
 const viewExistingDocument = (type) => {
@@ -359,17 +359,17 @@ const buildJsonFields = (d, email) => ({
 });
 
 const appendFiles = (fd, d) => {
-  if (d.marksheetFile instanceof File)               fd.append('marksheetFile',               d.marksheetFile);
-  if (d.intermediateMarksheetFile instanceof File)   fd.append('intermediateMarksheetFile',   d.intermediateMarksheetFile);
-  if (d.diplomaMarksheetFile instanceof File)        fd.append('diplomaMarksheetFile',        d.diplomaMarksheetFile);
-  if (d.undergraduateMarksheetFile instanceof File)  fd.append('undergraduateMarksheetFile',  d.undergraduateMarksheetFile);
+  if (d.marksheetFile instanceof File) fd.append('marksheetFile', d.marksheetFile);
+  if (d.intermediateMarksheetFile instanceof File) fd.append('intermediateMarksheetFile', d.intermediateMarksheetFile);
+  if (d.diplomaMarksheetFile instanceof File) fd.append('diplomaMarksheetFile', d.diplomaMarksheetFile);
+  if (d.undergraduateMarksheetFile instanceof File) fd.append('undergraduateMarksheetFile', d.undergraduateMarksheetFile);
   if (d.postGraduationMarksheetFile instanceof File) fd.append('postGraduationMarksheetFile', d.postGraduationMarksheetFile);
-  if (d.resumeFile instanceof File)                  fd.append('resumeFile',                  d.resumeFile);
+  if (d.resumeFile instanceof File) fd.append('resumeFile', d.resumeFile);
   // Profile image is stored as a base64 data URL — convert to File before sending
   if (d.profileImage && typeof d.profileImage === 'string' && d.profileImage.startsWith('data:')) {
     const [header] = d.profileImage.split(',');
     const mime = header.match(/data:(.*?);base64/)?.[1] || 'image/jpeg';
-    const ext  = mime.split('/')[1]?.replace('jpeg', 'jpg') || 'jpg';
+    const ext = mime.split('/')[1]?.replace('jpeg', 'jpg') || 'jpg';
     fd.append('profileImage', dataUrlToFile(d.profileImage, `profile_image.${ext}`, mime));
   }
 };
@@ -417,65 +417,65 @@ const saveDraft = async (draftData = {}) => {
 // Maps backend sanitize() field names → frontend form field names
 const mapServerDraftToForm = (s) => ({
   ...createEmptyDraft(),
-  fullName:                  s.fullName                  || '',
-  email:                     s.email                     || '',
-  phone:                     s.phone                     || '',
-  country:                   s.country                   || '+91',
-  address:                   s.address                   || '',
-  school:                    s.school                    || '',
+  fullName: s.fullName || '',
+  email: s.email || '',
+  phone: s.phone || '',
+  country: s.country || '+91',
+  address: s.address || '',
+  school: s.school || '',
   // Backend stores as tenthGpa / tenthYearOfPassing; form uses gpa / yearOfPassing
-  gpa:                       s.tenthGpa                  || '',
-  yearOfPassing:             s.tenthYearOfPassing        || String(new Date().getFullYear()),
-  qualificationAfter10th:    s.qualificationAfter10th    || '',
-  has12th:                   s.qualificationAfter10th === 'intermediate',
-  hasdiploma:                s.qualificationAfter10th === 'diploma',
-  stream:                    s.stream                    || '',
+  gpa: s.tenthGpa || '',
+  yearOfPassing: s.tenthYearOfPassing || String(new Date().getFullYear()),
+  qualificationAfter10th: s.qualificationAfter10th || '',
+  has12th: s.qualificationAfter10th === 'intermediate',
+  hasdiploma: s.qualificationAfter10th === 'diploma',
+  stream: s.stream || '',
   // Backend: intermediateCollege → form: gratudatecollege (existing typo kept as-is)
-  gratudatecollege:          s.intermediateCollege       || '',
-  intermediateGpa:           s.intermediateGpa           || '',
+  gratudatecollege: s.intermediateCollege || '',
+  intermediateGpa: s.intermediateGpa || '',
   intermediateYearOfPassing: s.intermediateYearOfPassing || '',
-  diplomaBranch:             s.diplomaBranch             || '',
+  diplomaBranch: s.diplomaBranch || '',
   // Backend: diplomaCollege → form: diplomacollege
-  diplomacollege:            s.diplomaCollege            || '',
-  diplomaGpa:                s.diplomaGpa                || '',
-  diplomaYearOfPassing:      s.diplomaYearOfPassing      || '',
-  hasUndergraduate:          s.hasUndergraduate          ?? null,
-  undergraduateDegree:       s.undergraduateDegree       || '',
-  undergraduateOtherDegree:  s.undergraduateOtherDegree  || '',
+  diplomacollege: s.diplomaCollege || '',
+  diplomaGpa: s.diplomaGpa || '',
+  diplomaYearOfPassing: s.diplomaYearOfPassing || '',
+  hasUndergraduate: s.hasUndergraduate ?? null,
+  undergraduateDegree: s.undergraduateDegree || '',
+  undergraduateOtherDegree: s.undergraduateOtherDegree || '',
   // Backend: btechBranch → form: btechDegree
-  btechDegree:               s.btechBranch               || '',
-  undergraduateUniversity:   s.undergraduateUniversity   || '',
-  undergraduateGpa:          s.undergraduateGpa          || '',
+  btechDegree: s.btechBranch || '',
+  undergraduateUniversity: s.undergraduateUniversity || '',
+  undergraduateGpa: s.undergraduateGpa || '',
   undergraduateYearOfPassing: s.undergraduateYearOfPassing || String(new Date().getFullYear()),
-  hasPostGraduation:         s.hasPostGraduation         ?? null,
-  postGraduationDegree:      s.postGraduationDegree      || '',
+  hasPostGraduation: s.hasPostGraduation ?? null,
+  postGraduationDegree: s.postGraduationDegree || '',
   postGraduationOtherDegree: s.postGraduationOtherDegree || '',
-  postGraduationUniversity:  s.postGraduationUniversity  || '',
-  postGraduationGpa:        s.postGraduationGpa         || '',
+  postGraduationUniversity: s.postGraduationUniversity || '',
+  postGraduationGpa: s.postGraduationGpa || '',
   postGraduationYearOfPassing: s.postGraduationYearOfPassing || String(new Date().getFullYear()),
-  hasProjects:               s.hasProjects               ?? true,
-  projects:   Array.isArray(s.projects)  && s.projects.length  > 0 ? s.projects  : [createEmptyProject()],
-  hasWorkExperience:         s.hasWorkExperience         ?? true,
-  positions:  Array.isArray(s.positions) && s.positions.length > 0 ? s.positions : [createEmptyPosition()],
-  wantsAiProfile:            s.wantsAiProfile            ?? null,
+  hasProjects: s.hasProjects ?? true,
+  projects: Array.isArray(s.projects) && s.projects.length > 0 ? s.projects : [createEmptyProject()],
+  hasWorkExperience: s.hasWorkExperience ?? true,
+  positions: Array.isArray(s.positions) && s.positions.length > 0 ? s.positions : [createEmptyPosition()],
+  wantsAiProfile: s.wantsAiProfile ?? null,
   // Files are never returned by the backend list endpoint — always start null
   marksheetFile: null, intermediateMarksheetFile: null, diplomaMarksheetFile: null,
   undergraduateMarksheetFile: null, postGraduationMarksheetFile: null, resumeFile: null,
   // Certificates already on file — flags + filenames only (no bytes), used
   // to show an "already uploaded" badge instead of a blank upload box.
-  registrationId:                     s.id                              ?? null,
-  hasTenthCertificate:                !!s.hasTenthCertificate,
-  tenthCertificateFileName:           s.tenthCertificateFileName        || '',
-  hasIntermediateCertificate:         !!s.hasIntermediateCertificate,
-  intermediateCertificateFileName:    s.intermediateCertificateFileName || '',
-  hasDiplomaCertificate:              !!s.hasDiplomaCertificate,
-  diplomaCertificateFileName:         s.diplomaCertificateFileName      || '',
-  hasUndergraduateCertificate:        !!s.hasUndergraduateCertificate,
-  undergraduateCertificateFileName:   s.undergraduateCertificateFileName || '',
-  hasPostGraduationCertificate:       !!s.hasPostGraduationCertificate,
-  postGraduationCertificateFileName:  s.postGraduationCertificateFileName || '',
-  hasResume:                          !!s.hasResume,
-  resumeFileName:                     s.resumeFileName                  || '',
+  registrationId: s.id ?? null,
+  hasTenthCertificate: !!s.hasTenthCertificate,
+  tenthCertificateFileName: s.tenthCertificateFileName || '',
+  hasIntermediateCertificate: !!s.hasIntermediateCertificate,
+  intermediateCertificateFileName: s.intermediateCertificateFileName || '',
+  hasDiplomaCertificate: !!s.hasDiplomaCertificate,
+  diplomaCertificateFileName: s.diplomaCertificateFileName || '',
+  hasUndergraduateCertificate: !!s.hasUndergraduateCertificate,
+  undergraduateCertificateFileName: s.undergraduateCertificateFileName || '',
+  hasPostGraduationCertificate: !!s.hasPostGraduationCertificate,
+  postGraduationCertificateFileName: s.postGraduationCertificateFileName || '',
+  hasResume: !!s.hasResume,
+  resumeFileName: s.resumeFileName || '',
 });
 
 export default function Register({ onSignOut }) {
@@ -492,7 +492,7 @@ export default function Register({ onSignOut }) {
 
   useEffect(() => {
     const loggedInEmail = localStorage.getItem('email') || '';
-    const loggedInName  = localStorage.getItem('name')  || '';
+    const loggedInName = localStorage.getItem('name') || '';
     const savedProfileImage = localStorage.getItem('profileImage');
     const fillLoginInfo = (mapped) => ({
       ...mapped,
@@ -540,17 +540,17 @@ export default function Register({ onSignOut }) {
       onSignOut={onSignOut}
     >
       <div className="dash-content">
-          <div className="grad-header " style={{ borderRadius: 14,  }}
-          >
-            {isEditMode ? 'Edit Registration' : 'Registration'}
-          </div>
-          <div className="glass-card registration-panel mt-3 reg-div" style={{  margin: '0 auto', padding: '24px 28px', }}>
+        <div className="grad-header " style={{ borderRadius: 14, }}
+        >
+          {isEditMode ? 'Edit Registration' : 'Registration'}
+        </div>
+        <div className="glass-card registration-panel mt-3 reg-div" style={{ margin: '0 auto', padding: '24px 28px', }}>
 
-            {draftLoading ? (
-              <div style={{ textAlign: 'center', padding: '48px 0', color: 'var(--text-subtle)' }}>
-                Loading your registration data…
-              </div>
-            ) : (<>
+          {draftLoading ? (
+            <div style={{ textAlign: 'center', padding: '48px 0', color: 'var(--text-subtle)' }}>
+              Loading your registration data…
+            </div>
+          ) : (<>
             <Stepper steps={STEPS} current={step} />
             {/* <ProfileImagePicker
           value={data.profileImage}
@@ -584,9 +584,9 @@ export default function Register({ onSignOut }) {
                 )}
               </motion.div>
             </AnimatePresence>
-            </>)}
-          </div>
+          </>)}
         </div>
+      </div>
 
       {showSuccessModal && (
         <div className="otp-modal-backdrop" role="presentation">
@@ -619,16 +619,16 @@ export default function Register({ onSignOut }) {
 
 const EduIcon = (props) => (
   <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-    <polygon points="12 2 22 8 12 14 2 8"/>
-    <path d="M6 10.5v5a6 6 0 0 0 12 0v-5"/>
-    <line x1="22" y1="8" x2="22" y2="14"/>
+    <polygon points="12 2 22 8 12 14 2 8" />
+    <path d="M6 10.5v5a6 6 0 0 0 12 0v-5" />
+    <line x1="22" y1="8" x2="22" y2="14" />
   </svg>
 );
 
 const WorkIcon = (props) => (
   <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-    <rect x="3" y="8" width="18" height="13" rx="2"/>
-    <path d="M9 8V5.5a3 3 0 0 1 6 0V8"/>
+    <rect x="3" y="8" width="18" height="13" rx="2" />
+    <path d="M9 8V5.5a3 3 0 0 1 6 0V8" />
   </svg>
 );
 
@@ -717,7 +717,7 @@ function StepDetails({ data, setData, onNext }) {
   const hasPostGraduation = watch('hasPostGraduation') ?? '';
   const hasUndergraduate = watch('hasUndergraduate') ?? '';
   const undergraduateDegree = watch('undergraduateDegree');
-   const bscStream = watch('bscStream');
+  const bscStream = watch('bscStream');
 
   useEffect(() => {
     if (qualificationAfter10th) setToggleErrors(e => ({ ...e, qualificationAfter10th: false }));
@@ -817,13 +817,13 @@ function StepDetails({ data, setData, onNext }) {
   return (
     <form className="registration-form" onSubmit={handleSubmit(submit, onError)}>
       {/* basic details */}
-      <div className="glass-card mt-3 p-3" style={{ borderRadius: 12}}>
+      <div className="glass-card mt-3 p-3" style={{ borderRadius: 12 }}>
         <ProfileImagePicker
           value={data.profileImage}
           onChange={(dataUrl) => setData(prev => ({ ...prev, profileImage: dataUrl }))}
         />
         <SectionHeader icon={FiUser}>Personal Information</SectionHeader>
-        
+
         <div className="row g-3">
           <div className="col-md-6">
             <div className="mb-3">
@@ -843,7 +843,7 @@ function StepDetails({ data, setData, onNext }) {
               </div>
             </div>
 
-               {/* <DarkInput label="Full Name" placeholder="John Doe"
+            {/* <DarkInput label="Full Name" placeholder="John Doe"
               error={errors.fullName?.message} register={register('fullName', { required: 'Required' })} /> */}
           </div>
           <div className="col-md-6">
@@ -879,24 +879,24 @@ function StepDetails({ data, setData, onNext }) {
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <DarkInput
-  icon={FiPhone}
-  label="Phone Number"
-  placeholder="1234567890"
-  type="tel"
-  required
-  error={errors.phone?.message}
-  register={register('phone', {
-    required: 'Required',
-    pattern: {
-      value: /^[0-9]{10}$/,
-      message: 'Phone number must be exactly 10 digits',
-    },
-  })}
-/>
+                  icon={FiPhone}
+                  label="Phone Number"
+                  placeholder="1234567890"
+                  type="tel"
+                  required
+                  error={errors.phone?.message}
+                  register={register('phone', {
+                    required: 'Required',
+                    pattern: {
+                      value: /^[0-9]{10}$/,
+                      message: 'Phone number must be exactly 10 digits',
+                    },
+                  })}
+                />
               </div>
             </div>
           </div>
-           <div className="col-md-12">
+          <div className="col-md-12">
             <DarkInput label="Address" placeholder="" required
               error={errors.address?.message} register={register('address', { required: 'Required' })} />
           </div>
@@ -908,19 +908,19 @@ function StepDetails({ data, setData, onNext }) {
         <SectionHeader icon={EduIcon}>Education Qualifications</SectionHeader>
 
         <div className="glass-card edu-card" style={{ borderRadius: 14, }}>
-          <SectionHeader  className="mb-2" style={{ fontSize: 16 }}>
+          <SectionHeader className="mb-2" style={{ fontSize: 16 }}>
             Secondary Education (10th)
           </SectionHeader>
           <div className="row g-3">
-             <div className="col-md-12">
-                <DarkInput
-                  label="School"
-                  placeholder="School Name"
-                  required
-                  error={errors.undergraduateUniversity?.message}
-                  register={register('school', { required: 'Required' })}
-                />
-              </div>
+            <div className="col-md-12">
+              <DarkInput
+                label="School"
+                placeholder="School Name"
+                required
+                error={errors.undergraduateUniversity?.message}
+                register={register('school', { required: 'Required' })}
+              />
+            </div>
             <div className="col-6">
               <DarkInput label="Percentage" placeholder="90" required
                 error={errors.gpa?.message}
@@ -955,7 +955,7 @@ function StepDetails({ data, setData, onNext }) {
               <div className="mb-0">
                 <label htmlFor="marksheetFile" className="upload-area w-100 d-flex flex-column align-items-center justify-content-center">
                   <span className="upload-icon mb-2" style={{ fontSize: 28, color: '#f5b94b' }}>
-                    <svg width="32" height="32" fill="none" viewBox="0 0 24 24"><path fill="currentColor" d="M12 16V4m0 0-4 4m4-4 4 4" stroke="#f5b94b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><rect x="4" y="16" width="16" height="4" rx="2" fill="none" stroke="#f5b94b" strokeWidth="2"/></svg>
+                    <svg width="32" height="32" fill="none" viewBox="0 0 24 24"><path fill="currentColor" d="M12 16V4m0 0-4 4m4-4 4 4" stroke="#f5b94b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /><rect x="4" y="16" width="16" height="4" rx="2" fill="none" stroke="#f5b94b" strokeWidth="2" /></svg>
                   </span>
                   <span className="upload-label">Upload Secondary (10th) Certificate</span>
                   <input
@@ -965,24 +965,24 @@ function StepDetails({ data, setData, onNext }) {
                     className="upload-input"
                     style={{ display: 'none' }}
                     {...register('marksheetFile', {
-  validate: value => {
-    const newFile = value?.[0];
-    const attachedFile = newFile || data.marksheetFile;
-    const hasExistingOnServer = data.hasTenthCertificate;
+                      validate: value => {
+                        const newFile = value?.[0];
+                        const attachedFile = newFile || data.marksheetFile;
+                        const hasExistingOnServer = data.hasTenthCertificate;
 
-    if (!attachedFile && !hasExistingOnServer) {
-      return 'Required';
-    }
+                        if (!attachedFile && !hasExistingOnServer) {
+                          return 'Required';
+                        }
 
-    if (!attachedFile) return true; // relying on the certificate already on file
+                        if (!attachedFile) return true; // relying on the certificate already on file
 
-    return (
-      attachedFile?.type === 'application/pdf' ||
-      attachedFile?.name?.toLowerCase()?.endsWith('.pdf') ||
-      'Only PDF files are allowed'
-    );
-  }
-})}
+                        return (
+                          attachedFile?.type === 'application/pdf' ||
+                          attachedFile?.name?.toLowerCase()?.endsWith('.pdf') ||
+                          'Only PDF files are allowed'
+                        );
+                      }
+                    })}
                   />
                 </label>
                 {errors.marksheetFile && <div className="text-danger small mt-1">{errors.marksheetFile.message}</div>}
@@ -1015,684 +1015,684 @@ function StepDetails({ data, setData, onNext }) {
             </div>
           </div>
         </div>
-      
 
-      {/* Qualification after 10th — combined Intermediate / Diploma toggle */}
 
-      <div ref={qualRef} className="glass-card mt-3 p-3" style={{ borderRadius: 12, outline: toggleErrors.qualificationAfter10th ? '2px solid var(--brand-orange)' : 'none' }}>
-        <SectionHeader>Qualification after 10th</SectionHeader>
-        {toggleErrors.qualificationAfter10th && <div style={{ color: 'var(--brand-orange)', fontSize: 12, marginBottom: 8 }}>Please select Intermediate or Diploma to continue.</div>}
-        <div className="yesno" style={{ maxWidth: 340 }}>
-          <label className={qualificationAfter10th === 'intermediate' ? 'active' : ''}>
-            <input type="radio" value="intermediate" {...register('qualificationAfter10th')} />
-            Intermediate
-          </label>
-          <label className={qualificationAfter10th === 'diploma' ? 'active' : ''}>
-            <input type="radio" value="diploma" {...register('qualificationAfter10th')} />
-            Diploma
-          </label>
-        </div>
-        {/* Intermediate / 12th fields */}
-      {qualificationAfter10th === 'intermediate' && (
-        <div className=" mt-3 " style={{ borderRadius: 12 }}>
-        
-          <SectionHeader className="mb-2" style={{ fontSize: 16 }}>Intermediate / 12th</SectionHeader>
-          <div className="row g-3">
-            
-            <div className="col-md-12">
-              <div className="mb-3">
-                <div className="label-sm">Stream</div>
-                <div className="select-field-wrap">
-                  <select className="form-select dark-input select-with-icon" {...register('stream', { required: 'Required' })}>
-                    <option value="">Select</option>
-                    <option value="MPC">MPC</option>
-                    <option value="BiPC">BiPC</option>
-                    <option value="CEC">CEC</option>
-                    <option value="HEC">HEC</option>
-                    <option value="Science">Science</option>
-                    <option value="Commerce">Commerce</option>
-                    <option value="Arts">Arts</option>
-                  </select>
-                  <span className="select-field-icon"><FiChevronDown /></span>
-                </div>
-                {errors.stream && <div className="text-danger small mt-1">{errors.stream.message}</div>}
-              </div>
-            </div>
-            <div className="col-md-12">
-                <DarkInput
-                  label="College/University Name"
-                  placeholder=""
-                  required
-                  error={errors.undergraduateUniversity?.message}
-                  register={register('gratudatecollege', { required: 'Required' })}
-                />
-              </div>
-            <div className="col-6">
-              <DarkInput label="Percentage" placeholder="90" required
-                error={errors.intermediateGpa?.message}
-                register={register('intermediateGpa', {
-                  required: 'Required',
-                  validate: value => {
-                    const normalized = value.trim().replace('%', '');
-                    const score = parseFloat(normalized);
-                    return (!Number.isNaN(score) && score >= 0 && score <= 100) || 'Enter a valid GPA or percentage';
-                  }
-                })} />
-            </div>
-            <div className="col-6">
-              <div className="mb-3">
-                <div className="label-sm">Passing Year</div>
-{(() => {
-  const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: 10 }, (_, i) => currentYear - i);
+        {/* Qualification after 10th — combined Intermediate / Diploma toggle */}
 
-  return (
-    <div className="select-field-wrap">
-      <select
-        className="form-select dark-input select-with-icon"
-        defaultValue={String(currentYear)}
-        {...register('intermediateYearOfPassing', {
-          required: 'Required',
-          validate: (value, formValues) =>
-            Number(value) >= Number(formValues.yearOfPassing) + 2 ||
-            '12th passing year must be at least 2 years greater than the 10th passing year.',
-        })}
-      >
-        {years.map(y => (
-          <option key={y} value={String(y)}>
-            {y}
-          </option>
-        ))}
-      </select>
-
-      <span className="select-field-icon">
-        <FiChevronDown />
-      </span>
-    </div>
-  );
-})()}
-
-{errors.intermediateYearOfPassing && (
-  <div className="text-danger small mt-1">
-    {errors.intermediateYearOfPassing.message}
-  </div>
-)}
-              </div>
-            </div>
-            <div className="col-12">
-              <div className="mb-0">
-                <label htmlFor="intermediateMarksheetFile" className="upload-area w-100 d-flex flex-column align-items-center justify-content-center">
-                  <span className="upload-icon mb-2" style={{ fontSize: 28, color: '#f5b94b' }}>
-                    <svg width="32" height="32" fill="none" viewBox="0 0 24 24"><path fill="currentColor" d="M12 16V4m0 0-4 4m4-4 4 4" stroke="#f5b94b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><rect x="4" y="16" width="16" height="4" rx="2" fill="none" stroke="#f5b94b" strokeWidth="2"/></svg>
-                  </span>
-                  <span className="upload-label">Upload Intermediate/12th Certificate</span>
-                  <span className="upload-hint">PDF, JPG, below 1 MB</span>
-                  <input id="intermediateMarksheetFile" type="file" accept=".pdf,application/pdf"
-                    className="upload-input" style={{ display: 'none' }}
-                    {...register('intermediateMarksheetFile', {
-                      validate: value => {
-                        const newFile = value?.[0];
-                        const attachedFile = newFile || data.intermediateMarksheetFile;
-                        const hasExistingOnServer = data.hasIntermediateCertificate;
-                        if (!attachedFile && !hasExistingOnServer) return 'Required';
-                        if (!attachedFile) return true; // relying on the certificate already on file
-                        return attachedFile?.type === 'application/pdf' || attachedFile?.name?.toLowerCase()?.endsWith('.pdf') || 'Only PDF files are allowed';
-                      }
-                    })} />
-                </label>
-                {errors.intermediateMarksheetFile && <div className="text-danger small mt-1">{errors.intermediateMarksheetFile.message}</div>}
-                {intermediateSelectedFile && (
-                  <div className="attached-doc mt-3">
-                    <div className="attached-doc-icon"><FiFileText /></div>
-                    <div className="attached-doc-content">
-                      <div className="attached-doc-name">{intermediateSelectedFile.name}</div>
-                      <div className="attached-doc-meta">{Math.round(intermediateSelectedFile.size / 1024)} KB</div>
-                    </div>
-                    <div className="d-flex gap-2 ms-auto">
-                      <a href={intermediatePreviewUrl} target="_blank" rel="noreferrer" className="reg-btn reg-btn-sm">Preview</a>
-                      <button type="button" className="reg-btn reg-btn-sm" onClick={deleteIntermediateAttachment}>Delete</button>
-                    </div>
-                  </div>
-                )}
-                {!intermediateSelectedFile && data.hasIntermediateCertificate && (
-                  <ExistingDocBadge filename={data.intermediateCertificateFileName} docType="intermediateCertificate" />
-                )}
-              </div>
-            </div>
+        <div ref={qualRef} className="glass-card mt-3 p-3" style={{ borderRadius: 12, outline: toggleErrors.qualificationAfter10th ? '2px solid var(--brand-orange)' : 'none' }}>
+          <SectionHeader>Qualification after 10th</SectionHeader>
+          {toggleErrors.qualificationAfter10th && <div style={{ color: 'var(--brand-orange)', fontSize: 12, marginBottom: 8 }}>Please select Intermediate or Diploma to continue.</div>}
+          <div className="yesno" style={{ maxWidth: 340 }}>
+            <label className={qualificationAfter10th === 'intermediate' ? 'active' : ''}>
+              <input type="radio" value="intermediate" {...register('qualificationAfter10th')} />
+              Intermediate
+            </label>
+            <label className={qualificationAfter10th === 'diploma' ? 'active' : ''}>
+              <input type="radio" value="diploma" {...register('qualificationAfter10th')} />
+              Diploma
+            </label>
           </div>
-        </div>
-      )}
+          {/* Intermediate / 12th fields */}
+          {qualificationAfter10th === 'intermediate' && (
+            <div className=" mt-3 " style={{ borderRadius: 12 }}>
 
-      {/* Diploma fields */}
-      {qualificationAfter10th === 'diploma' && (
-        <div className=" mt-3 " style={{ borderRadius: 12 }}>
-          <SectionHeader className="mb-2" style={{ fontSize: 16 }}>Diploma</SectionHeader>
-          <div className="row g-3">
-            
-            <div className="col-md-12">
-              <div className="mb-3">
-                <div className="label-sm">Branch</div>
-                <div className="select-field-wrap">
-                  <select className="form-select dark-input select-with-icon" {...register('diplomaBranch', { required: 'Required' })}>
-                   <option value="">Select Branch</option>
-                      {DIPLOMA_BRANCH_OPTIONS.map(option => (
-                        <option key={option} value={option}>{option}</option>
-                      ))}
-                  </select>
-                  <span className="select-field-icon"><FiChevronDown /></span>
-                </div>
-                {errors.stream && <div className="text-danger small mt-1">{errors.stream.message}</div>}
-              </div>
-            </div>
-            <div className="col-md-12">
-                <DarkInput
-                  label="College/University Name"
-                  placeholder=""
-                  required
-                  error={errors.undergraduateUniversity?.message}
-                  register={register('diplomacollege', { required: 'Required' })}
-                />
-              </div>
-            <div className="col-6">
-              <DarkInput label="Percentage" placeholder="90" required
-                error={errors.diplomaGpa?.message}
-                register={register('diplomaGpa', {
-                  required: 'Required',
-                  validate: value => {
-                    const normalized = value.trim().replace('%', '');
-                    const score = parseFloat(normalized);
-                    return (!Number.isNaN(score) && score >= 0 && score <= 100) || 'Enter a valid GPA or percentage';
-                  }
-                })} />
-            </div>
-            <div className="col-6">
-              <div className="mb-3">
-                <div className="label-sm">Passing Year</div>
-                {(() => {
-                  const currentYear = new Date().getFullYear();
-                  const years = Array.from({ length: 10 }, (_, i) => currentYear - i);
-                  return (
+              <SectionHeader className="mb-2" style={{ fontSize: 16 }}>Intermediate / 12th</SectionHeader>
+              <div className="row g-3">
+
+                <div className="col-md-12">
+                  <div className="mb-3">
+                    <div className="label-sm">Stream</div>
                     <div className="select-field-wrap">
-                      <select className="form-select dark-input select-with-icon" defaultValue={String(currentYear)} {...register('diplomaYearOfPassing', {
-                        required: 'Required',
-                        validate: (value, formValues) =>
-                          Number(value) > Number(formValues.yearOfPassing) ||
-                          'Diploma passing year must be greater than the 10th passing year.',
-                      })}>
-                        {years.map(y => <option key={y} value={String(y)}>{y}</option>)}
+                      <select className="form-select dark-input select-with-icon" {...register('stream', { required: 'Required' })}>
+                        <option value="">Select</option>
+                        <option value="MPC">MPC</option>
+                        <option value="BiPC">BiPC</option>
+                        <option value="CEC">CEC</option>
+                        <option value="HEC">HEC</option>
+                        <option value="Science">Science</option>
+                        <option value="Commerce">Commerce</option>
+                        <option value="Arts">Arts</option>
                       </select>
                       <span className="select-field-icon"><FiChevronDown /></span>
                     </div>
-                  );
-                })()}
-                {errors.diplomaYearOfPassing && <div className="text-danger small mt-1">{errors.diplomaYearOfPassing.message}</div>}
-              </div>
-            </div>
-            <div className="col-12">
-              <div className="mb-0">
-                <label htmlFor="diplomaMarksheetFile" className="upload-area w-100 d-flex flex-column align-items-center justify-content-center">
-                  <span className="upload-icon mb-2" style={{ fontSize: 28, color: '#f5b94b' }}>
-                    <svg width="32" height="32" fill="none" viewBox="0 0 24 24"><path fill="currentColor" d="M12 16V4m0 0-4 4m4-4 4 4" stroke="#f5b94b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><rect x="4" y="16" width="16" height="4" rx="2" fill="none" stroke="#f5b94b" strokeWidth="2"/></svg>
-                  </span>
-                  <span className="upload-label">Upload Diploma Certificate</span>
-                  <span className="upload-hint">PDF, JPG, below 1 MB</span>
-                  <input id="diplomaMarksheetFile" type="file" accept=".pdf,application/pdf"
-                    className="upload-input" style={{ display: 'none' }}
-                    {...register('diplomaMarksheetFile', {
+                    {errors.stream && <div className="text-danger small mt-1">{errors.stream.message}</div>}
+                  </div>
+                </div>
+                <div className="col-md-12">
+                  <DarkInput
+                    label="College/University Name"
+                    placeholder=""
+                    required
+                    error={errors.undergraduateUniversity?.message}
+                    register={register('gratudatecollege', { required: 'Required' })}
+                  />
+                </div>
+                <div className="col-6">
+                  <DarkInput label="Percentage" placeholder="90" required
+                    error={errors.intermediateGpa?.message}
+                    register={register('intermediateGpa', {
+                      required: 'Required',
                       validate: value => {
-                        const newFile = value?.[0];
-                        const attachedFile = newFile || data.diplomaMarksheetFile;
-                        const hasExistingOnServer = data.hasDiplomaCertificate;
-                        if (!attachedFile && !hasExistingOnServer) return 'Required';
-                        if (!attachedFile) return true; // relying on the certificate already on file
-                        return attachedFile?.type === 'application/pdf' || attachedFile?.name?.toLowerCase()?.endsWith('.pdf') || 'Only PDF files are allowed';
+                        const normalized = value.trim().replace('%', '');
+                        const score = parseFloat(normalized);
+                        return (!Number.isNaN(score) && score >= 0 && score <= 100) || 'Enter a valid GPA or percentage';
                       }
                     })} />
-                </label>
-                {errors.diplomaMarksheetFile && <div className="text-danger small mt-1">{errors.diplomaMarksheetFile.message}</div>}
-                {diplomaSelectedFile && (
-                  <div className="attached-doc mt-3">
-                    <div className="attached-doc-icon"><FiFileText /></div>
-                    <div className="attached-doc-content">
-                      <div className="attached-doc-name">{diplomaSelectedFile.name}</div>
-                      <div className="attached-doc-meta">{Math.round(diplomaSelectedFile.size / 1024)} KB</div>
-                    </div>
-                    <div className="d-flex gap-2 ms-auto">
-                      <a href={diplomaPreviewUrl} target="_blank" rel="noreferrer" className="reg-btn reg-btn-sm">Preview</a>
-                      <button type="button" className="reg-btn reg-btn-sm" onClick={deleteDiplomaAttachment}>Delete</button>
-                    </div>
+                </div>
+                <div className="col-6">
+                  <div className="mb-3">
+                    <div className="label-sm">Passing Year</div>
+                    {(() => {
+                      const currentYear = new Date().getFullYear();
+                      const years = Array.from({ length: 10 }, (_, i) => currentYear - i);
+
+                      return (
+                        <div className="select-field-wrap">
+                          <select
+                            className="form-select dark-input select-with-icon"
+                            defaultValue={String(currentYear)}
+                            {...register('intermediateYearOfPassing', {
+                              required: 'Required',
+                              validate: (value, formValues) =>
+                                Number(value) >= Number(formValues.yearOfPassing) + 2 ||
+                                '12th passing year must be at least 2 years greater than the 10th passing year.',
+                            })}
+                          >
+                            {years.map(y => (
+                              <option key={y} value={String(y)}>
+                                {y}
+                              </option>
+                            ))}
+                          </select>
+
+                          <span className="select-field-icon">
+                            <FiChevronDown />
+                          </span>
+                        </div>
+                      );
+                    })()}
+
+                    {errors.intermediateYearOfPassing && (
+                      <div className="text-danger small mt-1">
+                        {errors.intermediateYearOfPassing.message}
+                      </div>
+                    )}
                   </div>
-                )}
-                {!diplomaSelectedFile && data.hasDiplomaCertificate && (
-                  <ExistingDocBadge filename={data.diplomaCertificateFileName} docType="diplomaCertificate" />
-                )}
+                </div>
+                <div className="col-12">
+                  <div className="mb-0">
+                    <label htmlFor="intermediateMarksheetFile" className="upload-area w-100 d-flex flex-column align-items-center justify-content-center">
+                      <span className="upload-icon mb-2" style={{ fontSize: 28, color: '#f5b94b' }}>
+                        <svg width="32" height="32" fill="none" viewBox="0 0 24 24"><path fill="currentColor" d="M12 16V4m0 0-4 4m4-4 4 4" stroke="#f5b94b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /><rect x="4" y="16" width="16" height="4" rx="2" fill="none" stroke="#f5b94b" strokeWidth="2" /></svg>
+                      </span>
+                      <span className="upload-label">Upload Intermediate/12th Certificate</span>
+                      <span className="upload-hint">PDF, JPG, below 1 MB</span>
+                      <input id="intermediateMarksheetFile" type="file" accept=".pdf,application/pdf"
+                        className="upload-input" style={{ display: 'none' }}
+                        {...register('intermediateMarksheetFile', {
+                          validate: value => {
+                            const newFile = value?.[0];
+                            const attachedFile = newFile || data.intermediateMarksheetFile;
+                            const hasExistingOnServer = data.hasIntermediateCertificate;
+                            if (!attachedFile && !hasExistingOnServer) return 'Required';
+                            if (!attachedFile) return true; // relying on the certificate already on file
+                            return attachedFile?.type === 'application/pdf' || attachedFile?.name?.toLowerCase()?.endsWith('.pdf') || 'Only PDF files are allowed';
+                          }
+                        })} />
+                    </label>
+                    {errors.intermediateMarksheetFile && <div className="text-danger small mt-1">{errors.intermediateMarksheetFile.message}</div>}
+                    {intermediateSelectedFile && (
+                      <div className="attached-doc mt-3">
+                        <div className="attached-doc-icon"><FiFileText /></div>
+                        <div className="attached-doc-content">
+                          <div className="attached-doc-name">{intermediateSelectedFile.name}</div>
+                          <div className="attached-doc-meta">{Math.round(intermediateSelectedFile.size / 1024)} KB</div>
+                        </div>
+                        <div className="d-flex gap-2 ms-auto">
+                          <a href={intermediatePreviewUrl} target="_blank" rel="noreferrer" className="reg-btn reg-btn-sm">Preview</a>
+                          <button type="button" className="reg-btn reg-btn-sm" onClick={deleteIntermediateAttachment}>Delete</button>
+                        </div>
+                      </div>
+                    )}
+                    {!intermediateSelectedFile && data.hasIntermediateCertificate && (
+                      <ExistingDocBadge filename={data.intermediateCertificateFileName} docType="intermediateCertificate" />
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-      )}
-      </div>
+          )}
 
-      
+          {/* Diploma fields */}
+          {qualificationAfter10th === 'diploma' && (
+            <div className=" mt-3 " style={{ borderRadius: 12 }}>
+              <SectionHeader className="mb-2" style={{ fontSize: 16 }}>Diploma</SectionHeader>
+              <div className="row g-3">
 
-      <div ref={ugRef} className="glass-card mt-3 p-3" style={{ borderRadius: 12, outline: toggleErrors.hasUndergraduate ? '2px solid var(--brand-orange)' : 'none' }}>
-        <SectionHeader style={{ color: 'white', fontWeight: 500 }}>
-          Do you have Undergraduate degree?
-        </SectionHeader>
-        {toggleErrors.hasUndergraduate && <div style={{ color: 'var(--brand-orange)', fontSize: 12, marginBottom: 8 }}>Please select Yes or No to continue.</div>}
-        <div className="mb-3">
-          <div className="yesno" style={{ maxWidth: 340 }}>
-            <label className={hasUndergraduate === 'true' ? 'active' : ''}>
-              <input type="radio" value="true" {...register('hasUndergraduate')} />
-              Yes
-            </label>
-            <label className={hasUndergraduate === 'false' ? 'active' : ''}>
-              <input type="radio" value="false" {...register('hasUndergraduate')} />
-              No
-            </label>
-          </div>
-        </div>
-        {hasUndergraduate === 'true' && (
-        <div className="mt-3" style={{ borderRadius: 12 }}>
-          <div className="card-dark" >
-            <SectionHeader className="mb-2" style={{ fontSize: 16 }}>
-              Undergraduate Degree
-            </SectionHeader>
-            <div className="row g-3">
-
-              <div className="col-md-12">
-                <div className="mb-3">
-                  <div className="label-sm">Degree</div>
-                  <div className="select-field-wrap">
-                    <select className="form-select dark-input select-with-icon" {...register('undergraduateDegree', {
-                      validate: v => hasUndergraduate === 'true' ? (!!v || 'Required') : true
-                    })}>
-                      <option value="">Select Degree</option>
-                      {DEGREE_OPTIONS.map(option => (
-                        <option key={option} value={option}>{option}</option>
-                      ))}
-                    </select>
-                    <span className="select-field-icon"><FiChevronDown /></span>
+                <div className="col-md-12">
+                  <div className="mb-3">
+                    <div className="label-sm">Branch</div>
+                    <div className="select-field-wrap">
+                      <select className="form-select dark-input select-with-icon" {...register('diplomaBranch', { required: 'Required' })}>
+                        <option value="">Select Branch</option>
+                        {DIPLOMA_BRANCH_OPTIONS.map(option => (
+                          <option key={option} value={option}>{option}</option>
+                        ))}
+                      </select>
+                      <span className="select-field-icon"><FiChevronDown /></span>
+                    </div>
+                    {errors.stream && <div className="text-danger small mt-1">{errors.stream.message}</div>}
                   </div>
-                  {errors.undergraduateDegree && <div className="text-danger small mt-1">{errors.undergraduateDegree.message}</div>}
                 </div>
-              </div>
-
-              {undergraduateDegree === 'Other' && (
                 <div className="col-md-12">
                   <DarkInput
-                    label="Other Degree"
-                    placeholder="Enter your degree"
-                    error={errors.undergraduateOtherDegree?.message}
-                    register={register('undergraduateOtherDegree', {
-                      validate: value => (hasUndergraduate === 'true' && undergraduateDegree === 'Other') ? !!value?.trim() || 'Required' : true,
-                    })}
+                    label="College/University Name"
+                    placeholder=""
+                    required
+                    error={errors.undergraduateUniversity?.message}
+                    register={register('diplomacollege', { required: 'Required' })}
                   />
                 </div>
-              )}
-
-            
-
-              {undergraduateDegree === 'B.Tech' && (
-                <div className="col-md-12">
-                <div className="mb-3">
-                  <div className="label-sm">Degree</div>
-                  <div className="select-field-wrap">
-                    <select className="form-select dark-input select-with-icon" {...register('btechDegree', {
-                      validate: v => (hasUndergraduate === 'true' && undergraduateDegree === 'B.Tech') ? (!!v || 'Required') : true
-                    })}>
-                      <option value="">Select Degree</option>
-                      {Btech_Branch_OPTIONS.map(option => (
-                        <option key={option} value={option}>{option}</option>
-                      ))}
-                    </select>
-                    <span className="select-field-icon"><FiChevronDown /></span>
+                <div className="col-6">
+                  <DarkInput label="Percentage" placeholder="90" required
+                    error={errors.diplomaGpa?.message}
+                    register={register('diplomaGpa', {
+                      required: 'Required',
+                      validate: value => {
+                        const normalized = value.trim().replace('%', '');
+                        const score = parseFloat(normalized);
+                        return (!Number.isNaN(score) && score >= 0 && score <= 100) || 'Enter a valid GPA or percentage';
+                      }
+                    })} />
+                </div>
+                <div className="col-6">
+                  <div className="mb-3">
+                    <div className="label-sm">Passing Year</div>
+                    {(() => {
+                      const currentYear = new Date().getFullYear();
+                      const years = Array.from({ length: 10 }, (_, i) => currentYear - i);
+                      return (
+                        <div className="select-field-wrap">
+                          <select className="form-select dark-input select-with-icon" defaultValue={String(currentYear)} {...register('diplomaYearOfPassing', {
+                            required: 'Required',
+                            validate: (value, formValues) =>
+                              Number(value) > Number(formValues.yearOfPassing) ||
+                              'Diploma passing year must be greater than the 10th passing year.',
+                          })}>
+                            {years.map(y => <option key={y} value={String(y)}>{y}</option>)}
+                          </select>
+                          <span className="select-field-icon"><FiChevronDown /></span>
+                        </div>
+                      );
+                    })()}
+                    {errors.diplomaYearOfPassing && <div className="text-danger small mt-1">{errors.diplomaYearOfPassing.message}</div>}
                   </div>
-                  {errors.undergraduateDegree && <div className="text-danger small mt-1">{errors.undergraduateDegree.message}</div>}
+                </div>
+                <div className="col-12">
+                  <div className="mb-0">
+                    <label htmlFor="diplomaMarksheetFile" className="upload-area w-100 d-flex flex-column align-items-center justify-content-center">
+                      <span className="upload-icon mb-2" style={{ fontSize: 28, color: '#f5b94b' }}>
+                        <svg width="32" height="32" fill="none" viewBox="0 0 24 24"><path fill="currentColor" d="M12 16V4m0 0-4 4m4-4 4 4" stroke="#f5b94b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /><rect x="4" y="16" width="16" height="4" rx="2" fill="none" stroke="#f5b94b" strokeWidth="2" /></svg>
+                      </span>
+                      <span className="upload-label">Upload Diploma Certificate</span>
+                      <span className="upload-hint">PDF, JPG, below 1 MB</span>
+                      <input id="diplomaMarksheetFile" type="file" accept=".pdf,application/pdf"
+                        className="upload-input" style={{ display: 'none' }}
+                        {...register('diplomaMarksheetFile', {
+                          validate: value => {
+                            const newFile = value?.[0];
+                            const attachedFile = newFile || data.diplomaMarksheetFile;
+                            const hasExistingOnServer = data.hasDiplomaCertificate;
+                            if (!attachedFile && !hasExistingOnServer) return 'Required';
+                            if (!attachedFile) return true; // relying on the certificate already on file
+                            return attachedFile?.type === 'application/pdf' || attachedFile?.name?.toLowerCase()?.endsWith('.pdf') || 'Only PDF files are allowed';
+                          }
+                        })} />
+                    </label>
+                    {errors.diplomaMarksheetFile && <div className="text-danger small mt-1">{errors.diplomaMarksheetFile.message}</div>}
+                    {diplomaSelectedFile && (
+                      <div className="attached-doc mt-3">
+                        <div className="attached-doc-icon"><FiFileText /></div>
+                        <div className="attached-doc-content">
+                          <div className="attached-doc-name">{diplomaSelectedFile.name}</div>
+                          <div className="attached-doc-meta">{Math.round(diplomaSelectedFile.size / 1024)} KB</div>
+                        </div>
+                        <div className="d-flex gap-2 ms-auto">
+                          <a href={diplomaPreviewUrl} target="_blank" rel="noreferrer" className="reg-btn reg-btn-sm">Preview</a>
+                          <button type="button" className="reg-btn reg-btn-sm" onClick={deleteDiplomaAttachment}>Delete</button>
+                        </div>
+                      </div>
+                    )}
+                    {!diplomaSelectedFile && data.hasDiplomaCertificate && (
+                      <ExistingDocBadge filename={data.diplomaCertificateFileName} docType="diplomaCertificate" />
+                    )}
+                  </div>
                 </div>
               </div>
-              )}
-
-              {undergraduateDegree === 'B.Sc' && (
-  <div className="col-md-12">
-    <div className="mb-3">
-      <div className="label-sm">B.Sc Stream</div>
-
-      <div className="select-field-wrap">
-        <select
-          className="form-select dark-input select-with-icon"
-          {...register('bscStream', {
-            validate: v =>
-              hasUndergraduate === 'true' &&
-              undergraduateDegree === 'B.Sc'
-                ? !!v || 'Required'
-                : true
-          })}
-        >
-          <option value="">Select Stream</option>
-
-          {BSC_STREAM_OPTIONS.map(option => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
-
-        <span className="select-field-icon">
-          <FiChevronDown />
-        </span>
-      </div>
-
-      {errors.bscStream && (
-        <div className="text-danger small mt-1">
-          {errors.bscStream.message}
+            </div>
+          )}
         </div>
-      )}
-    </div>
-  </div>
-)}
 
-{undergraduateDegree === 'B.Sc' && bscStream === 'Other' && (
-  <div className="col-md-12">
-    <DarkInput
-      label="Other B.Sc Stream"
-      placeholder="Enter your B.Sc stream"
-      error={errors.bscOtherStream?.message}
-      register={register('bscOtherStream', {
-        validate: value =>
-          hasUndergraduate === 'true' &&
-          undergraduateDegree === 'B.Sc' &&
-          bscStream === 'Other'
-            ? !!value?.trim() || 'Required'
-            : true
-      })}
-    />
-  </div>
-)}
 
-              <div className="col-md-12">
-                <DarkInput
-                  label="University/College"
-                  placeholder="University/College Name"
-                  error={errors.undergraduateUniversity?.message}
-                  register={register('undergraduateUniversity', {
-                    validate: v => hasUndergraduate === 'true' ? (!!v?.trim() || 'Required') : true
-                  })}
-                />
-              </div>
 
-              <div className="col-6">
-                <DarkInput  label="Percentage" placeholder="90"
-                  error={errors.undergraduateGpa?.message}
-                  register={register('undergraduateGpa', {
-                    validate: value => {
-                      if (!value || !value.trim()) return true;
-                      const normalized = value.trim().replace('%', '');
-                      const score = parseFloat(normalized);
-                      return (!Number.isNaN(score) && score >= 0 && score <= 100) || 'Enter a valid GPA or percentage';
-                    }
-                  })} />
-              </div>
-              <div className="col-6">
-                <div className="mb-3">
-                  <div className="label-sm">Year of Passing</div>
-                  {(() => {
-                    const currentYear = new Date().getFullYear();
-                    const years = Array.from({ length: 10 }, (_, i) => currentYear - i);
-                    return (
+        <div ref={ugRef} className="glass-card mt-3 p-3" style={{ borderRadius: 12, outline: toggleErrors.hasUndergraduate ? '2px solid var(--brand-orange)' : 'none' }}>
+          <SectionHeader style={{ color: 'white', fontWeight: 500 }}>
+            Do you have Undergraduate degree?
+          </SectionHeader>
+          {toggleErrors.hasUndergraduate && <div style={{ color: 'var(--brand-orange)', fontSize: 12, marginBottom: 8 }}>Please select Yes or No to continue.</div>}
+          <div className="mb-3">
+            <div className="yesno" style={{ maxWidth: 340 }}>
+              <label className={hasUndergraduate === 'true' ? 'active' : ''}>
+                <input type="radio" value="true" {...register('hasUndergraduate')} />
+                Yes
+              </label>
+              <label className={hasUndergraduate === 'false' ? 'active' : ''}>
+                <input type="radio" value="false" {...register('hasUndergraduate')} />
+                No
+              </label>
+            </div>
+          </div>
+          {hasUndergraduate === 'true' && (
+            <div className="mt-3" style={{ borderRadius: 12 }}>
+              <div className="card-dark" >
+                <SectionHeader className="mb-2" style={{ fontSize: 16 }}>
+                  Undergraduate Degree
+                </SectionHeader>
+                <div className="row g-3">
+
+                  <div className="col-md-12">
+                    <div className="mb-3">
+                      <div className="label-sm">Degree</div>
                       <div className="select-field-wrap">
-                        <select className="form-select dark-input select-with-icon" defaultValue={String(currentYear)} {...register('undergraduateYearOfPassing', {
-                          validate: (value, formValues) => {
-                            if (hasUndergraduate !== 'true') return true;
-                            const priorYear = formValues.qualificationAfter10th === 'diploma'
-                              ? formValues.diplomaYearOfPassing
-                              : formValues.intermediateYearOfPassing;
-                            if (!priorYear) return true;
-                            return Number(value) > Number(priorYear) ||
-                              'Undergraduate passing year must be greater than the 12th/Diploma passing year.';
-                          },
+                        <select className="form-select dark-input select-with-icon" {...register('undergraduateDegree', {
+                          validate: v => hasUndergraduate === 'true' ? (!!v || 'Required') : true
                         })}>
-                          {years.map(y => <option key={y} value={String(y)}>{y}</option>)}
+                          <option value="">Select Degree</option>
+                          {DEGREE_OPTIONS.map(option => (
+                            <option key={option} value={option}>{option}</option>
+                          ))}
                         </select>
                         <span className="select-field-icon"><FiChevronDown /></span>
                       </div>
-                    );
-                  })()}
-                  {errors.undergraduateYearOfPassing && <div className="text-danger small mt-1">{errors.undergraduateYearOfPassing.message}</div>}
-                </div>
-              </div>
-              <div className="col-12">
-                <div className="mb-0">
-                  <label htmlFor="undergraduateMarksheetFile" className="upload-area w-100 d-flex flex-column align-items-center justify-content-center">
-                    <span className="upload-icon mb-2" style={{ fontSize: 28, color: '#f5b94b' }}>
-                      <svg width="32" height="32" fill="none" viewBox="0 0 24 24"><path fill="currentColor" d="M12 16V4m0 0-4 4m4-4 4 4" stroke="#f5b94b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><rect x="4" y="16" width="16" height="4" rx="2" fill="none" stroke="#f5b94b" strokeWidth="2"/></svg>
-                    </span>
-                    <span className="upload-label">Upload Undergraduate Certificate</span>
-                    <input
-                      id="undergraduateMarksheetFile"
-                      type="file"
-                      accept=".pdf,application/pdf"
-                      className="upload-input"
-                      style={{ display: 'none' }}
-                      {...register('undergraduateMarksheetFile', {
-  validate: value => {
-    if (hasUndergraduate !== 'true') return true;
-    const newFile = value?.[0];
-    const attachedFile = newFile || data.undergraduateMarksheetFile;
-    const hasExistingOnServer = data.hasUndergraduateCertificate;
-    if (!attachedFile && !hasExistingOnServer) return 'Required';
-    if (!attachedFile) return true; // relying on the certificate already on file
-    return attachedFile?.type === 'application/pdf' || attachedFile?.name?.toLowerCase()?.endsWith('.pdf') || 'Only PDF files are allowed';
-  }
-})}
-                    />
-                  </label>
-                  {errors.undergraduateMarksheetFile && <div className="text-danger small mt-1">{errors.undergraduateMarksheetFile.message}</div>}
+                      {errors.undergraduateDegree && <div className="text-danger small mt-1">{errors.undergraduateDegree.message}</div>}
+                    </div>
+                  </div>
 
-                  {undergraduateSelectedFile && (
-                    <div className="attached-doc mt-3">
-                      <div className="attached-doc-icon"><FiFileText /></div>
-                      <div className="attached-doc-content">
-                        <div className="attached-doc-name">{undergraduateSelectedFile.name}</div>
-                        <div className="attached-doc-meta">{Math.round(undergraduateSelectedFile.size / 1024)} KB </div>
-                      </div>
-                      <div className="d-flex gap-2 ms-auto">
-                        <a href={undergraduatePreviewUrl} target="_blank" rel="noreferrer" className="reg-btn reg-btn-sm">
-                          Preview
-                        </a>
-                        <button
-                          type="button"
-                          className="reg-btn reg-btn-sm"
-                          onClick={deleteUndergraduateAttachment}
-                        >
-                          Delete
-                        </button>
+                  {undergraduateDegree === 'Other' && (
+                    <div className="col-md-12">
+                      <DarkInput
+                        label="Other Degree"
+                        placeholder="Enter your degree"
+                        error={errors.undergraduateOtherDegree?.message}
+                        register={register('undergraduateOtherDegree', {
+                          validate: value => (hasUndergraduate === 'true' && undergraduateDegree === 'Other') ? !!value?.trim() || 'Required' : true,
+                        })}
+                      />
+                    </div>
+                  )}
+
+
+
+                  {undergraduateDegree === 'B.Tech' && (
+                    <div className="col-md-12">
+                      <div className="mb-3">
+                        <div className="label-sm">Degree</div>
+                        <div className="select-field-wrap">
+                          <select className="form-select dark-input select-with-icon" {...register('btechDegree', {
+                            validate: v => (hasUndergraduate === 'true' && undergraduateDegree === 'B.Tech') ? (!!v || 'Required') : true
+                          })}>
+                            <option value="">Select Degree</option>
+                            {Btech_Branch_OPTIONS.map(option => (
+                              <option key={option} value={option}>{option}</option>
+                            ))}
+                          </select>
+                          <span className="select-field-icon"><FiChevronDown /></span>
+                        </div>
+                        {errors.undergraduateDegree && <div className="text-danger small mt-1">{errors.undergraduateDegree.message}</div>}
                       </div>
                     </div>
                   )}
-                  {!undergraduateSelectedFile && data.hasUndergraduateCertificate && (
-                    <ExistingDocBadge filename={data.undergraduateCertificateFileName} docType="undergraduateCertificate" />
+
+                  {undergraduateDegree === 'B.Sc' && (
+                    <div className="col-md-12">
+                      <div className="mb-3">
+                        <div className="label-sm">B.Sc Stream</div>
+
+                        <div className="select-field-wrap">
+                          <select
+                            className="form-select dark-input select-with-icon"
+                            {...register('bscStream', {
+                              validate: v =>
+                                hasUndergraduate === 'true' &&
+                                  undergraduateDegree === 'B.Sc'
+                                  ? !!v || 'Required'
+                                  : true
+                            })}
+                          >
+                            <option value="">Select Stream</option>
+
+                            {BSC_STREAM_OPTIONS.map(option => (
+                              <option key={option} value={option}>
+                                {option}
+                              </option>
+                            ))}
+                          </select>
+
+                          <span className="select-field-icon">
+                            <FiChevronDown />
+                          </span>
+                        </div>
+
+                        {errors.bscStream && (
+                          <div className="text-danger small mt-1">
+                            {errors.bscStream.message}
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-      </div>
 
-      
+                  {undergraduateDegree === 'B.Sc' && bscStream === 'Other' && (
+                    <div className="col-md-12">
+                      <DarkInput
+                        label="Other B.Sc Stream"
+                        placeholder="Enter your B.Sc stream"
+                        error={errors.bscOtherStream?.message}
+                        register={register('bscOtherStream', {
+                          validate: value =>
+                            hasUndergraduate === 'true' &&
+                              undergraduateDegree === 'B.Sc' &&
+                              bscStream === 'Other'
+                              ? !!value?.trim() || 'Required'
+                              : true
+                        })}
+                      />
+                    </div>
+                  )}
 
-      <div ref={pgRef} className="glass-card mt-3 p-3" style={{ borderRadius: 12, outline: toggleErrors.hasPostGraduation ? '2px solid var(--brand-orange)' : 'none' }}>
-        <SectionHeader style={{ color: 'white', fontWeight: 500 }}>
-          Do you have Postgraduate degree?
-        </SectionHeader>
-        {toggleErrors.hasPostGraduation && <div style={{ color: 'var(--brand-orange)', fontSize: 12, marginBottom: 8 }}>Please select Yes or No to continue.</div>}
-        <div className="mb-3">
-          <div className="yesno" style={{ maxWidth: 340 }}>
-            <label className={hasPostGraduation === 'true' ? 'active' : ''}>
-              <input type="radio" value="true" {...register('hasPostGraduation')} />
-              Yes
-            </label>
-            <label className={hasPostGraduation === 'false' ? 'active' : ''}>
-              <input type="radio" value="false" {...register('hasPostGraduation')} />
-              No
-            </label>
-          </div>
-        </div>
-         {hasPostGraduation === 'true' && (
-        <div className="mt-3" style={{ borderRadius: 12 }}>
-          <div className="card-dark" >
-            <SectionHeader className="mb-2" style={{ fontSize: 16 }}>
-              Post Graduation Degree
-            </SectionHeader>
-            <div className="row g-3">
-              <div className="col-md-12">
-                <div className="mb-3">
-                  <div className="label-sm">Degree</div>
-                  <div className="select-field-wrap">
-                    <select className="form-select dark-input select-with-icon" {...register('postGraduationDegree', {
-                      validate: v => hasPostGraduation === 'true' ? (!!v || 'Required') : true
-                    })}>
-                      <option value="">Select Degree</option>
-                      {DEGREE_OPTIONS.map(option => (
-                        <option key={option} value={option}>{option}</option>
-                      ))}
-                    </select>
-                    <span className="select-field-icon"><FiChevronDown /></span>
+                  <div className="col-md-12">
+                    <DarkInput
+                      label="University/College"
+                      placeholder="University/College Name"
+                      error={errors.undergraduateUniversity?.message}
+                      register={register('undergraduateUniversity', {
+                        validate: v => hasUndergraduate === 'true' ? (!!v?.trim() || 'Required') : true
+                      })}
+                    />
                   </div>
-                  {errors.postGraduationDegree && <div className="text-danger small mt-1">{errors.postGraduationDegree.message}</div>}
-                </div>
-              </div>
 
-              {postGraduationDegree === 'Other' && (
-                <div className="col-md-12">
-                  <DarkInput
-                    label="Other Degree"
-                    placeholder="Enter your degree"
-                    error={errors.postGraduationOtherDegree?.message}
-                    register={register('postGraduationOtherDegree', {
-                      validate: value => (hasPostGraduation === 'true' && postGraduationDegree === 'Other') ? !!value?.trim() || 'Required' : true,
-                    })}
-                  />
-                </div>
-              )}
-
-              <div className="col-md-12">
-                <DarkInput label="University/College" placeholder="University/College Name"
-                  error={errors.postGraduationUniversity?.message}
-                  register={register('postGraduationUniversity', {
-                    validate: v => hasPostGraduation === 'true' ? (!!v?.trim() || 'Required') : true
-                  })} />
-              </div>
-              <div className="col-6">
-                <DarkInput  label="Percentage" placeholder="90"
-                  error={errors.postGraduationGpa?.message}
-                  register={register('postGraduationGpa', {
-                    validate: value => {
-                      if (!value || !value.trim()) return true;
-                      const normalized = value.trim().replace('%', '');
-                      const score = parseFloat(normalized);
-                      return (!Number.isNaN(score) && score >= 0 && score <= 100) || 'Enter a valid GPA or percentage';
-                    }
-                  })} />
-              </div>
-              <div className="col-6">
-                <div className="mb-3">
-                  <div className="label-sm">Year of Passing</div>
-                  {(() => {
-                    const currentYear = new Date().getFullYear();
-                    const years = Array.from({ length: 10 }, (_, i) => currentYear - i);
-                    return (
-                      <div className="select-field-wrap">
-                        <select className="form-select dark-input select-with-icon" defaultValue={String(currentYear)} {...register('postGraduationYearOfPassing', {
-                          validate: (value, formValues) => {
-                            if (hasPostGraduation !== 'true') return true;
-                            if (formValues.hasUndergraduate === 'true') {
-                              if (!formValues.undergraduateYearOfPassing) return true;
-                              return Number(value) > Number(formValues.undergraduateYearOfPassing) ||
-                                'Postgraduate passing year must be greater than the Undergraduate passing year.';
+                  <div className="col-6">
+                    <DarkInput label="Percentage" placeholder="90"
+                      error={errors.undergraduateGpa?.message}
+                      register={register('undergraduateGpa', {
+                        validate: value => {
+                          if (!value || !value.trim()) return true;
+                          const normalized = value.trim().replace('%', '');
+                          const score = parseFloat(normalized);
+                          return (!Number.isNaN(score) && score >= 0 && score <= 100) || 'Enter a valid GPA or percentage';
+                        }
+                      })} />
+                  </div>
+                  <div className="col-6">
+                    <div className="mb-3">
+                      <div className="label-sm">Year of Passing</div>
+                      {(() => {
+                        const currentYear = new Date().getFullYear();
+                        const years = Array.from({ length: 10 }, (_, i) => currentYear - i);
+                        return (
+                          <div className="select-field-wrap">
+                            <select className="form-select dark-input select-with-icon" defaultValue={String(currentYear)} {...register('undergraduateYearOfPassing', {
+                              validate: (value, formValues) => {
+                                if (hasUndergraduate !== 'true') return true;
+                                const priorYear = formValues.qualificationAfter10th === 'diploma'
+                                  ? formValues.diplomaYearOfPassing
+                                  : formValues.intermediateYearOfPassing;
+                                if (!priorYear) return true;
+                                return Number(value) > Number(priorYear) ||
+                                  'Undergraduate passing year must be greater than the 12th/Diploma passing year.';
+                              },
+                            })}>
+                              {years.map(y => <option key={y} value={String(y)}>{y}</option>)}
+                            </select>
+                            <span className="select-field-icon"><FiChevronDown /></span>
+                          </div>
+                        );
+                      })()}
+                      {errors.undergraduateYearOfPassing && <div className="text-danger small mt-1">{errors.undergraduateYearOfPassing.message}</div>}
+                    </div>
+                  </div>
+                  <div className="col-12">
+                    <div className="mb-0">
+                      <label htmlFor="undergraduateMarksheetFile" className="upload-area w-100 d-flex flex-column align-items-center justify-content-center">
+                        <span className="upload-icon mb-2" style={{ fontSize: 28, color: '#f5b94b' }}>
+                          <svg width="32" height="32" fill="none" viewBox="0 0 24 24"><path fill="currentColor" d="M12 16V4m0 0-4 4m4-4 4 4" stroke="#f5b94b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /><rect x="4" y="16" width="16" height="4" rx="2" fill="none" stroke="#f5b94b" strokeWidth="2" /></svg>
+                        </span>
+                        <span className="upload-label">Upload Undergraduate Certificate</span>
+                        <input
+                          id="undergraduateMarksheetFile"
+                          type="file"
+                          accept=".pdf,application/pdf"
+                          className="upload-input"
+                          style={{ display: 'none' }}
+                          {...register('undergraduateMarksheetFile', {
+                            validate: value => {
+                              if (hasUndergraduate !== 'true') return true;
+                              const newFile = value?.[0];
+                              const attachedFile = newFile || data.undergraduateMarksheetFile;
+                              const hasExistingOnServer = data.hasUndergraduateCertificate;
+                              if (!attachedFile && !hasExistingOnServer) return 'Required';
+                              if (!attachedFile) return true; // relying on the certificate already on file
+                              return attachedFile?.type === 'application/pdf' || attachedFile?.name?.toLowerCase()?.endsWith('.pdf') || 'Only PDF files are allowed';
                             }
-                            const priorYear = formValues.qualificationAfter10th === 'diploma'
-                              ? formValues.diplomaYearOfPassing
-                              : formValues.intermediateYearOfPassing;
-                            if (!priorYear) return true;
-                            return Number(value) > Number(priorYear) ||
-                              'Postgraduate passing year must be greater than the 12th/Diploma passing year.';
-                          },
-                        })}>
-                          {years.map(y => <option key={y} value={String(y)}>{y}</option>)}
-                        </select>
-                        <span className="select-field-icon"><FiChevronDown /></span>
-                      </div>
-                    );
-                  })()}
-                  {errors.postGraduationYearOfPassing && <div className="text-danger small mt-1">{errors.postGraduationYearOfPassing.message}</div>}
-                </div>
-              </div>
-              <div className="col-12">
-                <div className="mb-0">
-                  <label htmlFor="postGraduationMarksheetFile" className="upload-area w-100 d-flex flex-column align-items-center justify-content-center">
-                    <span className="upload-icon mb-2" style={{ fontSize: 28, color: '#f5b94b' }}>
-                      <svg width="32" height="32" fill="none" viewBox="0 0 24 24"><path fill="currentColor" d="M12 16V4m0 0-4 4m4-4 4 4" stroke="#f5b94b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><rect x="4" y="16" width="16" height="4" rx="2" fill="none" stroke="#f5b94b" strokeWidth="2"/></svg>
-                    </span>
-                    <span className="upload-label">Upload Post Graduation Certificate</span>
-                    <input
-                      id="postGraduationMarksheetFile"
-                      type="file"
-                      accept=".pdf,application/pdf"
-                      className="upload-input"
-                      style={{ display: 'none' }}
-                      {...register('postGraduationMarksheetFile', {
-  validate: value => {
-    if (hasPostGraduation !== 'true') return true;
-    const newFile = value?.[0];
-    const attachedFile = newFile || data.postGraduationMarksheetFile;
-    const hasExistingOnServer = data.hasPostGraduationCertificate;
-    if (!attachedFile && !hasExistingOnServer) return 'Required';
-    if (!attachedFile) return true; // relying on the certificate already on file
-    return attachedFile?.type === 'application/pdf' || attachedFile?.name?.toLowerCase()?.endsWith('.pdf') || 'Only PDF files are allowed';
-  }
-})}
-                    />
-                  </label>
-                  {errors.postGraduationMarksheetFile && <div className="text-danger small mt-1">{errors.postGraduationMarksheetFile.message}</div>}
+                          })}
+                        />
+                      </label>
+                      {errors.undergraduateMarksheetFile && <div className="text-danger small mt-1">{errors.undergraduateMarksheetFile.message}</div>}
 
-                  {postGraduationSelectedFile && (
-                    <div className="attached-doc mt-3">
-                      <div className="attached-doc-icon"><FiFileText /></div>
-                      <div className="attached-doc-content">
-                        <div className="attached-doc-name">{postGraduationSelectedFile.name}</div>
-                        <div className="attached-doc-meta">{Math.round(postGraduationSelectedFile.size / 1024)} KB </div>
-                      </div>
-                      <div className="d-flex gap-2 ms-auto">
-                        <a href={postGraduationPreviewUrl} target="_blank" rel="noreferrer" className="reg-btn reg-btn-sm">
-                          Preview
-                        </a>
-                        <button
-                          type="button"
-                          className="reg-btn reg-btn-sm"
-                          onClick={deletePostGraduationAttachment}
-                        >
-                          Delete
-                        </button>
-                      </div>
+                      {undergraduateSelectedFile && (
+                        <div className="attached-doc mt-3">
+                          <div className="attached-doc-icon"><FiFileText /></div>
+                          <div className="attached-doc-content">
+                            <div className="attached-doc-name">{undergraduateSelectedFile.name}</div>
+                            <div className="attached-doc-meta">{Math.round(undergraduateSelectedFile.size / 1024)} KB </div>
+                          </div>
+                          <div className="d-flex gap-2 ms-auto">
+                            <a href={undergraduatePreviewUrl} target="_blank" rel="noreferrer" className="reg-btn reg-btn-sm">
+                              Preview
+                            </a>
+                            <button
+                              type="button"
+                              className="reg-btn reg-btn-sm"
+                              onClick={deleteUndergraduateAttachment}
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                      {!undergraduateSelectedFile && data.hasUndergraduateCertificate && (
+                        <ExistingDocBadge filename={data.undergraduateCertificateFileName} docType="undergraduateCertificate" />
+                      )}
                     </div>
-                  )}
-                  {!postGraduationSelectedFile && data.hasPostGraduationCertificate && (
-                    <ExistingDocBadge filename={data.postGraduationCertificateFileName} docType="postGraduationCertificate" />
-                  )}
+                  </div>
                 </div>
               </div>
             </div>
+          )}
+        </div>
+
+
+
+        <div ref={pgRef} className="glass-card mt-3 p-3" style={{ borderRadius: 12, outline: toggleErrors.hasPostGraduation ? '2px solid var(--brand-orange)' : 'none' }}>
+          <SectionHeader style={{ color: 'white', fontWeight: 500 }}>
+            Do you have Postgraduate degree?
+          </SectionHeader>
+          {toggleErrors.hasPostGraduation && <div style={{ color: 'var(--brand-orange)', fontSize: 12, marginBottom: 8 }}>Please select Yes or No to continue.</div>}
+          <div className="mb-3">
+            <div className="yesno" style={{ maxWidth: 340 }}>
+              <label className={hasPostGraduation === 'true' ? 'active' : ''}>
+                <input type="radio" value="true" {...register('hasPostGraduation')} />
+                Yes
+              </label>
+              <label className={hasPostGraduation === 'false' ? 'active' : ''}>
+                <input type="radio" value="false" {...register('hasPostGraduation')} />
+                No
+              </label>
+            </div>
           </div>
+          {hasPostGraduation === 'true' && (
+            <div className="mt-3" style={{ borderRadius: 12 }}>
+              <div className="card-dark" >
+                <SectionHeader className="mb-2" style={{ fontSize: 16 }}>
+                  Post Graduation Degree
+                </SectionHeader>
+                <div className="row g-3">
+                  <div className="col-md-12">
+                    <div className="mb-3">
+                      <div className="label-sm">Degree</div>
+                      <div className="select-field-wrap">
+                        <select className="form-select dark-input select-with-icon" {...register('postGraduationDegree', {
+                          validate: v => hasPostGraduation === 'true' ? (!!v || 'Required') : true
+                        })}>
+                          <option value="">Select Degree</option>
+                          {DEGREE_OPTIONS.map(option => (
+                            <option key={option} value={option}>{option}</option>
+                          ))}
+                        </select>
+                        <span className="select-field-icon"><FiChevronDown /></span>
+                      </div>
+                      {errors.postGraduationDegree && <div className="text-danger small mt-1">{errors.postGraduationDegree.message}</div>}
+                    </div>
+                  </div>
+
+                  {postGraduationDegree === 'Other' && (
+                    <div className="col-md-12">
+                      <DarkInput
+                        label="Other Degree"
+                        placeholder="Enter your degree"
+                        error={errors.postGraduationOtherDegree?.message}
+                        register={register('postGraduationOtherDegree', {
+                          validate: value => (hasPostGraduation === 'true' && postGraduationDegree === 'Other') ? !!value?.trim() || 'Required' : true,
+                        })}
+                      />
+                    </div>
+                  )}
+
+                  <div className="col-md-12">
+                    <DarkInput label="University/College" placeholder="University/College Name"
+                      error={errors.postGraduationUniversity?.message}
+                      register={register('postGraduationUniversity', {
+                        validate: v => hasPostGraduation === 'true' ? (!!v?.trim() || 'Required') : true
+                      })} />
+                  </div>
+                  <div className="col-6">
+                    <DarkInput label="Percentage" placeholder="90"
+                      error={errors.postGraduationGpa?.message}
+                      register={register('postGraduationGpa', {
+                        validate: value => {
+                          if (!value || !value.trim()) return true;
+                          const normalized = value.trim().replace('%', '');
+                          const score = parseFloat(normalized);
+                          return (!Number.isNaN(score) && score >= 0 && score <= 100) || 'Enter a valid GPA or percentage';
+                        }
+                      })} />
+                  </div>
+                  <div className="col-6">
+                    <div className="mb-3">
+                      <div className="label-sm">Year of Passing</div>
+                      {(() => {
+                        const currentYear = new Date().getFullYear();
+                        const years = Array.from({ length: 10 }, (_, i) => currentYear - i);
+                        return (
+                          <div className="select-field-wrap">
+                            <select className="form-select dark-input select-with-icon" defaultValue={String(currentYear)} {...register('postGraduationYearOfPassing', {
+                              validate: (value, formValues) => {
+                                if (hasPostGraduation !== 'true') return true;
+                                if (formValues.hasUndergraduate === 'true') {
+                                  if (!formValues.undergraduateYearOfPassing) return true;
+                                  return Number(value) > Number(formValues.undergraduateYearOfPassing) ||
+                                    'Postgraduate passing year must be greater than the Undergraduate passing year.';
+                                }
+                                const priorYear = formValues.qualificationAfter10th === 'diploma'
+                                  ? formValues.diplomaYearOfPassing
+                                  : formValues.intermediateYearOfPassing;
+                                if (!priorYear) return true;
+                                return Number(value) > Number(priorYear) ||
+                                  'Postgraduate passing year must be greater than the 12th/Diploma passing year.';
+                              },
+                            })}>
+                              {years.map(y => <option key={y} value={String(y)}>{y}</option>)}
+                            </select>
+                            <span className="select-field-icon"><FiChevronDown /></span>
+                          </div>
+                        );
+                      })()}
+                      {errors.postGraduationYearOfPassing && <div className="text-danger small mt-1">{errors.postGraduationYearOfPassing.message}</div>}
+                    </div>
+                  </div>
+                  <div className="col-12">
+                    <div className="mb-0">
+                      <label htmlFor="postGraduationMarksheetFile" className="upload-area w-100 d-flex flex-column align-items-center justify-content-center">
+                        <span className="upload-icon mb-2" style={{ fontSize: 28, color: '#f5b94b' }}>
+                          <svg width="32" height="32" fill="none" viewBox="0 0 24 24"><path fill="currentColor" d="M12 16V4m0 0-4 4m4-4 4 4" stroke="#f5b94b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /><rect x="4" y="16" width="16" height="4" rx="2" fill="none" stroke="#f5b94b" strokeWidth="2" /></svg>
+                        </span>
+                        <span className="upload-label">Upload Post Graduation Certificate</span>
+                        <input
+                          id="postGraduationMarksheetFile"
+                          type="file"
+                          accept=".pdf,application/pdf"
+                          className="upload-input"
+                          style={{ display: 'none' }}
+                          {...register('postGraduationMarksheetFile', {
+                            validate: value => {
+                              if (hasPostGraduation !== 'true') return true;
+                              const newFile = value?.[0];
+                              const attachedFile = newFile || data.postGraduationMarksheetFile;
+                              const hasExistingOnServer = data.hasPostGraduationCertificate;
+                              if (!attachedFile && !hasExistingOnServer) return 'Required';
+                              if (!attachedFile) return true; // relying on the certificate already on file
+                              return attachedFile?.type === 'application/pdf' || attachedFile?.name?.toLowerCase()?.endsWith('.pdf') || 'Only PDF files are allowed';
+                            }
+                          })}
+                        />
+                      </label>
+                      {errors.postGraduationMarksheetFile && <div className="text-danger small mt-1">{errors.postGraduationMarksheetFile.message}</div>}
+
+                      {postGraduationSelectedFile && (
+                        <div className="attached-doc mt-3">
+                          <div className="attached-doc-icon"><FiFileText /></div>
+                          <div className="attached-doc-content">
+                            <div className="attached-doc-name">{postGraduationSelectedFile.name}</div>
+                            <div className="attached-doc-meta">{Math.round(postGraduationSelectedFile.size / 1024)} KB </div>
+                          </div>
+                          <div className="d-flex gap-2 ms-auto">
+                            <a href={postGraduationPreviewUrl} target="_blank" rel="noreferrer" className="reg-btn reg-btn-sm">
+                              Preview
+                            </a>
+                            <button
+                              type="button"
+                              className="reg-btn reg-btn-sm"
+                              onClick={deletePostGraduationAttachment}
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                      {!postGraduationSelectedFile && data.hasPostGraduationCertificate && (
+                        <ExistingDocBadge filename={data.postGraduationCertificateFileName} docType="postGraduationCertificate" />
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
-      )}
+
+
+
       </div>
-
-     
-
-        </div>
 
       <div className="first-part-buttons">
         <button
@@ -1702,7 +1702,7 @@ function StepDetails({ data, setData, onNext }) {
         >
           {draftSaved ? '✓ Data Saved' : 'Save as Draft'}
         </button>
-        <GradientButton className='gradient-btn' type="submit" style={{ maxWidth: 265   }}>Next: Project and Experience →</GradientButton>
+        <GradientButton className='gradient-btn' type="submit" style={{ maxWidth: 265 }}>Next: Project and Experience →</GradientButton>
       </div>
     </form>
   );
@@ -1788,7 +1788,7 @@ function ProjectEntry({ project, index, onChange, onRemove, descriptionError, de
       </div>
 
       {/* Is this a Technical Project? */}
-      
+
 
       {/* Tech fields — only when Technical */}
       {project.isTechnical === true && (
@@ -1846,24 +1846,35 @@ function ProjectEntry({ project, index, onChange, onRemove, descriptionError, de
           </div>
 
           {/* Description */}
-          
+
         </>
-        
+
       )}
-  <div className="mb-0">
-            <div className="label-sm">Project Description</div>
-            <textarea ref={descriptionRef} rows={4} className={`form-control dark-input ${descriptionError ? 'is-invalid' : ''}`}
-              placeholder="Developed an automated inventory tracking system for the university lab using computer vision."
-              value={project.description} onChange={(e) => onChange(index, 'description', e.target.value)} />
-            <div className="d-flex justify-content-between mt-1">
-              {descriptionError ? (
-                <span style={{ fontSize: 12, color: 'var(--danger, #e5484d)' }}>{descriptionError}</span>
-              ) : <span />}
-              <span style={{ fontSize: 12, color: 'var(--text-subtle)' }}>
-                {countCharacters(project.description)} / {MIN_DESCRIPTION_CHARACTERS} characters min
-              </span>
-            </div>
-          </div>
+
+
+     <div className="mb-0">
+  <div className="label-sm">Project Description</div>
+  <textarea 
+    ref={descriptionRef} 
+    rows={4} 
+    className={`form-control dark-input ${descriptionError ? 'is-invalid' : ''}`}
+    placeholder="Developed an automated inventory tracking system for the university lab using computer vision."
+    value={project.description} 
+    onChange={(e) => onChange(index, 'description', e.target.value)}
+    onCopy={(e) => e.preventDefault()}
+    onCut={(e) => e.preventDefault()}
+    onPaste={(e) => e.preventDefault()}
+    onContextMenu={(e) => e.preventDefault()}
+  />
+  <div className="d-flex justify-content-between mt-1">
+    {descriptionError ? (
+      <span style={{ fontSize: 12, color: 'var(--danger, #e5484d)' }}>{descriptionError}</span>
+    ) : <span />}
+    <span style={{ fontSize: 12, color: 'var(--text-subtle)' }}>
+      {countCharacters(project.description)} / {MIN_DESCRIPTION_CHARACTERS} characters min
+    </span>
+  </div>
+</div>
     </div>
   );
 }
@@ -1960,36 +1971,36 @@ function StepProjects({ data, setData, onNext, onBack }) {
       </div>
 
       {/* ── College Projects ── */}
-     
+
       <div className="glass-card mb-3 p-3" style={{ borderRadius: 12 }}>
-         <SectionHeader icon={FiFolder}>College Projects</SectionHeader>
+        <SectionHeader icon={FiFolder}>College Projects</SectionHeader>
         <div className="label-sm mb-2">Do you have any College Projects?</div>
         {/* <div className="yesno" style={{ maxWidth: 340 }}>
           <button type="button" className={hasProjects ? 'active' : ''} onClick={() => setHasProjects(true)}>Yes</button>
           <button type="button" className={!hasProjects ? 'active' : ''} onClick={() => setHasProjects(false)}>No</button>
         </div> */}
         {hasProjects && (
-        <>
-          {projects.map((project, index) => (
-            <ProjectEntry key={index} project={project} index={index} onChange={updateProject}
-              onRemove={projects.length > 1 ? () => removeProject(index) : null}
-              descriptionError={projectErrors[index]}
-              descriptionRef={(el) => { descriptionRefs.current[index] = el; }} />
-          ))}
-          <button type="button" className="add-project-btn mb-4" onClick={addProject}>
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-            </svg>
-            Add Project
-          </button>
-        </>
-      )}
+          <>
+            {projects.map((project, index) => (
+              <ProjectEntry key={index} project={project} index={index} onChange={updateProject}
+                onRemove={projects.length > 1 ? () => removeProject(index) : null}
+                descriptionError={projectErrors[index]}
+                descriptionRef={(el) => { descriptionRefs.current[index] = el; }} />
+            ))}
+            <button type="button" className="add-project-btn mb-4" onClick={addProject}>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+              Add Project
+            </button>
+          </>
+        )}
       </div>
 
-      
+
 
       {/* ── Work Experience ── */}
-      
+
       <div className="glass-card mb-3 p-3" style={{ borderRadius: 12 }}>
         <SectionHeader icon={WorkIcon}>Work Experience</SectionHeader>
         <div className="label-sm mb-2">Do you have professional Work Experience?</div>
@@ -1998,59 +2009,59 @@ function StepProjects({ data, setData, onNext, onBack }) {
           <button type="button" className={!hasWorkExperience ? 'active' : ''} onClick={() => setHasWorkExperience(false)}>No</button>
         </div>
         {hasWorkExperience && (
-        <>
-          {positions.map((pos, index) => (
-            <div key={index} className=" mb-3 mt-3" style={{ borderRadius: 12 }}>
-              {positions.length > 1 && (
-                <div className="d-flex justify-content-between align-items-center mb-3">
-                  <span style={{ fontWeight: 600, fontSize: 13, color: 'var(--text-heading)' }}>Position {index + 1}</span>
-                  <button type="button" className="reg-btn reg-btn-sm" onClick={() => removePosition(index)}>Remove</button>
+          <>
+            {positions.map((pos, index) => (
+              <div key={index} className=" mb-3 mt-3" style={{ borderRadius: 12 }}>
+                {positions.length > 1 && (
+                  <div className="d-flex justify-content-between align-items-center mb-3">
+                    <span style={{ fontWeight: 600, fontSize: 13, color: 'var(--text-heading)' }}>Position {index + 1}</span>
+                    <button type="button" className="reg-btn reg-btn-sm" onClick={() => removePosition(index)}>Remove</button>
+                  </div>
+                )}
+                <div className="mb-3">
+                  <div className="label-sm">Company Name</div>
+                  <input className="form-control dark-input" placeholder="TechCorp Inc."
+                    value={pos.companyName} onChange={(e) => updatePosition(index, 'companyName', e.target.value)} />
                 </div>
-              )}
-              <div className="mb-3">
-                <div className="label-sm">Company Name</div>
-                <input className="form-control dark-input" placeholder="TechCorp Inc."
-                  value={pos.companyName} onChange={(e) => updatePosition(index, 'companyName', e.target.value)} />
+                <div className="row g-3">
+                  <div className="col-6">
+                    <div className="label-sm">Role</div>
+                    <input className="form-control dark-input" placeholder="Software Intern"
+                      value={pos.role} onChange={(e) => updatePosition(index, 'role', e.target.value)} />
+                  </div>
+                  <div className="col-6">
+                    <div className="label-sm">Duration</div>
+                    <select className="form-select dark-input"
+                      value={pos.duration} onChange={(e) => updatePosition(index, 'duration', e.target.value)}>
+                      <option value="">Select </option>
+                      <option value="1 Month">1 Month</option>
+                      <option value="2 Months">2 Months</option>
+                      <option value="3 Months">3 Months</option>
+                      <option value="6 Months">6 Months</option>
+                      <option value="1 Year">1 Year</option>
+                      <option value="1.5 Years">1.5 Years</option>
+                      <option value="2 Years">2 Years</option>
+                      <option value="2+ Years">2+ Years</option>
+                    </select>
+                  </div>
+                </div>
+                <button type="button" className="add-project-btn mt-4 mb-4" onClick={addPosition}>
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                  </svg>
+                  Add Position
+                </button>
               </div>
-              <div className="row g-3">
-                <div className="col-6">
-                  <div className="label-sm">Role</div>
-                  <input className="form-control dark-input" placeholder="Software Intern"
-                    value={pos.role} onChange={(e) => updatePosition(index, 'role', e.target.value)} />
-                </div>
-                <div className="col-6">
-                  <div className="label-sm">Duration</div>
-                  <select className="form-select dark-input"
-                    value={pos.duration} onChange={(e) => updatePosition(index, 'duration', e.target.value)}>
-                    <option value="">Select </option>
-                    <option value="1 Month">1 Month</option>
-                    <option value="2 Months">2 Months</option>
-                    <option value="3 Months">3 Months</option>
-                    <option value="6 Months">6 Months</option>
-                    <option value="1 Year">1 Year</option>
-                    <option value="1.5 Years">1.5 Years</option>
-                    <option value="2 Years">2 Years</option>
-                    <option value="2+ Years">2+ Years</option>
-                  </select>
-                </div>
-              </div>
-              <button type="button" className="add-project-btn mt-4 mb-4" onClick={addPosition}>
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M8 3v10M3 8h10" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-            </svg>
-            Add Position
-          </button>
-            </div>
-          ))}
-          
-        </>
-      )}
+            ))}
+
+          </>
+        )}
       </div>
 
-      
+
 
       {/* ── Resume ── */}
-     
+
       <div className="glass-card mb-3 p-3" style={{ borderRadius: 12 }}>
         <SectionHeader icon={FiFileText}>Profile</SectionHeader>
         <div className="label-sm mb-2">Do you want an AI-generated profile?</div>
@@ -2091,10 +2102,10 @@ function StepProjects({ data, setData, onNext, onBack }) {
                 style={{ cursor: 'pointer', minHeight: 120 }} onClick={() => resumeInputRef.current?.click()}>
                 <span className="mb-2" style={{ fontSize: 32, color: 'var(--text-subtle)' }}>
                   <svg width="36" height="36" fill="none" viewBox="0 0 24 24">
-                    <rect x="4" y="2" width="16" height="20" rx="2" stroke="currentColor" strokeWidth="1.5"/>
-                    <path d="M8 12h8M8 16h5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                    <path d="M12 2v5h5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M14 6l2.5 2.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                    <rect x="4" y="2" width="16" height="20" rx="2" stroke="currentColor" strokeWidth="1.5" />
+                    <path d="M8 12h8M8 16h5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                    <path d="M12 2v5h5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    <path d="M14 6l2.5 2.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                   </svg>
                 </span>
                 <span style={{ fontWeight: 600, fontSize: 14, color: 'var(--text-body)' }}>Click to upload your Profile</span>
@@ -2169,13 +2180,13 @@ function StepPreview({ data, onBack, onSubmitSuccess, setStep }) {
           <div style={{ position: 'relative', width: 110, height: 110, background: '#e8edf5', borderRadius: 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <svg width="66" height="58" viewBox="0 0 66 58" fill="none" xmlns="http://www.w3.org/2000/svg">
               {/* Back folder */}
-              <path d="M4 15C4 12.8 5.8 11 8 11H21L26 16H54C56.2 16 58 17.8 58 20V41C58 43.2 56.2 45 54 45H8C5.8 45 4 43.2 4 41V15Z" fill="#7aaad8" opacity="0.8"/>
+              <path d="M4 15C4 12.8 5.8 11 8 11H21L26 16H54C56.2 16 58 17.8 58 20V41C58 43.2 56.2 45 54 45H8C5.8 45 4 43.2 4 41V15Z" fill="#7aaad8" opacity="0.8" />
               {/* Front folder */}
-              <path d="M10 22C10 19.8 11.8 18 14 18H27L32 23H60C62.2 23 64 24.8 64 27V48C64 50.2 62.2 52 60 52H14C11.8 52 10 50.2 10 48V22Z" fill="#4a7cc7"/>
+              <path d="M10 22C10 19.8 11.8 18 14 18H27L32 23H60C62.2 23 64 24.8 64 27V48C64 50.2 62.2 52 60 52H14C11.8 52 10 50.2 10 48V22Z" fill="#4a7cc7" />
             </svg>
             <div style={{ position: 'absolute', bottom: 9, right: 9, width: 29, height: 29, background: 'var(--brand-orange)', borderRadius: '50%', border: '2.5px solid #12152a', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
-                <path d="M1 5L5 9L13 1" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M1 5L5 9L13 1" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
           </div>
@@ -2203,7 +2214,7 @@ function StepPreview({ data, onBack, onSubmitSuccess, setStep }) {
       ]} />
 
       {/* ── Secondary Education (10th) ── */}
-      <PreviewSection style={{borderBottom:"10px"}} title="Secondary Education (10th)" icon={EduIcon} rows={[
+      <PreviewSection style={{ borderBottom: "10px" }} title="Secondary Education (10th)" icon={EduIcon} rows={[
         ['School', data.school || '—'],
         ['GPA/Percentage', data.gpa || '—'],
         ['Year of Passing', data.yearOfPassing || '—'],
