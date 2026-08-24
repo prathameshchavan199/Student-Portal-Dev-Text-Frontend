@@ -14,16 +14,38 @@ import { AuthContext } from '../context/AuthContext.jsx';
 
 
 const STEPS = ['Details', 'Projects', 'Preview'];
+const BSC_STREAM_OPTIONS = [
+  'Computer Science',
+  'Mathematics',
+  'Physics',
+  'Chemistry',
+  'Biotechnology',
+  'Microbiology',
+  'Botany',
+  'Zoology',
+  'Statistics',
+  'Information Technology',
+  'Electronics',
+  'Other'
+];
 const DEGREE_OPTIONS = [
-    'B.Tech',
-  'B.Com',
-  'BBA',
-  'BA',
-  'B.Sc',
-  'BCA',
-  'B.Ed',
-  'BSW',
-  'Other',
+  "B.Tech",
+  "B.Com",
+  "BBA",
+  "BA",
+  "B.Sc",
+  "BCA",
+  "B.Ed",
+  "BSW",
+  "B.Pharm",
+  "BDS",
+  "B.Sc Nursing",
+  "MBBS",
+  "BA LLB",
+  "LLB",
+  "LLM",
+  "Pharm.D",
+  "Other"
 ];
 
 const DIPLOMA_BRANCH_OPTIONS = [
@@ -128,6 +150,8 @@ const createEmptyDraft = () => ({
   hasdiploma: false,
   hasPostGraduation: null,
   hasUndergraduate: null,
+  bscStream: '',
+  bscOtherStream: '',
   projectTitle: '',
   description: '',
   tags: ['Python', 'React Native'],
@@ -693,6 +717,7 @@ function StepDetails({ data, setData, onNext }) {
   const hasPostGraduation = watch('hasPostGraduation') ?? '';
   const hasUndergraduate = watch('hasUndergraduate') ?? '';
   const undergraduateDegree = watch('undergraduateDegree');
+   const bscStream = watch('bscStream');
 
   useEffect(() => {
     if (qualificationAfter10th) setToggleErrors(e => ({ ...e, qualificationAfter10th: false }));
@@ -1327,6 +1352,63 @@ function StepDetails({ data, setData, onNext }) {
                 </div>
               </div>
               )}
+
+              {undergraduateDegree === 'B.Sc' && (
+  <div className="col-md-12">
+    <div className="mb-3">
+      <div className="label-sm">B.Sc Stream</div>
+
+      <div className="select-field-wrap">
+        <select
+          className="form-select dark-input select-with-icon"
+          {...register('bscStream', {
+            validate: v =>
+              hasUndergraduate === 'true' &&
+              undergraduateDegree === 'B.Sc'
+                ? !!v || 'Required'
+                : true
+          })}
+        >
+          <option value="">Select Stream</option>
+
+          {BSC_STREAM_OPTIONS.map(option => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
+
+        <span className="select-field-icon">
+          <FiChevronDown />
+        </span>
+      </div>
+
+      {errors.bscStream && (
+        <div className="text-danger small mt-1">
+          {errors.bscStream.message}
+        </div>
+      )}
+    </div>
+  </div>
+)}
+
+{undergraduateDegree === 'B.Sc' && bscStream === 'Other' && (
+  <div className="col-md-12">
+    <DarkInput
+      label="Other B.Sc Stream"
+      placeholder="Enter your B.Sc stream"
+      error={errors.bscOtherStream?.message}
+      register={register('bscOtherStream', {
+        validate: value =>
+          hasUndergraduate === 'true' &&
+          undergraduateDegree === 'B.Sc' &&
+          bscStream === 'Other'
+            ? !!value?.trim() || 'Required'
+            : true
+      })}
+    />
+  </div>
+)}
 
               <div className="col-md-12">
                 <DarkInput
