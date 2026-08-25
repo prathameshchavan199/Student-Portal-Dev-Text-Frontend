@@ -152,6 +152,8 @@ const createEmptyDraft = () => ({
   hasUndergraduate: null,
   bscStream: '',
   bscOtherStream: '',
+  isPursuingUndergraduate: null,
+  undergraduateCurrentYear: '',
   projectTitle: '',
   description: '',
   tags: ['Python', 'React Native'],
@@ -345,6 +347,10 @@ const buildJsonFields = (d, email) => ({
   undergraduateUniversity: d.undergraduateUniversity,
   undergraduateGpa: d.undergraduateGpa,
   undergraduateYearOfPassing: d.undergraduateYearOfPassing,
+  bscStream: d.bscStream,
+  bscOtherStream: d.bscOtherStream,
+  isPursuingUndergraduate: d.isPursuingUndergraduate,
+  undergraduateCurrentYear: d.undergraduateCurrentYear,
   hasPostGraduation: d.hasPostGraduation,
   postGraduationDegree: d.postGraduationDegree,
   postGraduationOtherDegree: d.postGraduationOtherDegree,
@@ -712,6 +718,7 @@ function StepDetails({ data, setData, onNext }) {
   const intermediateSelectedFile = watch('intermediateMarksheetFile')?.[0] ?? data.intermediateMarksheetFile;
   const diplomaSelectedFile = watch('diplomaMarksheetFile')?.[0] ?? data.diplomaMarksheetFile;
   const postGraduationSelectedFile = watch('postGraduationMarksheetFile')?.[0] ?? data.postGraduationMarksheetFile;
+  const isPursuingUndergraduate = watch('isPursuingUndergraduate');
   const undergraduateSelectedFile = watch('undergraduateMarksheetFile')?.[0] ?? data.undergraduateMarksheetFile;
   const qualificationAfter10th = watch('qualificationAfter10th') ?? '';
   const hasPostGraduation = watch('hasPostGraduation') ?? '';
@@ -1277,7 +1284,9 @@ function StepDetails({ data, setData, onNext }) {
 
         <div ref={ugRef} className="glass-card mt-3 p-3" style={{ borderRadius: 12, outline: toggleErrors.hasUndergraduate ? '2px solid var(--brand-orange)' : 'none' }}>
           <SectionHeader style={{ color: 'white', fontWeight: 500 }}>
-            Do you have Undergraduate degree?
+            {/* Do you have Undergraduate degree? */}
+
+            Do you have or are you pursuing an Undergraduate degree?
           </SectionHeader>
           {toggleErrors.hasUndergraduate && <div style={{ color: 'var(--brand-orange)', fontSize: 12, marginBottom: 8 }}>Please select Yes or No to continue.</div>}
           <div className="mb-3">
@@ -1299,6 +1308,21 @@ function StepDetails({ data, setData, onNext }) {
                   Undergraduate Degree
                 </SectionHeader>
                 <div className="row g-3">
+                  <div className="col-md-12">
+  <div className="mb-3">
+    <div className="label-sm">Are you currently pursuing this degree?</div>
+    <div className="yesno" style={{ maxWidth: 340 }}>
+      <label className={isPursuingUndergraduate === 'true' ? 'active' : ''}>
+        <input type="radio" value="true" {...register('isPursuingUndergraduate')} />
+        Yes
+      </label>
+      <label className={isPursuingUndergraduate === 'false' ? 'active' : ''}>
+        <input type="radio" value="false" {...register('isPursuingUndergraduate')} />
+        No
+      </label>
+    </div>
+  </div>
+</div>
 
                   <div className="col-md-12">
                     <div className="mb-3">
@@ -1410,6 +1434,35 @@ function StepDetails({ data, setData, onNext }) {
                     </div>
                   )}
 
+                  {isPursuingUndergraduate === 'true' && (
+  <div className="col-md-12">
+    <div className="mb-3">
+      <div className="label-sm">Current Year of Study</div>
+      <div className="select-field-wrap">
+        <select
+          className="form-select dark-input select-with-icon"
+          {...register('undergraduateCurrentYear', {
+            validate: v =>
+              (hasUndergraduate === 'true' && isPursuingUndergraduate === 'true')
+                ? (!!v || 'Required')
+                : true
+          })}
+        >
+          <option value="">Select Year</option>
+          <option value="First Year">First Year</option>
+          <option value="Second Year">Second Year</option>
+          <option value="Third Year">Third Year</option>
+          <option value="Fourth Year">Fourth Year</option>
+        </select>
+        <span className="select-field-icon"><FiChevronDown /></span>
+      </div>
+      {errors.undergraduateCurrentYear && (
+        <div className="text-danger small mt-1">{errors.undergraduateCurrentYear.message}</div>
+      )}
+    </div>
+  </div>
+)}
+
                   <div className="col-md-12">
                     <DarkInput
                       label="University/College"
@@ -1433,7 +1486,7 @@ function StepDetails({ data, setData, onNext }) {
                         }
                       })} />
                   </div>
-                  <div className="col-6">
+                  {/* <div className="col-6">
                     <div className="mb-3">
                       <div className="label-sm">Year of Passing</div>
                       {(() => {
@@ -1460,7 +1513,49 @@ function StepDetails({ data, setData, onNext }) {
                       })()}
                       {errors.undergraduateYearOfPassing && <div className="text-danger small mt-1">{errors.undergraduateYearOfPassing.message}</div>}
                     </div>
-                  </div>
+                  </div> */}
+                  <div className="col-6">
+  <div className="mb-3">
+    <div className="label-sm">
+      {isPursuingUndergraduate === 'true' ? 'Expected Year of Passing' : 'Year of Passing'}
+    </div>
+    {(() => {
+      const currentYear = new Date().getFullYear();
+      const years = isPursuingUndergraduate === 'true'
+        ? Array.from({ length: 6 }, (_, i) => currentYear + i)       // current year to +5 (future)
+        : Array.from({ length: 10 }, (_, i) => currentYear - i);     // current year to -9 (past)
+      return (
+        <div className="select-field-wrap">
+          <select
+            className="form-select dark-input select-with-icon"
+            defaultValue={String(currentYear)}
+            {...register('undergraduateYearOfPassing', {
+              validate: (value, formValues) => {
+                if (hasUndergraduate !== 'true') return true;
+                const priorYear = formValues.qualificationAfter10th === 'diploma'
+                  ? formValues.diplomaYearOfPassing
+                  : formValues.intermediateYearOfPassing;
+                if (!priorYear) return true;
+                if (isPursuingUndergraduate === 'true') {
+                  return Number(value) >= Number(priorYear) ||
+                    'Expected passing year must be on or after the 12th/Diploma passing year.';
+                }
+                return Number(value) > Number(priorYear) ||
+                  'Undergraduate passing year must be greater than the 12th/Diploma passing year.';
+              },
+            })}
+          >
+            {years.map(y => <option key={y} value={String(y)}>{y}</option>)}
+          </select>
+          <span className="select-field-icon"><FiChevronDown /></span>
+        </div>
+      );
+    })()}
+    {errors.undergraduateYearOfPassing && (
+      <div className="text-danger small mt-1">{errors.undergraduateYearOfPassing.message}</div>
+    )}
+  </div>
+</div>
                   <div className="col-12">
                     <div className="mb-0">
                       <label htmlFor="undergraduateMarksheetFile" className="upload-area w-100 d-flex flex-column align-items-center justify-content-center">
@@ -1474,17 +1569,29 @@ function StepDetails({ data, setData, onNext }) {
                           accept=".pdf,application/pdf"
                           className="upload-input"
                           style={{ display: 'none' }}
+                          // {...register('undergraduateMarksheetFile', {
+                          //   validate: value => {
+                          //     if (hasUndergraduate !== 'true') return true;
+                          //     const newFile = value?.[0];
+                          //     const attachedFile = newFile || data.undergraduateMarksheetFile;
+                          //     const hasExistingOnServer = data.hasUndergraduateCertificate;
+                          //     if (!attachedFile && !hasExistingOnServer) return 'Required';
+                          //     if (!attachedFile) return true; // relying on the certificate already on file
+                          //     return attachedFile?.type === 'application/pdf' || attachedFile?.name?.toLowerCase()?.endsWith('.pdf') || 'Only PDF files are allowed';
+                          //   }
+                          // })}
                           {...register('undergraduateMarksheetFile', {
-                            validate: value => {
-                              if (hasUndergraduate !== 'true') return true;
-                              const newFile = value?.[0];
-                              const attachedFile = newFile || data.undergraduateMarksheetFile;
-                              const hasExistingOnServer = data.hasUndergraduateCertificate;
-                              if (!attachedFile && !hasExistingOnServer) return 'Required';
-                              if (!attachedFile) return true; // relying on the certificate already on file
-                              return attachedFile?.type === 'application/pdf' || attachedFile?.name?.toLowerCase()?.endsWith('.pdf') || 'Only PDF files are allowed';
-                            }
-                          })}
+  validate: value => {
+    if (hasUndergraduate !== 'true') return true;
+    if (isPursuingUndergraduate === 'true') return true; // not required while pursuing
+    const newFile = value?.[0];
+    const attachedFile = newFile || data.undergraduateMarksheetFile;
+    const hasExistingOnServer = data.hasUndergraduateCertificate;
+    if (!attachedFile && !hasExistingOnServer) return 'Required';
+    if (!attachedFile) return true;
+    return attachedFile?.type === 'application/pdf' || attachedFile?.name?.toLowerCase()?.endsWith('.pdf') || 'Only PDF files are allowed';
+  }
+})}
                         />
                       </label>
                       {errors.undergraduateMarksheetFile && <div className="text-danger small mt-1">{errors.undergraduateMarksheetFile.message}</div>}
