@@ -3,12 +3,14 @@ import { Navigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
 const GuestRoute = ({ children }) => {
-  const { authenticated, loading } = useContext(AuthContext);
+  const { user, authenticated, loading } = useContext(AuthContext);
 
   if (loading) return null;
 
   if (authenticated) {
-    return <Navigate to="/dashboard" replace />;
+    return (
+      <Navigate to={user?.role === 'TPO_ADMIN' ? '/tpo/dashboard' : '/dashboard'} replace />
+    );
   }
 
   return children;

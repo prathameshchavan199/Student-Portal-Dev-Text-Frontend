@@ -94,12 +94,10 @@ export default function CourseProgress({ onSignOut }) {
                 {visibleCourses.map(course => (
                   <CourseCard
                     key={course.courseId}
-                    id={course.courseId}
                     title={course.title || course.courseName}
                     instructor={course.instructor}
                     description={course.description}
                     imageUrl={course.imageUrl}
-                    imageKey={course.imageKey}
                     date={course.date}
                     time={course.time}
                     platform={course.platform}

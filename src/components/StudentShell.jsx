@@ -122,6 +122,7 @@ export default function StudentShell({
         );
 
         console.log('Profile info response:', response.data);
+        // localStorage.setItem('user', JSON.stringify(response.data));
 
         if (cancelled) return;
 

@@ -1,4 +1,3 @@
-
 import { useContext, useEffect, useState } from "react";
 import {AuthContext } from "../context/AuthContext";
 import CyfenixLogo from "../assets/images/Cyfenix-Logo.png";
@@ -13,7 +12,7 @@ import axios from 'axios';
 
 
 export default function Login() {
-  const { user, setUser, authenticated, setAuthenticated, setRegistered } = useContext(AuthContext);
+  const { user, setUser, authenticated, setRegistered } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   const [loginError, setLoginError] = useState('');
 
@@ -54,7 +53,7 @@ const onSubmit = async (data) => {
       payload,
       { withCredentials: true }
     );
-
+    localStorage.setItem("user", response.data);
     localStorage.setItem("name", response.data.name);
     localStorage.setItem("email", response.data.email);
     localStorage.setItem("user", JSON.stringify(response.data));
@@ -64,10 +63,13 @@ const onSubmit = async (data) => {
     if (response.data.refreshToken) localStorage.setItem("refreshToken", response.data.refreshToken);
 
     setUser(response.data);
-    setAuthenticated(true);
     setRegistered(response.data.registered);
 
-    navigate(response.data.registered ? '/dashboard' : '/register');
+    if (response.data.role === 'TPO_ADMIN') {
+      navigate('/tpo/dashboard');
+    } else {
+      navigate(response.data.registered ? '/dashboard' : '/register');
+    }
 
   } catch (error) {
     console.error('Error logging in:', error);

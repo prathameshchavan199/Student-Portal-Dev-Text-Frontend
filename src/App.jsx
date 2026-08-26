@@ -23,8 +23,13 @@ import Profile from './pages/Profile.jsx';
 import DocViewer from './pages/DocViewer.jsx';
 import AddCourse from './pages/AddCourse.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
+import AdminRoute from './components/AdminRoute.jsx';
 import GuestRoute from './components/GuestRoute.jsx';
 import AuthCallback from './pages/AuthCallback.jsx';
+import TpoDashboard from './pages/tpo/TpoDashboard.jsx';
+import TpoCourses from './pages/tpo/TpoCourses.jsx';
+import TpoStudents from './pages/tpo/TpoStudents.jsx';
+import TpoAssessments from './pages/tpo/TpoAssessments.jsx';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -71,6 +76,10 @@ export default function App() {
       <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
       <Route path="/profile/:docFile" element={<ProtectedRoute><DocViewer /></ProtectedRoute>} />
       {/* <Route path="/admin/add-course" element={<ProtectedRoute><AddCourse /></ProtectedRoute>} /> */}
+      <Route path="/tpo/dashboard" element={<AdminRoute><TpoDashboard /></AdminRoute>} />
+      <Route path="/tpo/courses" element={<AdminRoute><TpoCourses /></AdminRoute>} />
+      <Route path="/tpo/students" element={<AdminRoute><TpoStudents /></AdminRoute>} />
+      <Route path="/tpo/assessments" element={<AdminRoute><TpoAssessments /></AdminRoute>} />
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
     </>
