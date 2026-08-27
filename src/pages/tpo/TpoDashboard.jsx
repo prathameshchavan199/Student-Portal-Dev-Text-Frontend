@@ -96,15 +96,15 @@ export default function TpoDashboard() {
             </div>
 
             <div className="tpo-panel">
-              <div className="tpo-panel-header-title">Dept. Readiness Index</div>
-              {data.departmentReadiness.length === 0 ? (
+              <div className="tpo-panel-header-title">Undergraduate Degree Readiness Index</div>
+              {data.degreeReadiness.length === 0 ? (
                 <div className="tpo-empty-state">No assessment attempts yet — this fills in once students start taking assessments.</div>
               ) : (
                 <div className="tpo-readiness-list">
-                  {data.departmentReadiness.map((d) => (
-                    <div key={d.department} className="tpo-readiness-row">
+                  {data.degreeReadiness.map((d) => (
+                    <div key={d.degree} className="tpo-readiness-row">
                       <div className="tpo-readiness-label">
-                        <span>{d.department}</span>
+                        <span>{d.degree}</span>
                         <strong>{d.averageScorePct}%</strong>
                       </div>
                       <div className="tpo-readiness-track">

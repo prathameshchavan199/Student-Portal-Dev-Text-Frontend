@@ -28,7 +28,7 @@ function pctClass(pct) {
 export default function TpoAssessments() {
   const [search, setSearch] = useState('');
   const [type, setType] = useState('');
-  const [department, setDepartment] = useState('');
+  const [degree, setDegree] = useState('');
   const [page, setPage] = useState(0);
   const [data, setData] = useState(null);
   const [error, setError] = useState('');
@@ -37,7 +37,7 @@ export default function TpoAssessments() {
     const params = { page, size: PAGE_SIZE };
     if (search.trim()) params.search = search.trim();
     if (type) params.type = type;
-    if (department.trim()) params.department = department.trim();
+    if (degree.trim()) params.degree = degree.trim();
 
     axios
       .get(`${API_BASE_URL}/api/tpo/assessments`, { params })
@@ -48,7 +48,7 @@ export default function TpoAssessments() {
         console.error('TPO assessments fetch error:', err);
         setError('Could not load assessments.');
       });
-  }, [search, type, department, page]);
+  }, [search, type, degree, page]);
 
   const totalPages = data?.totalPages ?? 1;
   const types = Array.from(new Set((data?.items || []).map((a) => a.type))).filter(Boolean);
@@ -93,11 +93,11 @@ export default function TpoAssessments() {
 
           <input
             className="tpo-dept-input"
-            placeholder="Department"
-            value={department}
+            placeholder="Undergraduate Degree"
+            value={degree}
             onChange={(e) => {
               setPage(0);
-              setDepartment(e.target.value);
+              setDegree(e.target.value);
             }}
           />
         </div>
@@ -111,7 +111,7 @@ export default function TpoAssessments() {
                 <thead>
                   <tr>
                     <th>Assessment Name</th>
-                    <th>Department</th>
+                    <th>Undergraduate Degree</th>
                     <th>Students</th>
                     <th>Completed</th>
                   </tr>
@@ -125,7 +125,7 @@ export default function TpoAssessments() {
                     data.items.map((a) => (
                       <tr key={a.assessmentId}>
                         <td className="tpo-table-title">{a.name}</td>
-                        <td>{a.department}</td>
+                        <td>{a.degree}</td>
                         <td>{a.students}</td>
                         <td>
                           <span className={`tpo-badge ${pctClass(a.completedPct)}`}>{a.completedPct}%</span>

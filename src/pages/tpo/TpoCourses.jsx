@@ -29,6 +29,7 @@ function statusClass(status) {
 export default function TpoCourses() {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('');
+  const [degree, setDegree] = useState('');
   const [status, setStatus] = useState('');
   const [page, setPage] = useState(0);
   const [data, setData] = useState(null);
@@ -38,6 +39,7 @@ export default function TpoCourses() {
     const params = { page, size: PAGE_SIZE };
     if (search.trim()) params.search = search.trim();
     if (category) params.category = category;
+    if (degree.trim()) params.degree = degree.trim();
     if (status) params.status = status;
 
     axios
@@ -49,7 +51,7 @@ export default function TpoCourses() {
         console.error('TPO courses fetch error:', err);
         setError('Could not load courses.');
       });
-  }, [search, category, status, page]);
+  }, [search, category, degree, status, page]);
 
   const totalPages = data?.totalPages ?? 1;
 
@@ -91,6 +93,16 @@ export default function TpoCourses() {
             <option value="offlineProgram">Offline</option>
           </select>
 
+          <input
+            className="tpo-dept-input"
+            placeholder="Undergraduate Degree"
+            value={degree}
+            onChange={(e) => {
+              setPage(0);
+              setDegree(e.target.value);
+            }}
+          />
+
           <select
             value={status}
             onChange={(e) => {
@@ -114,27 +126,29 @@ export default function TpoCourses() {
                 <thead>
                   <tr>
                     <th>Course Name</th>
+                    <th>Undergraduate Degree</th>
                     <th>Category</th>
                     <th>Students</th>
                     <th>Status</th>
-                    <th>Completion %</th>
+                    <th>Completed</th>
                   </tr>
                 </thead>
                 <tbody>
                   {data.items.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="tpo-table-empty">No courses match your filters.</td>
+                      <td colSpan={6} className="tpo-table-empty">No courses match your filters.</td>
                     </tr>
                   ) : (
                     data.items.map((c) => (
                       <tr key={c.courseId}>
                         <td className="tpo-table-title">{c.courseName}</td>
+                        <td>{c.degree}</td>
                         <td>{CATEGORY_LABELS[c.category] || c.category}</td>
                         <td>{c.students}</td>
                         <td>
                           <span className={`tpo-badge ${statusClass(c.status)}`}>{c.status}</span>
                         </td>
-                        <td>{c.completionPct}%</td>
+                        <td>{c.completedStudents.toLocaleString()}/{c.students}</td>
                       </tr>
                     ))
                   )}

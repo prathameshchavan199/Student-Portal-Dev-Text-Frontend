@@ -16,7 +16,7 @@ function statusClass(status) {
 
 export default function TpoStudents() {
   const [search, setSearch] = useState('');
-  const [department, setDepartment] = useState('');
+  const [degree, setDegree] = useState('');
   const [year, setYear] = useState('');
   const [status, setStatus] = useState('');
   const [page, setPage] = useState(0);
@@ -26,7 +26,7 @@ export default function TpoStudents() {
   useEffect(() => {
     const params = { page, size: PAGE_SIZE };
     if (search.trim()) params.search = search.trim();
-    if (department.trim()) params.department = department.trim();
+    if (degree.trim()) params.degree = degree.trim();
     if (year) params.year = year;
     if (status) params.status = status;
 
@@ -39,7 +39,7 @@ export default function TpoStudents() {
         console.error('TPO students fetch error:', err);
         setError('Could not load students.');
       });
-  }, [search, department, year, status, page]);
+  }, [search, degree, year, status, page]);
 
   const totalPages = data?.totalPages ?? 1;
 
@@ -61,11 +61,11 @@ export default function TpoStudents() {
 
           <input
             className="tpo-dept-input"
-            placeholder="Department"
-            value={department}
+            placeholder="Undergraduate Degree"
+            value={degree}
             onChange={(e) => {
               setPage(0);
-              setDepartment(e.target.value);
+              setDegree(e.target.value);
             }}
           />
 
@@ -106,7 +106,7 @@ export default function TpoStudents() {
                   <tr>
                     <th>Student ID</th>
                     <th>Name</th>
-                    <th>Department</th>
+                    <th>Undergraduate Degree</th>
                     <th>Year</th>
                     <th>Status</th>
                     <th>Avg Score</th>
@@ -124,7 +124,7 @@ export default function TpoStudents() {
                       <tr key={s.studentId}>
                         <td>{s.studentId}</td>
                         <td className="tpo-table-title">{s.name}</td>
-                        <td>{s.department}</td>
+                        <td>{s.degree}</td>
                         <td>{s.year}</td>
                         <td>
                           <span className={`tpo-badge ${statusClass(s.status)}`}>{s.status}</span>

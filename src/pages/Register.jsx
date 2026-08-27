@@ -140,7 +140,7 @@ const createEmptyDraft = () => ({
   undergraduateUniversity: '',
   undergraduateGpa: '',
   undergraduateYearOfPassing: String(new Date().getFullYear()),
-  department: '',
+  isPursuingUndergraduate: null,
   currentYear: '',
   postGraduationDegree: '',
   postGraduationOtherDegree: '',
@@ -323,7 +323,7 @@ const buildJsonFields = (d, email) => ({
   undergraduateUniversity: d.undergraduateUniversity,
   undergraduateGpa: d.undergraduateGpa,
   undergraduateYearOfPassing: d.undergraduateYearOfPassing,
-  department: d.department,
+  isPursuingUndergraduate: d.isPursuingUndergraduate,
   currentYear: d.currentYear,
   hasPostGraduation: d.hasPostGraduation,
   postGraduationDegree: d.postGraduationDegree,
@@ -427,7 +427,7 @@ const mapServerDraftToForm = (s) => ({
   undergraduateUniversity:   s.undergraduateUniversity   || '',
   undergraduateGpa:          s.undergraduateGpa          || '',
   undergraduateYearOfPassing: s.undergraduateYearOfPassing || String(new Date().getFullYear()),
-  department:                 s.department                || '',
+  isPursuingUndergraduate:    s.isPursuingUndergraduate   ?? null,
   currentYear:                s.currentYear                || '',
   hasPostGraduation:         s.hasPostGraduation         ?? null,
   postGraduationDegree:      s.postGraduationDegree      || '',
@@ -677,7 +677,8 @@ function StepDetails({ data, setData, onNext }) {
       ...data,
       qualificationAfter10th: data.qualificationAfter10th || '',
       hasPostGraduation: data.hasPostGraduation === true ? 'true' : data.hasPostGraduation === false ? 'false' : '',
-      hasUndergraduate: data.hasUndergraduate === true ? 'true' : data.hasUndergraduate === false ? 'false' : ''
+      hasUndergraduate: data.hasUndergraduate === true ? 'true' : data.hasUndergraduate === false ? 'false' : '',
+      isPursuingUndergraduate: data.isPursuingUndergraduate === true ? 'true' : data.isPursuingUndergraduate === false ? 'false' : ''
     }
   });
 
@@ -686,7 +687,8 @@ function StepDetails({ data, setData, onNext }) {
       ...data,
       qualificationAfter10th: data.qualificationAfter10th || '',
       hasPostGraduation: data.hasPostGraduation === true ? 'true' : data.hasPostGraduation === false ? 'false' : '',
-      hasUndergraduate: data.hasUndergraduate === true ? 'true' : data.hasUndergraduate === false ? 'false' : ''
+      hasUndergraduate: data.hasUndergraduate === true ? 'true' : data.hasUndergraduate === false ? 'false' : '',
+      isPursuingUndergraduate: data.isPursuingUndergraduate === true ? 'true' : data.isPursuingUndergraduate === false ? 'false' : ''
     });
   }, [data, reset]);
 
@@ -698,6 +700,7 @@ function StepDetails({ data, setData, onNext }) {
   const qualificationAfter10th = watch('qualificationAfter10th') ?? '';
   const hasPostGraduation = watch('hasPostGraduation') ?? '';
   const hasUndergraduate = watch('hasUndergraduate') ?? '';
+  const isPursuingUndergraduate = watch('isPursuingUndergraduate') ?? '';
   const undergraduateDegree = watch('undergraduateDegree');
 
   useEffect(() => {
@@ -729,6 +732,7 @@ function StepDetails({ data, setData, onNext }) {
     hasdiploma: v.qualificationAfter10th === 'diploma',
     hasPostGraduation: v.hasPostGraduation === 'true',
     hasUndergraduate: v.hasUndergraduate === 'true',
+    isPursuingUndergraduate: v.isPursuingUndergraduate === 'true',
   });
 
   const submit = async (v) => {
@@ -1247,12 +1251,30 @@ function StepDetails({ data, setData, onNext }) {
             </label>
           </div>
         </div>
+        
         {hasUndergraduate === 'true' && (
+          
         <div className="mt-3" style={{ borderRadius: 12 }}>
           <div className="card-dark" >
             <SectionHeader className="mb-2" style={{ fontSize: 16 }}>
               Undergraduate Degree
             </SectionHeader>
+            <div className="col-md-12">
+                <div className="mb-3">
+                  <div className="label-sm">Are you currently pursuing this graduation?</div>
+                  <div className="yesno" style={{ maxWidth: 340 }}>
+                    <label className={isPursuingUndergraduate === 'true' ? 'active' : ''}>
+                      <input type="radio" value="true" {...register('isPursuingUndergraduate')} />
+                      Yes
+                    </label>
+                    <label className={isPursuingUndergraduate === 'false' ? 'active' : ''}>
+                      <input type="radio" value="false" {...register('isPursuingUndergraduate')} />
+                      No
+                    </label>
+                  </div>
+                </div>
+              </div>
+              
             <div className="row g-3">
 
               <div className="col-md-12">
@@ -1272,6 +1294,26 @@ function StepDetails({ data, setData, onNext }) {
                   {errors.undergraduateDegree && <div className="text-danger small mt-1">{errors.undergraduateDegree.message}</div>}
                 </div>
               </div>
+              {isPursuingUndergraduate === 'true' && (
+              <div className="col-md-12">
+                <div className="mb-3">
+                  <div className="label-sm">Current Year of Study</div>
+                  <div className="select-field-wrap">
+                    <select className="form-select dark-input select-with-icon" {...register('currentYear', {
+                      validate: v => (hasUndergraduate === 'true' && isPursuingUndergraduate === 'true') ? (!!v || 'Required') : true
+                    })}>
+                      <option value="">Select Year</option>
+                      <option value="1st Year">1st Year</option>
+                      <option value="2nd Year">2nd Year</option>
+                      <option value="3rd Year">3rd Year</option>
+                      <option value="4th Year">4th Year</option>
+                    </select>
+                    <span className="select-field-icon"><FiChevronDown /></span>
+                  </div>
+                  {errors.currentYear && <div className="text-danger small mt-1">{errors.currentYear.message}</div>}
+                </div>
+              </div>
+              )}
 
               {undergraduateDegree === 'Other' && (
                 <div className="col-md-12">
@@ -1359,35 +1401,8 @@ function StepDetails({ data, setData, onNext }) {
                   {errors.undergraduateYearOfPassing && <div className="text-danger small mt-1">{errors.undergraduateYearOfPassing.message}</div>}
                 </div>
               </div>
-              <div className="col-md-12">
-                <DarkInput
-                  label="Department"
-                  placeholder="e.g. Computer Science, Electronics, Mechanical"
-                  error={errors.department?.message}
-                  register={register('department', {
-                    validate: v => hasUndergraduate === 'true' ? (!!v?.trim() || 'Required') : true
-                  })}
-                />
-              </div>
-              <div className="col-md-12">
-                <div className="mb-3">
-                  <div className="label-sm">Current Year of Study</div>
-                  <div className="select-field-wrap">
-                    <select className="form-select dark-input select-with-icon" {...register('currentYear', {
-                      validate: v => hasUndergraduate === 'true' ? (!!v || 'Required') : true
-                    })}>
-                      <option value="">Select Year</option>
-                      <option value="1st Year">1st Year</option>
-                      <option value="2nd Year">2nd Year</option>
-                      <option value="3rd Year">3rd Year</option>
-                      <option value="4th Year">4th Year</option>
-                      <option value="Graduated">Graduated</option>
-                    </select>
-                    <span className="select-field-icon"><FiChevronDown /></span>
-                  </div>
-                  {errors.currentYear && <div className="text-danger small mt-1">{errors.currentYear.message}</div>}
-                </div>
-              </div>
+              
+              
               <div className="col-12">
                 <div className="mb-0">
                   <label htmlFor="undergraduateMarksheetFile" className="upload-area w-100 d-flex flex-column align-items-center justify-content-center">
@@ -2117,8 +2132,8 @@ function StepPreview({ data, onBack, onSubmitSuccess, setStep }) {
           ['University', data.undergraduateUniversity || '—'],
           ['GPA/Percentage', data.undergraduateGpa || '—'],
           ['Year of Passing', data.undergraduateYearOfPassing || '—'],
-          ['Department', data.department || '—'],
-          ['Current Year of Study', data.currentYear || '—'],
+          ['Currently Pursuing', formatYesNo(data.isPursuingUndergraduate)],
+          ...(data.isPursuingUndergraduate ? [['Current Year of Study', data.currentYear || '—']] : []),
           ['Certificate', formatFile(data.undergraduateMarksheetFile)],
         ] : []),
       ]} />
