@@ -86,6 +86,27 @@ const Btech_Branch_OPTIONS = [
   'Other',
 ];
 
+const Bsc_Specialization_OPTIONS = [
+  'B.Sc. Physics',
+  'B.Sc. Chemistry',
+  'B.Sc. Mathematics',
+  'B.Sc. Statistics',
+  'B.Sc. Botany',
+  'B.Sc. Zoology',
+  'B.Sc. Computer Science',
+  'B.Sc. Information Technology',
+  'B.Sc. Biotechnology',
+  'B.Sc. Microbiology',
+  'B.Sc. Biochemistry',
+  'B.Sc. Environmental Science',
+  'B.Sc. Electronics',
+  'B.Sc. Agriculture',
+  'B.Sc. Psychology',
+  'B.Sc. Geography',
+  'B.Sc. Geology',
+  'B.Sc. Forensic Science',
+];
+
 const TECH_STACK_OPTIONS = ['Full Stack', 'Front-end Only', 'Back-end Only', 'Mobile App', 'Data Science / ML', 'DevOps / Cloud', 'Embedded Systems', 'Other'];
 const FRONTEND_OPTIONS = ['React.js', 'Vue.js', 'Angular', 'Next.js', 'HTML / CSS / JS', 'Flutter', 'React Native', 'Android (Kotlin)', 'iOS (Swift)', 'Other'];
 const BACKEND_OPTIONS = ['Node.js (Express)', 'Python (Django)', 'Python (Flask)', 'Python (FastAPI)', 'Java (Spring Boot)', 'PHP (Laravel)', 'Ruby on Rails', '.NET (C#)', 'Go', 'Other'];
@@ -319,7 +340,7 @@ const buildJsonFields = (d, email) => ({
   hasUndergraduate: d.hasUndergraduate,
   undergraduateDegree: d.undergraduateDegree,
   undergraduateOtherDegree: d.undergraduateOtherDegree,
-  btechDegree: d.btechDegree,
+  undergraduateSpecialization: d.specialization,
   undergraduateUniversity: d.undergraduateUniversity,
   undergraduateGpa: d.undergraduateGpa,
   undergraduateYearOfPassing: d.undergraduateYearOfPassing,
@@ -422,8 +443,7 @@ const mapServerDraftToForm = (s) => ({
   hasUndergraduate:          s.hasUndergraduate          ?? null,
   undergraduateDegree:       s.undergraduateDegree       || '',
   undergraduateOtherDegree:  s.undergraduateOtherDegree  || '',
-  // Backend: btechBranch → form: btechDegree
-  btechDegree:               s.btechBranch               || '',
+  specialization:             s.undergraduateSpecialization || '',
   undergraduateUniversity:   s.undergraduateUniversity   || '',
   undergraduateGpa:          s.undergraduateGpa          || '',
   undergraduateYearOfPassing: s.undergraduateYearOfPassing || String(new Date().getFullYear()),
@@ -702,6 +722,16 @@ function StepDetails({ data, setData, onNext }) {
   const hasUndergraduate = watch('hasUndergraduate') ?? '';
   const isPursuingUndergraduate = watch('isPursuingUndergraduate') ?? '';
   const undergraduateDegree = watch('undergraduateDegree');
+
+  const prevUndergraduateDegreeRef = useRef(undergraduateDegree);
+  useEffect(() => {
+    if (prevUndergraduateDegreeRef.current !== undergraduateDegree) {
+      // B.Tech and B.Sc each have their own specialization list — clear a stale
+      // selection from the other list when the degree changes.
+      setValue('specialization', '');
+      prevUndergraduateDegreeRef.current = undergraduateDegree;
+    }
+  }, [undergraduateDegree, setValue]);
 
   useEffect(() => {
     if (qualificationAfter10th) setToggleErrors(e => ({ ...e, qualificationAfter10th: false }));
@@ -1251,15 +1281,15 @@ function StepDetails({ data, setData, onNext }) {
             </label>
           </div>
         </div>
-        
         {hasUndergraduate === 'true' && (
-          
         <div className="mt-3" style={{ borderRadius: 12 }}>
           <div className="card-dark" >
             <SectionHeader className="mb-2" style={{ fontSize: 16 }}>
               Undergraduate Degree
             </SectionHeader>
-            <div className="col-md-12">
+            <div className="row g-3">
+
+              <div className="col-md-12">
                 <div className="mb-3">
                   <div className="label-sm">Are you currently pursuing this graduation?</div>
                   <div className="yesno" style={{ maxWidth: 340 }}>
@@ -1274,8 +1304,6 @@ function StepDetails({ data, setData, onNext }) {
                   </div>
                 </div>
               </div>
-              
-            <div className="row g-3">
 
               <div className="col-md-12">
                 <div className="mb-3">
@@ -1294,6 +1322,7 @@ function StepDetails({ data, setData, onNext }) {
                   {errors.undergraduateDegree && <div className="text-danger small mt-1">{errors.undergraduateDegree.message}</div>}
                 </div>
               </div>
+
               {isPursuingUndergraduate === 'true' && (
               <div className="col-md-12">
                 <div className="mb-3">
@@ -1330,22 +1359,22 @@ function StepDetails({ data, setData, onNext }) {
 
             
 
-              {undergraduateDegree === 'B.Tech' && (
+              {(undergraduateDegree === 'B.Tech' || undergraduateDegree === 'B.Sc') && (
                 <div className="col-md-12">
                 <div className="mb-3">
-                  <div className="label-sm">Degree</div>
+                  <div className="label-sm">Specialization</div>
                   <div className="select-field-wrap">
-                    <select className="form-select dark-input select-with-icon" {...register('btechDegree', {
-                      validate: v => (hasUndergraduate === 'true' && undergraduateDegree === 'B.Tech') ? (!!v || 'Required') : true
+                    <select className="form-select dark-input select-with-icon" {...register('specialization', {
+                      validate: v => (hasUndergraduate === 'true' && (undergraduateDegree === 'B.Tech' || undergraduateDegree === 'B.Sc')) ? (!!v || 'Required') : true
                     })}>
-                      <option value="">Select Degree</option>
-                      {Btech_Branch_OPTIONS.map(option => (
+                      <option value="">Select Specialization</option>
+                      {(undergraduateDegree === 'B.Tech' ? Btech_Branch_OPTIONS : Bsc_Specialization_OPTIONS).map(option => (
                         <option key={option} value={option}>{option}</option>
                       ))}
                     </select>
                     <span className="select-field-icon"><FiChevronDown /></span>
                   </div>
-                  {errors.undergraduateDegree && <div className="text-danger small mt-1">{errors.undergraduateDegree.message}</div>}
+                  {errors.specialization && <div className="text-danger small mt-1">{errors.specialization.message}</div>}
                 </div>
               </div>
               )}
@@ -2127,7 +2156,7 @@ function StepPreview({ data, onBack, onSubmitSuccess, setStep }) {
         ['Has Undergraduate', formatYesNo(data.hasUndergraduate)],
         ...(data.hasUndergraduate ? [
           ['Degree', data.undergraduateDegree || '—'],
-          ...(data.undergraduateDegree === 'B.Tech' ? [['Branch', data.btechDegree || '—']] : []),
+          ...((data.undergraduateDegree === 'B.Tech' || data.undergraduateDegree === 'B.Sc') ? [['Specialization', data.specialization || '—']] : []),
           ...(data.undergraduateDegree === 'Other' ? [['Other Degree', data.undergraduateOtherDegree || '—']] : []),
           ['University', data.undergraduateUniversity || '—'],
           ['GPA/Percentage', data.undergraduateGpa || '—'],
