@@ -8169,6 +8169,408 @@ body.mcq-active .dash-wrap { overflow: visible !important; }
   box-shadow: 0 6px 18px rgba(123, 92, 255, 0.28);
 }
 
+/* ── TPO Support ─────────────────────────────────────────────────────────── */
+
+.tpo-support-new-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+}
+.tpo-support-new-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(123, 92, 255, 0.12);
+  color: var(--purple);
+  display: grid;
+  place-items: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.tpo-support-new-title {
+  font-weight: 800;
+  color: var(--text-heading);
+  margin-bottom: 2px;
+}
+.tpo-support-new-sub {
+  font-size: 13px;
+  color: var(--text-subtle);
+}
+.tpo-support-new-arrow {
+  margin-left: auto;
+  color: var(--purple);
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.tpo-support-section-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text-heading);
+  margin: 4px 0 -6px;
+}
+
+.tpo-ticket-list {
+  display: grid;
+  gap: 14px;
+}
+.tpo-ticket-card {
+  display: flex;
+  gap: 14px;
+  padding: 18px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+}
+.tpo-ticket-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.tpo-ticket-body {
+  flex: 1;
+  min-width: 0;
+}
+.tpo-ticket-number {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--purple);
+}
+.tpo-ticket-desc {
+  font-weight: 800;
+  color: var(--text-heading);
+  margin: 2px 0 4px;
+}
+.tpo-ticket-sub {
+  font-size: 13px;
+  color: var(--text-subtle);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.tpo-ticket-date {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-subtle);
+  margin-top: 8px;
+}
+.tpo-ticket-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.tpo-ticket-status {
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.tpo-ticket-status.status-open { color: var(--brand-blue); }
+.tpo-ticket-status.status-in_progress { color: #f97316; }
+.tpo-ticket-status.status-resolved { color: #16803c; }
+
+.tpo-support-form {
+  display: grid;
+  gap: 22px;
+  max-width: 640px;
+}
+.tpo-form-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-heading);
+  margin-bottom: 8px;
+}
+.tpo-form-label .req { color: #dc2626; margin-left: 2px; }
+
+.tpo-priority-select {
+  position: relative;
+}
+.tpo-priority-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--card-bg);
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text-subtle);
+}
+.tpo-priority-trigger .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.tpo-priority-trigger .label {
+  font-weight: 700;
+  color: var(--text-heading);
+  flex-shrink: 0;
+}
+.tpo-priority-trigger .desc {
+  color: var(--text-subtle);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  text-align: left;
+}
+.tpo-priority-trigger .chev {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+.tpo-priority-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  box-shadow: 0 12px 30px rgba(20, 25, 40, 0.14);
+  z-index: 20;
+  overflow: hidden;
+}
+.tpo-priority-option {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  font-size: 14px;
+}
+.tpo-priority-option:hover { background: var(--page-bg); }
+.tpo-priority-option .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.tpo-priority-option .label {
+  font-weight: 700;
+  color: var(--text-heading);
+  flex-shrink: 0;
+}
+.tpo-priority-option .desc {
+  color: var(--text-subtle);
+  font-size: 13px;
+}
+
+.tpo-support-textarea {
+  width: 100%;
+  min-height: 140px;
+  resize: vertical;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 14px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--text-body);
+  background: var(--card-bg);
+}
+.tpo-support-textarea:focus {
+  outline: none;
+  border-color: var(--brand-blue);
+}
+.tpo-char-count {
+  text-align: right;
+  font-size: 12px;
+  color: var(--text-subtle);
+  margin-top: 6px;
+}
+
+.tpo-dropzone {
+  border: 2px dashed var(--border-color);
+  border-radius: 12px;
+  padding: 28px 16px;
+  text-align: center;
+  cursor: pointer;
+}
+.tpo-dropzone.drag-over {
+  border-color: var(--purple);
+  background: rgba(123, 92, 255, 0.05);
+}
+.tpo-dropzone-icon {
+  font-size: 28px;
+  color: var(--purple);
+  margin-bottom: 10px;
+}
+.tpo-dropzone-title {
+  font-weight: 800;
+  color: var(--text-heading);
+  margin-bottom: 4px;
+}
+.tpo-dropzone-title button {
+  border: 0;
+  background: none;
+  color: var(--purple);
+  font-weight: 800;
+  cursor: pointer;
+  padding: 0;
+}
+.tpo-dropzone-hint {
+  font-size: 12px;
+  color: var(--text-subtle);
+}
+
+.tpo-thumb-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+.tpo-thumb {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+.tpo-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.tpo-thumb-remove {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 0;
+  background: #dc2626;
+  color: #fff;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  font-size: 11px;
+  padding: 0;
+}
+.tpo-thumb-add {
+  aspect-ratio: 1;
+  border-radius: 10px;
+  border: 1px dashed var(--border-color);
+  background: rgba(123, 92, 255, 0.06);
+  color: var(--purple);
+  display: grid;
+  place-items: center;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.tpo-form-actions {
+  display: flex;
+  gap: 12px;
+}
+.tpo-btn-reset {
+  padding: 12px 24px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  background: var(--card-bg);
+  color: var(--text-heading);
+  font-weight: 700;
+  cursor: pointer;
+}
+.tpo-btn-submit {
+  padding: 12px 28px;
+  border-radius: 10px;
+  border: 0;
+  background: linear-gradient(120deg, #2f6fed, #7b5cff 55%, #f2542d 130%);
+  color: #fff;
+  font-weight: 800;
+  cursor: pointer;
+}
+.tpo-btn-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.tpo-back-btn {
+  border: 0;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  position: absolute;
+  left: 16px;
+}
+.tpo-page-title-bar.with-back {
+  position: relative;
+}
+
+.tpo-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 20, 35, 0.5);
+  display: grid;
+  place-items: center;
+  z-index: 200;
+  padding: 20px;
+}
+.tpo-modal-card {
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 32px;
+  text-align: center;
+  max-width: 360px;
+  width: 100%;
+}
+.tpo-modal-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(34, 197, 94, 0.12);
+  color: #16803c;
+  display: grid;
+  place-items: center;
+  font-size: 28px;
+  margin: 0 auto 18px;
+}
+.tpo-modal-message {
+  font-weight: 800;
+  color: var(--text-heading);
+  margin-bottom: 22px;
+}
+.tpo-modal-ok {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 0;
+  background: linear-gradient(120deg, #2f6fed, #7b5cff 55%, #f2542d 130%);
+  color: #fff;
+  font-weight: 800;
+  cursor: pointer;
+}
+
 @media (max-width: 900px) {
   .tpo-stats-row {
     grid-template-columns: repeat(2, minmax(0, 1fr));

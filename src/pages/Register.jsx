@@ -107,6 +107,14 @@ const Bsc_Specialization_OPTIONS = [
   'B.Sc. Forensic Science',
 ];
 
+const COLLEGE_OPTIONS = [
+  'Sunrise Institute of Technology',
+  'Greenfield College of Engineering',
+  'Horizon Arts & Science College',
+  'Silver Oak Institute of Management',
+  'Riverdale College of Computer Science',
+];
+
 const TECH_STACK_OPTIONS = ['Full Stack', 'Front-end Only', 'Back-end Only', 'Mobile App', 'Data Science / ML', 'DevOps / Cloud', 'Embedded Systems', 'Other'];
 const FRONTEND_OPTIONS = ['React.js', 'Vue.js', 'Angular', 'Next.js', 'HTML / CSS / JS', 'Flutter', 'React Native', 'Android (Kotlin)', 'iOS (Swift)', 'Other'];
 const BACKEND_OPTIONS = ['Node.js (Express)', 'Python (Django)', 'Python (Flask)', 'Python (FastAPI)', 'Java (Spring Boot)', 'PHP (Laravel)', 'Ruby on Rails', '.NET (C#)', 'Go', 'Other'];
@@ -1291,22 +1299,6 @@ function StepDetails({ data, setData, onNext }) {
 
               <div className="col-md-12">
                 <div className="mb-3">
-                  <div className="label-sm">Are you currently pursuing this graduation?</div>
-                  <div className="yesno" style={{ maxWidth: 340 }}>
-                    <label className={isPursuingUndergraduate === 'true' ? 'active' : ''}>
-                      <input type="radio" value="true" {...register('isPursuingUndergraduate')} />
-                      Yes
-                    </label>
-                    <label className={isPursuingUndergraduate === 'false' ? 'active' : ''}>
-                      <input type="radio" value="false" {...register('isPursuingUndergraduate')} />
-                      No
-                    </label>
-                  </div>
-                </div>
-              </div>
-
-              <div className="col-md-12">
-                <div className="mb-3">
                   <div className="label-sm">Degree</div>
                   <div className="select-field-wrap">
                     <select className="form-select dark-input select-with-icon" {...register('undergraduateDegree', {
@@ -1322,27 +1314,6 @@ function StepDetails({ data, setData, onNext }) {
                   {errors.undergraduateDegree && <div className="text-danger small mt-1">{errors.undergraduateDegree.message}</div>}
                 </div>
               </div>
-
-              {isPursuingUndergraduate === 'true' && (
-              <div className="col-md-12">
-                <div className="mb-3">
-                  <div className="label-sm">Current Year of Study</div>
-                  <div className="select-field-wrap">
-                    <select className="form-select dark-input select-with-icon" {...register('currentYear', {
-                      validate: v => (hasUndergraduate === 'true' && isPursuingUndergraduate === 'true') ? (!!v || 'Required') : true
-                    })}>
-                      <option value="">Select Year</option>
-                      <option value="1st Year">1st Year</option>
-                      <option value="2nd Year">2nd Year</option>
-                      <option value="3rd Year">3rd Year</option>
-                      <option value="4th Year">4th Year</option>
-                    </select>
-                    <span className="select-field-icon"><FiChevronDown /></span>
-                  </div>
-                  {errors.currentYear && <div className="text-danger small mt-1">{errors.currentYear.message}</div>}
-                </div>
-              </div>
-              )}
 
               {undergraduateDegree === 'Other' && (
                 <div className="col-md-12">
@@ -1380,14 +1351,21 @@ function StepDetails({ data, setData, onNext }) {
               )}
 
               <div className="col-md-12">
-                <DarkInput
-                  label="University/College"
-                  placeholder="University/College Name"
-                  error={errors.undergraduateUniversity?.message}
-                  register={register('undergraduateUniversity', {
-                    validate: v => hasUndergraduate === 'true' ? (!!v?.trim() || 'Required') : true
-                  })}
-                />
+                <div className="mb-3">
+                  <div className="label-sm">University/College</div>
+                  <div className="select-field-wrap">
+                    <select className="form-select dark-input select-with-icon" {...register('undergraduateUniversity', {
+                      validate: v => hasUndergraduate === 'true' ? (!!v || 'Required') : true
+                    })}>
+                      <option value="">Select University/College</option>
+                      {COLLEGE_OPTIONS.map(option => (
+                        <option key={option} value={option}>{option}</option>
+                      ))}
+                    </select>
+                    <span className="select-field-icon"><FiChevronDown /></span>
+                  </div>
+                  {errors.undergraduateUniversity && <div className="text-danger small mt-1">{errors.undergraduateUniversity.message}</div>}
+                </div>
               </div>
 
               <div className="col-6">
@@ -1430,8 +1408,41 @@ function StepDetails({ data, setData, onNext }) {
                   {errors.undergraduateYearOfPassing && <div className="text-danger small mt-1">{errors.undergraduateYearOfPassing.message}</div>}
                 </div>
               </div>
-              
-              
+              <div className="col-md-12">
+                <div className="mb-3">
+                  <div className="label-sm">Are you currently pursuing this graduation?</div>
+                  <div className="yesno" style={{ maxWidth: 340 }}>
+                    <label className={isPursuingUndergraduate === 'true' ? 'active' : ''}>
+                      <input type="radio" value="true" {...register('isPursuingUndergraduate')} />
+                      Yes
+                    </label>
+                    <label className={isPursuingUndergraduate === 'false' ? 'active' : ''}>
+                      <input type="radio" value="false" {...register('isPursuingUndergraduate')} />
+                      No
+                    </label>
+                  </div>
+                </div>
+              </div>
+              {isPursuingUndergraduate === 'true' && (
+              <div className="col-md-12">
+                <div className="mb-3">
+                  <div className="label-sm">Current Year of Study</div>
+                  <div className="select-field-wrap">
+                    <select className="form-select dark-input select-with-icon" {...register('currentYear', {
+                      validate: v => (hasUndergraduate === 'true' && isPursuingUndergraduate === 'true') ? (!!v || 'Required') : true
+                    })}>
+                      <option value="">Select Year</option>
+                      <option value="1st Year">1st Year</option>
+                      <option value="2nd Year">2nd Year</option>
+                      <option value="3rd Year">3rd Year</option>
+                      <option value="4th Year">4th Year</option>
+                    </select>
+                    <span className="select-field-icon"><FiChevronDown /></span>
+                  </div>
+                  {errors.currentYear && <div className="text-danger small mt-1">{errors.currentYear.message}</div>}
+                </div>
+              </div>
+              )}
               <div className="col-12">
                 <div className="mb-0">
                   <label htmlFor="undergraduateMarksheetFile" className="upload-area w-100 d-flex flex-column align-items-center justify-content-center">
@@ -1550,11 +1561,21 @@ function StepDetails({ data, setData, onNext }) {
               )}
 
               <div className="col-md-12">
-                <DarkInput label="University/College" placeholder="University/College Name"
-                  error={errors.postGraduationUniversity?.message}
-                  register={register('postGraduationUniversity', {
-                    validate: v => hasPostGraduation === 'true' ? (!!v?.trim() || 'Required') : true
-                  })} />
+                <div className="mb-3">
+                  <div className="label-sm">University/College</div>
+                  <div className="select-field-wrap">
+                    <select className="form-select dark-input select-with-icon" {...register('postGraduationUniversity', {
+                      validate: v => hasPostGraduation === 'true' ? (!!v || 'Required') : true
+                    })}>
+                      <option value="">Select University/College</option>
+                      {COLLEGE_OPTIONS.map(option => (
+                        <option key={option} value={option}>{option}</option>
+                      ))}
+                    </select>
+                    <span className="select-field-icon"><FiChevronDown /></span>
+                  </div>
+                  {errors.postGraduationUniversity && <div className="text-danger small mt-1">{errors.postGraduationUniversity.message}</div>}
+                </div>
               </div>
               <div className="col-6">
                 <DarkInput  label="Percentage" placeholder="90"

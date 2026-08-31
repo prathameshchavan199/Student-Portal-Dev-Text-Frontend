@@ -27,7 +27,6 @@ function pctClass(pct) {
 
 export default function TpoAssessments() {
   const [search, setSearch] = useState('');
-  const [type, setType] = useState('');
   const [degree, setDegree] = useState('');
   const [page, setPage] = useState(0);
   const [data, setData] = useState(null);
@@ -36,7 +35,6 @@ export default function TpoAssessments() {
   useEffect(() => {
     const params = { page, size: PAGE_SIZE };
     if (search.trim()) params.search = search.trim();
-    if (type) params.type = type;
     if (degree.trim()) params.degree = degree.trim();
 
     axios
@@ -48,10 +46,9 @@ export default function TpoAssessments() {
         console.error('TPO assessments fetch error:', err);
         setError('Could not load assessments.');
       });
-  }, [search, type, degree, page]);
+  }, [search, degree, page]);
 
   const totalPages = data?.totalPages ?? 1;
-  const types = Array.from(new Set((data?.items || []).map((a) => a.type))).filter(Boolean);
 
   return (
     <TpoShell title="Assessments">
@@ -69,7 +66,7 @@ export default function TpoAssessments() {
           <label className="tpo-search-field">
             <FiSearch />
             <input
-              placeholder="Search assessments, skills, or topics..."
+              placeholder="Search assessments..."
               value={search}
               onChange={(e) => {
                 setPage(0);
@@ -77,19 +74,6 @@ export default function TpoAssessments() {
               }}
             />
           </label>
-
-          <select
-            value={type}
-            onChange={(e) => {
-              setPage(0);
-              setType(e.target.value);
-            }}
-          >
-            <option value="">All Types</option>
-            {types.map((t) => (
-              <option key={t} value={t}>{t}</option>
-            ))}
-          </select>
 
           <input
             className="tpo-dept-input"

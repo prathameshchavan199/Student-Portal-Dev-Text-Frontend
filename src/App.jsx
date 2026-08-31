@@ -30,6 +30,7 @@ import TpoDashboard from './pages/tpo/TpoDashboard.jsx';
 import TpoCourses from './pages/tpo/TpoCourses.jsx';
 import TpoStudents from './pages/tpo/TpoStudents.jsx';
 import TpoAssessments from './pages/tpo/TpoAssessments.jsx';
+import TpoSupport from './pages/tpo/TpoSupport.jsx';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -80,6 +81,7 @@ export default function App() {
       <Route path="/tpo/courses" element={<AdminRoute><TpoCourses /></AdminRoute>} />
       <Route path="/tpo/students" element={<AdminRoute><TpoStudents /></AdminRoute>} />
       <Route path="/tpo/assessments" element={<AdminRoute><TpoAssessments /></AdminRoute>} />
+      <Route path="/tpo/support" element={<AdminRoute><TpoSupport /></AdminRoute>} />
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
     </>

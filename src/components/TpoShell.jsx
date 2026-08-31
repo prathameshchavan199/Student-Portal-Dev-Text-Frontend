@@ -11,7 +11,7 @@ const navItems = [
   { icon: FiUsers,     label: 'Students',    path: '/tpo/students' },
   { icon: FiBookOpen,  label: 'Courses',     path: '/tpo/courses' },
   { icon: FiClipboard, label: 'Assessments', path: '/tpo/assessments' },
-  { icon: FiHelpCircle, label: 'Support',    path: '/tpo/dashboard', disabled: true },
+  { icon: FiHelpCircle, label: 'Support',    path: '/tpo/support' },
 ];
 
 function initialsFor(name) {
