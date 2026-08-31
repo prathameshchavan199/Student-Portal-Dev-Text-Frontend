@@ -255,7 +255,7 @@ export default function TpoSupport() {
         )}
 
         {view === 'new' && (
-          <div className="tpo-support-form">
+          <div className="tpo-support-form col-md-12">
             <div>
               <div className="tpo-form-label">Priority<span className="req">*</span></div>
               <PrioritySelect value={priority} onChange={setPriority} />
