@@ -31,6 +31,9 @@ import TpoCourses from './pages/tpo/TpoCourses.jsx';
 import TpoStudents from './pages/tpo/TpoStudents.jsx';
 import TpoAssessments from './pages/tpo/TpoAssessments.jsx';
 import TpoSupport from './pages/tpo/TpoSupport.jsx';
+import PeerHome from './pages/peer/PeerHome.jsx';
+import PeerTeach from './pages/peer/PeerTeach.jsx';
+import PeerLearn from './pages/peer/PeerLearn.jsx';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -76,6 +79,9 @@ export default function App() {
       <Route path="/courses-progress" element={<ProtectedRoute><CourseProgress /></ProtectedRoute>} />
       <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
       <Route path="/profile/:docFile" element={<ProtectedRoute><DocViewer /></ProtectedRoute>} />
+      <Route path="/peer" element={<ProtectedRoute><PeerHome /></ProtectedRoute>} />
+      <Route path="/peer/teach" element={<ProtectedRoute><PeerTeach /></ProtectedRoute>} />
+      <Route path="/peer/learn" element={<ProtectedRoute><PeerLearn /></ProtectedRoute>} />
       {/* <Route path="/admin/add-course" element={<ProtectedRoute><AddCourse /></ProtectedRoute>} /> */}
       <Route path="/tpo/dashboard" element={<AdminRoute><TpoDashboard /></AdminRoute>} />
       <Route path="/tpo/courses" element={<AdminRoute><TpoCourses /></AdminRoute>} />

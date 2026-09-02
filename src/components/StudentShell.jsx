@@ -11,6 +11,7 @@ import {
   FiMenu,
   FiSearch,
   FiTrendingUp,
+  FiUsers,
   FiVideo,
   FiX,
 } from 'react-icons/fi';
@@ -25,6 +26,7 @@ const mainNavItems = [
   { icon: FiBook, label: 'Courses', path: '/courses' },
   { icon: FiTrendingUp, label: 'Course Progress', path: '/course-progress' },
   { icon: FiClipboard, label: 'Assessment', path: '/assessment' },
+  { icon: FiUsers, label: 'Peer to Peer', path: '/peer' },
   { icon: FiBriefcase, label: 'Campus Placement Programs', path: '/dashboard' },
   { icon: FiVideo, label: 'Interactive Sessions', path: '/dashboard' },
 ];

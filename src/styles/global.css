@@ -1658,6 +1658,7 @@ a:hover { color: #ffb558; }
 .course-booking-card-horizontal .course-booking-description {
   margin: 10px 0 0;
 }
+
 .course-booking-card-horizontal .course-booking-meta {
   align-self: stretch;
   align-content: start;
@@ -7654,6 +7655,13 @@ body.mcq-active .dash-wrap { overflow: visible !important; }
 .db-session-sub   { font-size: 12px; color: var(--text-subtle); margin: 0; }
 .db-session-count { font-size: 32px; font-weight: 800;  flex-shrink: 0; }
 /* .db-session-count-orange              { color: #f97316 !important; } */
+
+
+.pp-container{
+  padding: 20px 16px;
+  background: var(--card-bg);
+  margin: 20px;
+}
 
 /* ── TPO Admin Panel ─────────────────────────────────────────────────────── */
 
