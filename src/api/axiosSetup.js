@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-export const API_BASE_URL = 'http://localhost:8081'; // local dev
-// export const API_BASE_URL = 'https://api.cyfenix.com'; // production
+// export const API_BASE_URL = 'http://localhost:8081'; // local dev
+export const API_BASE_URL = 'https://api.cyfenix.com'; // production
 export const GOOGLE_CLIENT_ID = '77085865510-ra9jjmlc59c5ia7eqhs6ler10u266fhf.apps.googleusercontent.com';
 
 
