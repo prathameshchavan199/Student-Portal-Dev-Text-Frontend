@@ -63,6 +63,14 @@ export const peerStyles = `
     color: var(--text-subtle); white-space: nowrap;
   }
   .pp-tab.active { background: var(--grad-btn); color: #fff; border-color: transparent; }
+
+  /* .course-shell only sets min-height, and .course-phone-panel only wraps its
+   * content, so the white panel can end before the viewport does and let the
+   * dotted background show through underneath. These make the panel stretch
+   * to fill the remaining height instead. */
+  .pp-shell-fill { display: flex; flex-direction: column; }
+  .pp-panel-fill { display: flex; flex-direction: column; flex: 1; }
+  .pp-panel-body { flex: 1; display: flex; flex-direction: column; }
 `;
 
 /* Page shell used by every Peer to Peer page — reuses the exact same
@@ -73,8 +81,8 @@ export const peerStyles = `
 export function PeerPanel({ icon: Icon, topbarLabel = 'Peer to Peer', title, subtitle, showBack = false, children }) {
   const navigate = useNavigate();
   return (
-    <main className="course-shell">
-      <section className="course-phone-panel">
+    <main className="course-shell pp-shell-fill">
+      <section className="course-phone-panel pp-panel-fill">
         <div className="course-phone-topbar">
           {showBack && (
             <button type="button" className="mcq-topbar-back" aria-label="Go back" onClick={() => navigate(-1)}>
@@ -86,7 +94,7 @@ export function PeerPanel({ icon: Icon, topbarLabel = 'Peer to Peer', title, sub
         </div>
         <h1>{title}</h1>
         {subtitle && <p>{subtitle}</p>}
-        {children}
+        <div className="pp-panel-body">{children}</div>
       </section>
     </main>
   );

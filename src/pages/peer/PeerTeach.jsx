@@ -59,7 +59,7 @@ export default function PeerTeach() {
   return (
     <StudentShell>
       <style>{peerStyles}</style>
-      <PeerPanel topbarLabel="Peer to Peer" title="Teach" subtitle="Share what you know with other students." showBack>
+      <PeerPanel  topbarLabel="Peer to Peer" title="Teach" subtitle="Share what you know with other students." showBack>
         <div style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap' }}>
           {TABS.map((t) => (
             <button key={t.id} type="button" className={`pp-tab ${tab === t.id ? 'active' : ''}`} onClick={() => setTab(t.id)}>

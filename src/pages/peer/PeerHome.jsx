@@ -10,19 +10,21 @@ function RoleCard({ icon: Icon, title, blurb, cta, chipClass, onClick }) {
       onClick={onClick}
       style={{
         flex: '1 1 260px', cursor: 'pointer', minWidth: 240,
-        display: 'flex', flexDirection: 'column', gap: 12,
+        display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
         transition: 'transform 0.15s, box-shadow 0.15s',
       }}
       onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 30px rgba(0,0,0,0.08)'; }}
       onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; }}
     >
-      <span className={`pp-icon-chip ${chipClass}`} style={{ width: 46, height: 46, borderRadius: 12 }}>
-        <Icon size={22} />
-      </span>
-      <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-heading)' }}>{title}</div>
-      <div style={{ fontSize: 13.5, color: 'var(--text-subtle)', lineHeight: 1.5 }}>{blurb}</div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <span className={`pp-icon-chip ${chipClass}`} style={{ width: 46, height: 46, borderRadius: 12 }}>
+          <Icon size={22} />
+        </span>
+        <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-heading)' }}>{title}</div>
+        <div style={{ fontSize: 13.5, color: 'var(--text-subtle)', lineHeight: 1.5 }}>{blurb}</div>
+      </div>
       <div style={{
-        marginTop: 6, display: 'flex', alignItems: 'center', gap: 6,
+        marginTop: 20, display: 'flex', alignItems: 'center', gap: 6,
         fontSize: 13, fontWeight: 700, color: chipClass === 'orange' ? 'var(--brand-orange)' : 'var(--brand-blue)',
       }}>
         {cta} <FiArrowRight size={14} />
@@ -38,12 +40,12 @@ export default function PeerHome() {
     <StudentShell>
       <style>{peerStyles}</style>
       <PeerPanel
-        icon={FiUsers}
+        
         topbarLabel="Peer to Peer"
         title="Learn together. Teach together."
         subtitle="Share what you know, or find a fellow student to learn from."
       >
-        <div style={{ display: 'flex', gap: 18, flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: 18, flexWrap: 'wrap', flex: 1, alignItems: 'stretch' }}>
           <RoleCard
             icon={FiBookOpen}
             title="I Want to Teach"
