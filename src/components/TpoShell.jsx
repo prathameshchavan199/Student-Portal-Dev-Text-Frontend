@@ -4,6 +4,7 @@ import axios from 'axios';
 import { FiGrid, FiUsers, FiBookOpen, FiClipboard, FiHelpCircle, FiMenu, FiX, FiLogOut } from 'react-icons/fi';
 import { AuthContext } from '../context/AuthContext.jsx';
 import { API_BASE_URL } from '../api/axiosSetup.js';
+import { clearAuthStorage } from '../utils/auth.js';
 import CyfenixLogo from '../assets/images/Cyfenix-Logo.png';
 
 const navItems = [
@@ -32,9 +33,8 @@ export default function TpoShell({ title, children }) {
     } catch (error) {
       console.error('Logout failed:', error);
     } finally {
-      setUser({});
-      localStorage.removeItem('user');
-      localStorage.removeItem('email');
+      setUser(null);
+      clearAuthStorage();
       navigate('/login');
     }
   };

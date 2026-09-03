@@ -8,6 +8,7 @@ import {
 import { AuthContext } from '../context/AuthContext.jsx';
 import StudentShell from '../components/StudentShell.jsx';
 import { API_BASE_URL } from '../api/axiosSetup.js';
+import { clearAuthStorage } from '../utils/auth.js';
 import { TOUR_OPEN_EVENT } from '../components/WelcomeTour.jsx';
 
 const val = (v) => (v && v !== 'Other' && String(v).trim() ? v : null);
@@ -95,9 +96,8 @@ export default function Profile({ onSignOut }) {
     } catch (err) {
       console.error('Logout failed:', err);
     } finally {
-      setUser({});
-      localStorage.removeItem('user');
-      localStorage.removeItem('email');
+      setUser(null);
+      clearAuthStorage();
       window.location.replace('/login');
     }
   };

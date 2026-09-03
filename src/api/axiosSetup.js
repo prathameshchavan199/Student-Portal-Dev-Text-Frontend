@@ -1,7 +1,8 @@
 import axios from 'axios';
+import { clearAuthStorage } from '../utils/auth.js';
 
-// export const API_BASE_URL = 'http://localhost:8081'; // local dev
-export const API_BASE_URL = 'https://api.cyfenix.com'; // production
+export const API_BASE_URL = 'http://localhost:8081'; // local dev
+// export const API_BASE_URL = 'https://api.cyfenix.com'; // production
 export const GOOGLE_CLIENT_ID = '77085865510-ra9jjmlc59c5ia7eqhs6ler10u266fhf.apps.googleusercontent.com';
 
 
@@ -39,12 +40,7 @@ axios.interceptors.response.use(
         }
         return axios(original);
       } catch {
-        localStorage.removeItem('user');
-        localStorage.removeItem('email');
-        localStorage.removeItem('name');
-        localStorage.removeItem('idToken');
-        localStorage.removeItem('refreshToken');
-        localStorage.removeItem('provider');
+        clearAuthStorage();
         window.location.href = '/login';
       }
     }

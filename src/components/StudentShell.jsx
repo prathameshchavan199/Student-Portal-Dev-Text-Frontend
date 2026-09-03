@@ -18,6 +18,7 @@ import {
 
 import { AuthContext } from '../context/AuthContext.jsx';
 import { useCourses } from '../context/CourseContext.jsx';
+import { clearAuthStorage } from '../utils/auth.js';
 import CyfenixLogo from '../assets/images/Cyfenix-Logo.png';
 import WelcomeTour from './WelcomeTour.jsx';
 
@@ -221,9 +222,8 @@ export default function StudentShell({
         }
       );
 
-      setUser({});
-      localStorage.removeItem('user');
-      localStorage.removeItem('email');
+      setUser(null);
+      clearAuthStorage();
 
       navigate('/login');
     } catch (error) {
