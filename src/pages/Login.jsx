@@ -37,7 +37,7 @@ export default function Login() {
       `&redirect_uri=${redirectUri}` +
       `&scope=email+openid+profile` +
       `&access_type=offline` +
-      `&prompt=select_account`;
+      `&prompt=consent select_account`;
   };
 
 

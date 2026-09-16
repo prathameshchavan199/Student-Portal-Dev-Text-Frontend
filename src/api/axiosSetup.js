@@ -15,6 +15,33 @@ axios.interceptors.request.use(request => {
   return request;
 });
 
+// Shared in-flight refresh promise. When several requests 401 at the same
+// moment (e.g. a page firing multiple GETs in parallel on mount), they all
+// await this ONE refresh call instead of each independently hitting
+// /api/users/refresh — which was causing Cognito to rate-limit the burst
+// of concurrent AdminInitiateAuth calls and force-logout the user even
+// though the token itself was refreshable.
+let refreshPromise = null;
+
+function performRefresh() {
+  const email = localStorage.getItem('email');
+  const refreshToken = localStorage.getItem('refreshToken');
+  const provider = localStorage.getItem('provider') || 'LOCAL';
+
+  return axios
+    .post(
+      `${API_BASE_URL}/api/users/refresh`,
+      { email, refreshToken, provider },
+      { withCredentials: true }
+    )
+    .then(res => {
+      if (res.data.idToken) {
+        localStorage.setItem('idToken', res.data.idToken);
+      }
+      return res.data.idToken;
+    });
+}
+
 axios.interceptors.response.use(
   response => response,
   async error => {
@@ -27,17 +54,12 @@ axios.interceptors.response.use(
     if (error.response?.status === 401 && !original._retry && !isAuthEndpoint) {
       original._retry = true;
       try {
-        const email = localStorage.getItem('email');
-        const refreshToken = localStorage.getItem('refreshToken');
-        const provider = localStorage.getItem('provider') || 'LOCAL';
-        const res = await axios.post(
-          `${API_BASE_URL}/api/users/refresh`,
-          { email, refreshToken, provider },
-          { withCredentials: true }
-        );
-        if (res.data.idToken) {
-          localStorage.setItem('idToken', res.data.idToken);
+        if (!refreshPromise) {
+          refreshPromise = performRefresh().finally(() => {
+            refreshPromise = null;
+          });
         }
+        await refreshPromise;
         return axios(original);
       } catch {
         clearAuthStorage();
