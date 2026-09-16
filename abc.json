@@ -1,0 +1,608 @@
+{
+      "userId": "1",
+      "salaryBudgetFinalSalaryPercentage": null,
+      "dateOfCurrentPosition": null,
+      "matrix1Label": null,
+      "salary": null,
+      "objective": "0.0",
+      "ssn": null,
+      "state": null,
+      "issueComments": null,
+      "timeZone": "Asia/Colombo",
+      "defaultLocale": "en_US",
+      "nationality": null,
+      "salaryBudgetLumpsumPercentage": null,
+      "sysCostOfSource": null,
+      "ethnicity": null,
+      "displayName": "Super Admin",
+      "payGrade": null,
+      "nickname": null,
+      "email": null,
+      "salaryBudgetExtra2Percentage": null,
+      "stockBudgetOther1Amount": null,
+      "talentPool": null,
+      "raiseProrating": null,
+      "sysStartingSalary": null,
+      "finalJobCode": null,
+      "lumpsum2Target": null,
+      "stockBudgetOptionAmount": null,
+      "country": null,
+      "lastModifiedDateTime": "/Date(1731456289000+0000)/",
+      "stockBudgetStockAmount": null,
+      "sciLastModified": "/Date(1658122801000+0000)/",
+      "criticalTalentComments": null,
+      "homePhone": null,
+      "veteranSeparated": null,
+      "stockBudgetOther2Amount": null,
+      "firstName": "Super",
+      "stockBudgetUnitAmount": null,
+      "salutation": null,
+      "impactOfLoss": null,
+      "benchStrength": null,
+      "sysSource": null,
+      "futureLeader": null,
+      "title": null,
+      "meritEffectiveDate": null,
+      "veteranProtected": null,
+      "lumpsumTarget": null,
+      "employeeClass": null,
+      "hireDate": "/Date(631152000000)/",
+      "matrix2Label": null,
+      "salaryLocal": null,
+      "citizenship": null,
+      "reasonForLeaving": null,
+      "riskOfLoss": null,
+      "location": "N/A",
+      "reloComments": null,
+      "username": "1",
+      "serviceDate": null,
+      "reviewFreq": null,
+      "salaryBudgetTotalRaisePercentage": null,
+      "jobCode": "Chief Operating Officer - DIMO Aftersales (JC01)",
+      "lastModifiedWithTZ": "/Date(1731456289000+0000)/",
+      "division": "N/A",
+      "custom02": null,
+      "meritTarget": null,
+      "custom01": "01-Jan",
+      "isAlumni": false,
+      "custom04": null,
+      "custom03": null,
+      "custom06": null,
+      "custom05": "DIESEL & MOTOR ENGINEERING PLC (DM01)",
+      "custom08": null,
+      "reloWilling": null,
+      "custom07": null,
+      "stockBudgetOther3Amount": null,
+      "custom09": null,
+      "onboardingId": null,
+      "fax": null,
+      "bonusBudgetAmount": null,
+      "salaryBudgetPromotionPercentage": null,
+      "dateOfPosition": null,
+      "finalJobFamily": null,
+      "teamMembersSize": 0,
+      "compensationEligible": null,
+      "lastReviewDate": null,
+      "compensationStockEligible": null,
+      "businessPhone": null,
+      "status": "t",
+      "lastName": "Admin",
+      "gender": " ",
+      "city": null,
+      "competency": "0.0",
+      "businessSegment": null,
+      "compensationSalaryRateUnits": null,
+      "newToPosition": null,
+      "assignmentUUID": "FD4BD5A2A111406DA1FBED6F3D0F4331",
+      "dateOfBirth": "/Date(0)/",
+      "localCurrencyCode": null,
+      "jobLevel": null,
+      "custom11": null,
+      "defaultFullName": "Super Admin",
+      "custom10": null,
+      "compensationReadOnly": null,
+      "custom13": null,
+      "custom12": null,
+      "custom15": null,
+      "custom14": "Retail_OLD (SF - BU01)",
+      "veteranDisabled": null,
+      "totalTeamSize": "0",
+      "married": null,
+      "cellPhone": null,
+      "veteranMedal": null,
+      "compensationSalaryRateType": null,
+      "zipCode": null,
+      "jobTitle": null,
+      "minority": null,
+      "suffix": null,
+      "matrixManaged": null,
+      "bonusTarget": null,
+      "addressLine1": null,
+      "jobFamily": null,
+      "jobRole": null,
+      "addressLine2": null,
+      "addressLine3": null,
+      "mi": null,
+      "potential": "0.0",
+      "origHireDate": null,
+      "level": null,
+      "salaryBudgetMeritPercentage": null,
+      "salaryProrating": null,
+      "lastModified": "/Date(1731456289000)/",
+      "promotionAmount": null,
+      "impactOfLossComments": null,
+      "empId": null,
+      "compensationSalaryEligible": null,
+      "department": "N/A",
+      "isPrimaryAssignment": true,
+      "reloLocation": null,
+      "companyExitDate": null,
+      "seatingChart": null,
+      "finalJobRole": null,
+      "performance": "0.0",
+      "compensationBonusEligible": null,
+      "keyPosition": null,
+      "salaryBudgetExtraPercentage": null,
+      "delegatorOfAutoDelegateConfigNav": {
+
+      },
+      "subjectUserOfONB2ProcessResponsibleNav": {
+
+      },
+      "secondManager": {
+
+      },
+      "ethnicityNav": {
+
+      },
+      "incumbentOfPositionNav": {
+
+      },
+      "genderNav": {
+
+      },
+      "externalCodeOfcust_InhouseGeneralReportNav": {
+
+      },
+      "subjectUserIdOfAchievementNav": {
+
+      },
+      "userIdOfExternalTimeRecordNav": {
+
+      },
+      "usersSysIdOfEmployeeDataReplicationNotificationNav": {
+
+      },
+      "externalCodeOfcust_PayrollMonthlyReportNav": {
+
+      },
+      "signatureUserOfComplianceFormSignatureNav": {
+
+      },
+      "workerIdOfBenefitsIntegrationRecurringInfoNav": {
+
+      },
+      "proxy": {
+
+      },
+      "targetIdOfTimeManagementAlertNav": {
+
+      },
+      "lastNudgedByOfONB2EquipmentActivityNav": {
+
+      },
+      "matrixReports": {
+
+      },
+      "userIdOfWorkScheduleNav": {
+
+      },
+      "workerIdOfBenefitEligibleUserNav": {
+
+      },
+      "subjectUserOfONB2EquipmentActivityNav": {
+
+      },
+      "userIdOfTimeCollectorNav": {
+
+      },
+      "userIdOfEmployeeTimeGroupNav": {
+
+      },
+      "userIdOfExternalAllowanceNav": {
+
+      },
+      "workerIdOfBenefitsExceptionNav": {
+
+      },
+      "externalCodeOfcust_HospitalizationCreditLetterNav": {
+
+      },
+      "cust_relatedPositionIncumbentOfPositionMatrixRelationshipNav": {
+
+      },
+      "benchStrengthNav": {
+
+      },
+      "manager": {
+
+      },
+      "userSysIdOfWorkOrderNav": {
+
+      },
+      "impactOfLossNav": {
+
+      },
+      "externalCodeOfcust_assetsNav": {
+
+      },
+      "userIdOfAccrualCalculationBaseNav": {
+
+      },
+      "externalCodeOfcust_BenefitsReportNav": {
+
+      },
+      "userIdOfHRISChangeLogDataReplicationNav": {
+
+      },
+      "workerIdOfBenefitEnrollmentNav": {
+
+      },
+      "cust_EmployeeIDOfcust_DependentDetailsNav": {
+
+      },
+      "responsibleOfONB2ProcessUserTaskNav": {
+
+      },
+      "atsUserIdOfONB2ProcessTriggerNav": {
+
+      },
+      "externalCodeOfcust_HospitalizationReimbursementNav": {
+
+      },
+      "nominationNav": {
+
+      },
+      "submittedByOfEmployeeTimeSheetNav": {
+
+      },
+      "reasonForLeavingNav": {
+
+      },
+      "userIdOfExternalTimeDataNav": {
+
+      },
+      "lastNudgedByOfONB2BuddyActivityNav": {
+
+      },
+      "workerIdOfBenefitEmployeeOptoutRequestsNav": {
+
+      },
+      "externalCodeOfcust_customRetirement_DateNav": {
+
+      },
+      "customManager": {
+
+      },
+      "managerOfONB2ProcessNav": {
+
+      },
+      "externalCodeOfcust_TimestatementNav": {
+
+      },
+      "workOrderOwnerIdOfWorkOrderNav": {
+
+      },
+      "usersSysIdOfEmpCostDistributionNav": {
+
+      },
+      "approverOfAdvanceNav": {
+
+      },
+      "costCenterManagerOfFOCostCenterNav": {
+
+      },
+      "userIdOfTimeContainerNav": {
+
+      },
+      "sysSourceNav": {
+
+      },
+      "secondReports": {
+
+      },
+      "externalCodeOfcust_Document_GenerationPortletNav": {
+
+      },
+      "userIdOfTimeRecordingNav": {
+
+      },
+      "userSysIdOfOneTimeDeductionNav": {
+
+      },
+      "userSysIdOfRecurringDeductionNav": {
+
+      },
+      "workerOfPaymentInformationV3Nav": {
+
+      },
+      "cust_GuarantorOfcust_Festival_LoanNav": {
+
+      },
+      "empInfo": {
+
+      },
+      "usersSysIdOfSecondaryAssignmentsItemNav": {
+
+      },
+      "userIdOfEmployeePayrollRunResultsNav": {
+
+      },
+      "externalCodeOfcust_Emp_BenefitsNav": {
+
+      },
+      "buddyUserOfONB2BuddyActivityNav": {
+
+      },
+      "externalCodeOfcust_OvertimeNav": {
+
+      },
+      "userIdOfTimeAccountNav": {
+
+      },
+      "userIdOfBudgetGroupNav": {
+
+      },
+      "completedByOfONB2EquipmentActivityNav": {
+
+      },
+      "externalCodeOfSkillProfileNav": {
+
+      },
+      "externalCodeOfcust_PayslipNav": {
+
+      },
+      "usersSysIdOfEmployeeDataReplicationElementNav": {
+
+      },
+      "headOfUnitOfFODivisionNav": {
+
+      },
+      "workerIdOfBenefitEventProcessingLogNav": {
+
+      },
+      "externalCodeOfcust_AttendanceRegularisationNav": {
+
+      },
+      "externalCodeOfcust_PayrollOpdInhouseExceededReportNav": {
+
+      },
+      "assigneeUserIdOfDomainEventAlertNav": {
+
+      },
+      "userOfChallengeInvitationNav": {
+
+      },
+      "responsibleUserOfONB2EquipmentActivityResponsibleNav": {
+
+      },
+      "reloWillingNav": {
+
+      },
+      "customReports": {
+
+      },
+      "completedByOfONB2ProcessUserTaskNav": {
+
+      },
+      "delegateeOfAutoDelegateDetailNav": {
+
+      },
+      "completedByOfONB2BuddyActivityNav": {
+
+      },
+      "subjectUserOfAssignedComplianceFormNav": {
+
+      },
+      "hr": {
+
+      },
+      "headOfUnitOfFOBusinessUnitNav": {
+
+      },
+      "workerIdOfBenefitEmployeeClaimNav": {
+
+      },
+      "responsibleUserOfONB2ProcessResponsibleNav": {
+
+      },
+      "workerIdOfACAReportingInformationNav": {
+
+      },
+      "externalCodeOfcust_PayrollTaxBenefitsNav": {
+
+      },
+      "responsibleUserOfONB2BuddyActivityResponsibleNav": {
+
+      },
+      "externalCodeOfcust_InhouseExceededReportNav": {
+
+      },
+      "subjectUserOfONB2ProcessUserTaskNav": {
+
+      },
+      "userIdOfTimeAccountSnapshotNav": {
+
+      },
+      "userIdOfTimeAccountPayoutNav": {
+
+      },
+      "completedByOfComplianceProcessTaskNav": {
+
+      },
+      "workerIdOfBenefitsIntegrationOneTimeInfoNav": {
+
+      },
+      "userIdOfTemporaryTimeInformationNav": {
+
+      },
+      "externalCodeOfcust_AssestsNav": {
+
+      },
+      "rehireUserOfONB2ProcessTriggerNav": {
+
+      },
+      "approvedByOfEmployeeTimeSheetNav": {
+
+      },
+      "externalCodeOfcust_HospitalizationNonPayingWardNav": {
+
+      },
+      "directReports": {
+
+      },
+      "externalCodeOfcust_Cust_OTapprovalNav": {
+
+      },
+      "personKeyNav": {
+
+      },
+      "usersSysIdOfEmployeeDataReplicationConfirmationNav": {
+
+      },
+      "cust_GenericOBJ_IDOfcust_Emp_BenefitsNav": {
+
+      },
+      "userIdOfEmployeeTimeSheetNav": {
+
+      },
+      "userSysIdOfNonRecurringPaymentNav": {
+
+      },
+      "declinedByOfComplianceDocumentFlowNav": {
+
+      },
+      "companyRepresentativeOfLegalEntitySAUNav": {
+
+      },
+      "competencyRatingNav": {
+
+      },
+      "workerIdOfBenefitClaimAccumulationNav": {
+
+      },
+      "workerIdOfBenefitProgramEnrollmentNav": {
+
+      },
+      "userPermissionsNav": {
+
+      },
+      "subjectUserOfComplianceFormDataNav": {
+
+      },
+      "assigneeUserIdOfTimeManagementAlertNav": {
+
+      },
+      "auditUserSysIdOfOneTimeDeductionNav": {
+
+      },
+      "responsibleUserOfAssignedComplianceFormNav": {
+
+      },
+      "userOfONB2ProcessNav": {
+
+      },
+      "restartedByOfONB2ProcessTaskNav": {
+
+      },
+      "subjectUserOfComplianceDocumentFlowNav": {
+
+      },
+      "userOfOnboardingInfoNav": {
+
+      },
+      "subjectUserIdOfActivityNav": {
+
+      },
+      "userIdOfDataReplicationProxyNav": {
+
+      },
+      "employmentIdentityOfDRTMPurgeFreezeNav": {
+
+      },
+      "matrixManager": {
+
+      },
+      "salutationNav": {
+
+      },
+      "userOfComplianceProcessNav": {
+
+      },
+      "userIdOfEmployeeTimeNav": {
+
+      },
+      "workerIdOfBenefitEnrollmentGroupNav": {
+
+      },
+      "contactEmployeeIdOfBenefitContactNav": {
+
+      },
+      "eventPublishedByOfBenefitEventProcessingLogNav": {
+
+      },
+      "completedByOfONB2ProcessTaskNav": {
+
+      },
+      "externalCodeOfcust_Emp_Display_BenefitsNav": {
+
+      },
+      "externalCodeOfcust_OutdoorExceededReportNav": {
+
+      },
+      "subjectUserOfONB2BuddyActivityNav": {
+
+      },
+      "externalCodeOfcust_Festival_LoanNav": {
+
+      },
+      "headOfUnitOfFODepartmentNav": {
+
+      },
+      "hrReports": {
+
+      },
+      "userIdOfAllowanceRecordingNav": {
+
+      },
+      "riskOfLossNav": {
+
+      },
+      "subjectUserOfComplianceProcessTaskNav": {
+
+      },
+      "externalCodeOfcust_OutdoorGeneralReportNav": {
+
+      },
+      "ownerOfTalentPoolNav": {
+
+      },
+      "subjectUserOfONB2DataCollectionUserConfigNav": {
+
+      },
+      "restartedByOfONB2ProcessUserTaskNav": {
+
+      },
+      "userIdOfPositionRightToReturnNav": {
+
+      },
+      "userSysIdOfAdvancesAccumulationNav": {
+
+      },
+      "workerIdOfBenefitEmployeeLifeEventDeclarationFormNav": {
+
+      },
+      "usersSysIdOfHireDateChangeNav": {
+
+      }
+    },
