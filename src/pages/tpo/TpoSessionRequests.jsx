@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import axios from 'axios';
 import {
-  FiSearch, FiX, FiCheck, FiUser, FiClock, FiUsers, FiFileText,
-  FiCheckCircle, FiXCircle, FiMoreVertical, FiCalendar, FiTag,
+  FiSearch, FiX, FiUser, FiClock, FiUsers, FiFileText,
+  FiCheckCircle, FiXCircle, FiCalendar, FiTag,
   FiBarChart2, FiAward,
 } from 'react-icons/fi';
 import TpoShell from '../../components/TpoShell.jsx';
@@ -69,9 +69,6 @@ export default function TpoSessionRequests() {
   const [page, setPage] = useState(0);
   const [selected, setSelected] = useState(null);
   const [actingId, setActingId] = useState(null);
-  const [menuOpenId, setMenuOpenId] = useState(null);
-
-  const menuRef = useRef(null);
 
   const load = useCallback(() => {
     setError('');
@@ -99,16 +96,6 @@ export default function TpoSessionRequests() {
   useEffect(() => {
     load();
   }, [load]);
-
-  /* Close the row kebab menu on any outside click. */
-  useEffect(() => {
-    if (menuOpenId === null) return undefined;
-    const onDocClick = (e) => {
-      if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpenId(null);
-    };
-    document.addEventListener('mousedown', onDocClick);
-    return () => document.removeEventListener('mousedown', onDocClick);
-  }, [menuOpenId]);
 
   const departments = useMemo(() => {
     const set = new Set();
@@ -158,14 +145,6 @@ export default function TpoSessionRequests() {
   const safePage = Math.min(page, totalPages - 1);
   const pageItems = filtered.slice(safePage * PAGE_SIZE, safePage * PAGE_SIZE + PAGE_SIZE);
 
-  /* Keep a row selected so the details panel is visible by default. Falls back to
-   * the first row of the current result set whenever the selection drops out of it. */
-  useEffect(() => {
-    if (loading || filtered.length === 0) return;
-    if (selected && filtered.some((r) => r.id === selected.id)) return;
-    setSelected(filtered[0]);
-  }, [loading, filtered, selected]);
-
   const filtersDirty =
     search !== '' || deptFilter !== ALL || levelFilter !== ALL || statusFilter !== ALL;
 
@@ -179,7 +158,6 @@ export default function TpoSessionRequests() {
 
   const respond = (id, approve) => {
     setActingId(id);
-    setMenuOpenId(null);
     axios
       .post(`${API_BASE_URL}/api/tpo/peer-sessions/${id}/respond`, { approve })
       .then((res) => {
@@ -200,6 +178,16 @@ export default function TpoSessionRequests() {
     setPage(0);
     setStatusFilter((prev) => (prev === bucket ? ALL : bucket));
   };
+
+  /* Close the details popup on Escape. */
+  useEffect(() => {
+    if (!selected) return undefined;
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') setSelected(null);
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [selected]);
 
   const selBadge = selected ? statusBadge(selected.status) : null;
   const selPending = selected ? bucketOf(selected.status) === BUCKET.PENDING : false;
@@ -317,9 +305,8 @@ export default function TpoSessionRequests() {
         {loading && !error && <div className="tpo-empty-state">Loading session requests…</div>}
 
         {!loading && !error && items && (
-          <div className="tpo-split-layout">
-            <div className="tpo-table-wrap tpo-split-main">
-              <table className="tpo-table tpo-table-approvals">
+          <div className="tpo-table-wrap">
+            <table className="tpo-table tpo-table-approvals">
                 <thead>
                   <tr>
                     <th></th>
@@ -335,7 +322,7 @@ export default function TpoSessionRequests() {
                 <tbody>
                   {pageItems.length === 0 ? (
                     <tr>
-                      <td colSpan={8} className="tpo-table-empty">
+                      <td colSpan={7} className="tpo-table-empty">
                         No session requests match these filters.
                       </td>
                     </tr>
@@ -343,13 +330,11 @@ export default function TpoSessionRequests() {
                     pageItems.map((r, idx) => {
                       const badge = statusBadge(r.status);
                       const tags = r.topic?.tags || [];
-                      const isPending = bucketOf(r.status) === BUCKET.PENDING;
                       return (
                         <tr
                           key={r.id}
-                          className={selected?.id === r.id ? 'tpo-row-selected' : ''}
+                          className={`tpo-row-clickable ${selected?.id === r.id ? 'tpo-row-selected' : ''}`}
                           onClick={() => setSelected(r)}
-                          style={{ cursor: 'pointer' }}
                         >
                           <td>{safePage * PAGE_SIZE + idx + 1}</td>
 
@@ -395,63 +380,6 @@ export default function TpoSessionRequests() {
                               <badge.Icon /> {badge.label}
                             </span>
                           </td>
-
-                          {/* <td>
-                            <div className="tpo-actions-cell" onClick={(e) => e.stopPropagation()}>
-                              <button
-                                type="button"
-                                className="tpo-view-btn"
-                                onClick={() => setSelected(r)}
-                              >
-                                View
-                              </button>
-
-                              <div
-                                className="tpo-kebab-wrap"
-                                ref={menuOpenId === r.id ? menuRef : null}
-                              >
-                                <button
-                                  type="button"
-                                  className="tpo-kebab-btn"
-                                  aria-label="More actions"
-                                  onClick={() => setMenuOpenId(menuOpenId === r.id ? null : r.id)}
-                                >
-                                  <FiMoreVertical />
-                                </button>
-
-                                {menuOpenId === r.id && (
-                                  <div className="tpo-kebab-menu">
-                                    <button
-                                      type="button"
-                                      onClick={() => { setSelected(r); setMenuOpenId(null); }}
-                                    >
-                                      <FiFileText /> View details
-                                    </button>
-                                    {isPending && (
-                                      <>
-                                        <button
-                                          type="button"
-                                          className="ok"
-                                          disabled={actingId === r.id}
-                                          onClick={() => respond(r.id, true)}
-                                        >
-                                          <FiCheck /> Approve
-                                        </button>
-                                        <button
-                                          type="button"
-                                          className="danger"
-                                          disabled={actingId === r.id}
-                                          onClick={() => respond(r.id, false)}
-                                        >
-                                          <FiXCircle /> Reject
-                                        </button>
-                                      </>
-                                    )}
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          </td> */}
                         </tr>
                       );
                     })
@@ -468,10 +396,15 @@ export default function TpoSessionRequests() {
                 onPageChange={setPage}
               />
             </div>
+        )}
 
-            {/* {selected && (
-              <div className="tpo-panel tpo-split-side tpo-details-panel">
-                <div className="tpo-panel-header tpo-details-head">
+        {selected && (
+          <div className="tpo-modal-overlay" onClick={() => setSelected(null)}>
+            <div
+              className="tpo-modal-card tpo-details-modal"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="tpo-panel-header tpo-details-head">
                   <h3>Session Details</h3>
                   <button
                     type="button"
@@ -613,8 +546,7 @@ export default function TpoSessionRequests() {
                     </button>
                   </div>
                 )}
-              </div>
-            )} */}
+            </div>
           </div>
         )}
       </div>

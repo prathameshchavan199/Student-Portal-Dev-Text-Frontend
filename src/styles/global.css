@@ -9229,3 +9229,32 @@ body.mcq-active .dash-wrap { overflow: visible !important; }
     overflow: visible;
   }
 }
+/* ============================================================
+   TPO — Session Requests: details popup (row click)
+   ============================================================ */
+
+.tpo-row-clickable { cursor: pointer; }
+.tpo-row-clickable:hover td { background: #F7F9FD; }
+
+/* Wider variant of the shared .tpo-modal-card, sized for the
+   session-details content (previously the right-hand panel). */
+.tpo-details-modal {
+  text-align: left;
+  max-width: 480px;
+  width: 100%;
+  max-height: min(88vh, 720px);
+  overflow-y: auto;
+  padding: 22px 24px 24px;
+}
+.tpo-details-modal::-webkit-scrollbar { width: 8px; }
+.tpo-details-modal::-webkit-scrollbar-thumb {
+  background: #DDE3EE;
+  border-radius: 8px;
+}
+.tpo-details-modal .tpo-details-head {
+  margin-bottom: 14px;
+}
+
+@media (max-width: 560px) {
+  .tpo-details-modal { max-width: 100%; padding: 18px 16px 20px; }
+}
