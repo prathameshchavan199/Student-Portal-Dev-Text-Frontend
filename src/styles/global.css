@@ -8129,110 +8129,174 @@ body.mcq-active .dash-wrap { overflow: visible !important; }
 .tpo-badge-red   { background: rgba(220, 38, 38, 0.1);  color: #dc2626; }
 .tpo-badge-gray  { background: rgba(107, 114, 128, 0.12); color: var(--text-subtle); }
 
-.tpo-tab-btn {
-  padding: 10px 18px;
-  border-radius: 10px;
+.tpo-badge-orange { background: rgba(249, 115, 22, 0.12); color: #f97316; }
+
+.tpo-stat-card-btn {
   border: 1px solid var(--border-color);
-  background: var(--card-bg);
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.tpo-stat-card-btn.active {
+  border-color: var(--brand-blue);
+  box-shadow: 0 0 0 3px rgba(76, 111, 255, 0.12);
+}
+
+.tpo-section-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.tpo-section-header-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(123, 92, 255, 0.12);
+  color: var(--purple);
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.tpo-section-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
   color: var(--text-heading);
+}
+.tpo-section-header p {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--text-subtle);
+  font-weight: 500;
+}
+
+.tpo-split-layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 16px;
+  align-items: flex-start;
+}
+.tpo-split-main {
+  min-width: 0;
+}
+.tpo-split-side {
+  position: sticky;
+  top: 16px;
+}
+
+.tpo-table-person {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.tpo-table-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(76, 111, 255, 0.12);
+  color: var(--brand-blue);
+  font-weight: 700;
+  font-size: 12px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.tpo-table-subtext {
+  font-size: 11px;
+  color: var(--text-subtle);
+}
+
+.tpo-row-selected {
+  background: rgba(76, 111, 255, 0.06);
+}
+
+.tpo-link-btn {
+  border: 0;
+  background: transparent;
+  color: var(--brand-blue);
   font-weight: 700;
   font-size: 13px;
   cursor: pointer;
 }
-.tpo-tab-btn.active {
-  border-color: transparent;
-  background: linear-gradient(120deg, #2f6fed, #7b5cff 55%, #f2542d 130%);
-  color: #fff;
+
+.tpo-icon-btn {
+  border: 0;
+  background: transparent;
+  color: var(--text-subtle);
+  font-size: 18px;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
 }
 
-.tpo-peer-request-list {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+.tpo-detail-block {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border-color);
 }
-.tpo-peer-request-card {
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 14px;
-  padding: 18px 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
+.tpo-detail-block:last-of-type {
+  border-bottom: 0;
 }
-.tpo-peer-request-topic {
+.tpo-detail-title-row {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 15px;
-  color: var(--text-heading);
-}
-.tpo-peer-request-people {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-}
-.tpo-peer-person {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  background: var(--bg-7, rgba(0,0,0,0.03));
-  border-radius: 10px;
-  padding: 10px 12px;
-}
-.tpo-peer-person-role {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--text-subtle);
-}
-.tpo-peer-person-meta {
-  font-size: 12px;
-  color: var(--text-subtle);
-}
-.tpo-peer-person-email {
-  font-size: 11px;
-  color: var(--text-subtle);
-  word-break: break-all;
-}
-.tpo-peer-request-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 16px;
-  align-items: center;
-  font-size: 13px;
-  color: var(--text-subtle);
-}
-.tpo-peer-request-meta svg {
-  vertical-align: -2px;
-  margin-right: 4px;
-}
-.tpo-peer-request-message {
-  font-style: italic;
-}
-.tpo-peer-request-actions {
-  display: flex;
+  justify-content: space-between;
   gap: 10px;
 }
-.tpo-peer-approve-btn,
-.tpo-peer-reject-btn {
-  display: inline-flex;
+.tpo-detail-title-row strong {
+  font-size: 16px;
+  color: var(--text-heading);
+}
+.tpo-detail-label {
+  display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 13px;
-  padding: 8px 16px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-subtle);
+  margin-bottom: 6px;
 }
-.tpo-peer-reject-btn {
-  color: #dc2626;
+.tpo-detail-value {
+  font-size: 14px;
+  color: var(--text-heading);
+  font-weight: 600;
 }
-.tpo-peer-request-approved-note {
+.tpo-detail-sub {
   font-size: 12px;
   color: var(--text-subtle);
+  margin-top: 2px;
+}
+.tpo-detail-message {
+  font-style: italic;
+  font-weight: 500;
+}
+.tpo-detail-actions {
+  display: flex;
+  gap: 10px;
+  padding-top: 16px;
+}
+.tpo-detail-actions .tpo-btn-submit,
+.tpo-detail-actions .tpo-btn-reset {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 14px;
+  font-size: 13px;
+}
+.tpo-reject-btn {
+  color: #dc2626;
+  border-color: #dc2626;
 }
 
-@media (max-width: 640px) {
-  .tpo-peer-request-people {
+@media (max-width: 900px) {
+  .tpo-split-layout {
     grid-template-columns: 1fr;
+  }
+  .tpo-split-side {
+    position: static;
   }
 }
 
@@ -8746,5 +8810,422 @@ body.mcq-active .dash-wrap { overflow: visible !important; }
   }
   .tpo-user-name {
     font-size: 14px;
+  }
+}
+/* ============================================================
+   TPO — Session Requests (approvals) redesign
+   ============================================================ */
+
+/* ---- Tinted stat tiles: icon left, number + label right ---- */
+.tpo-stats-row-tinted {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+}
+.tpo-stat-tile {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 22px;
+  border-radius: 18px;
+  border: 1px solid transparent;
+  text-align: left;
+  width: 100%;
+  cursor: pointer;
+  transition: box-shadow .16s ease, transform .16s ease, border-color .16s ease;
+}
+.tpo-stat-tile.static { cursor: default; }
+.tpo-stat-tile:not(.static):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(34, 51, 84, 0.10);
+}
+.tpo-stat-tile-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+  background: #fff;
+  flex-shrink: 0;
+}
+.tpo-stat-tile-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.tpo-stat-tile-text strong {
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1.05;
+  color: var(--text-heading);
+}
+.tpo-stat-tile-text em {
+  font-style: normal;
+  font-size: 14px;
+  font-weight: 600;
+  color: #5b6b85;
+}
+
+.tpo-stat-tile.tone-amber { background: linear-gradient(180deg, #FFF4E0 0%, #FDEBCF 100%); }
+.tpo-stat-tile.tone-amber .tpo-stat-tile-icon { color: #f59e0b; background: #FFE6BC; }
+.tpo-stat-tile.tone-green { background: linear-gradient(180deg, #E7FAEF 0%, #D8F5E4 100%); }
+.tpo-stat-tile.tone-green .tpo-stat-tile-icon { color: #16a34a; background: #C8F0D8; }
+.tpo-stat-tile.tone-red   { background: linear-gradient(180deg, #FDECEE 0%, #FBDDE1 100%); }
+.tpo-stat-tile.tone-red .tpo-stat-tile-icon { color: #e5484d; background: #F8D2D6; }
+.tpo-stat-tile.tone-blue  { background: linear-gradient(180deg, #E8F1FE 0%, #DCE9FD 100%); }
+.tpo-stat-tile.tone-blue .tpo-stat-tile-icon { color: #3b82f6; background: #CFE1FC; }
+
+.tpo-stat-tile.active {
+  border-color: rgba(99, 91, 255, 0.55);
+  box-shadow: 0 0 0 3px rgba(99, 91, 255, 0.14);
+}
+
+/* ---- Reset button in the toolbar ---- */
+.tpo-reset-btn {
+  border: 1px solid #DCD8FF;
+  background: #EFECFF;
+  color: #635BFF;
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: 10px;
+  padding: 10px 26px;
+  min-width: 110px;
+  cursor: pointer;
+  transition: background .15s ease, opacity .15s ease;
+}
+.tpo-reset-btn:hover:not(:disabled) { background: #E4DFFF; }
+.tpo-reset-btn:disabled { opacity: .55; cursor: not-allowed; }
+
+/* ---- Approvals table ---- */
+.tpo-table-approvals th {
+  font-size: 12px;
+  letter-spacing: .01em;
+  white-space: nowrap;
+}
+.tpo-table-approvals td { vertical-align: middle; }
+
+.tpo-topic-cell { display: flex; flex-direction: column; gap: 6px; }
+.tpo-topic-name {
+  font-weight: 700;
+  color: var(--text-heading);
+  font-size: 14px;
+}
+
+.tpo-chip-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.tpo-chip {
+  background: #EEF3FF;
+  color: #4C6FFF;
+  border-radius: 6px;
+  padding: 3px 9px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ---- Level / status pills ---- */
+.tpo-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.tpo-pill svg { font-size: 13px; flex-shrink: 0; }
+.tpo-pill.tone-green  { background: #DFF6E8; color: #16803c; }
+.tpo-pill.tone-blue   { background: #E2ECFF; color: #2563eb; }
+.tpo-pill.tone-purple { background: #ECE7FF; color: #6d4aff; }
+.tpo-pill.tone-amber  { background: #FDF0D5; color: #b7791f; }
+.tpo-pill.tone-red    { background: #FCE3E5; color: #d23f43; }
+.tpo-pill.tone-gray   { background: #EDEFF3; color: var(--text-subtle); }
+
+/* ---- Row actions: View + kebab ---- */
+.tpo-actions-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.tpo-view-btn {
+  border: 1px solid #D7E0F2;
+  background: #F7F9FD;
+  color: #4C6FFF;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 8px;
+  padding: 6px 16px;
+  cursor: pointer;
+  transition: background .15s ease;
+}
+.tpo-view-btn:hover { background: #EDF2FD; }
+
+.tpo-kebab-wrap { position: relative; }
+.tpo-kebab-btn {
+  border: 0;
+  background: transparent;
+  color: var(--text-subtle);
+  font-size: 16px;
+  padding: 6px 4px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+.tpo-kebab-btn:hover { background: #F1F4F9; color: var(--text-heading); }
+
+.tpo-kebab-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  z-index: 30;
+  min-width: 168px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  box-shadow: 0 10px 26px rgba(34, 51, 84, 0.16);
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+}
+.tpo-kebab-menu button {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-heading);
+  padding: 9px 10px;
+  border-radius: 7px;
+  cursor: pointer;
+}
+.tpo-kebab-menu button:hover:not(:disabled) { background: #F3F5FA; }
+.tpo-kebab-menu button:disabled { opacity: .5; cursor: not-allowed; }
+.tpo-kebab-menu button.ok { color: #16803c; }
+.tpo-kebab-menu button.danger { color: #d23f43; }
+
+/* ---- Details side panel ---- */
+.tpo-details-panel {
+  padding: 18px 20px 20px;
+  align-self: start;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+}
+.tpo-details-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.tpo-details-head h3 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--text-heading);
+}
+.tpo-details-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.tpo-details-title-row strong {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--text-heading);
+}
+.tpo-details-desc {
+  font-size: 13px;
+  line-height: 1.55;
+  color: #5b6b85;
+  margin: 0 0 14px;
+}
+
+.tpo-detail-rows { display: flex; flex-direction: column; gap: 14px; }
+.tpo-detail-row { display: flex; gap: 12px; align-items: flex-start; }
+.tpo-detail-row > div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.tpo-detail-row-icon {
+  color: #8a94a6;
+  font-size: 17px;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.tpo-detail-row-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-subtle);
+}
+.tpo-detail-row-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-heading);
+  word-break: break-word;
+}
+.tpo-detail-row-link {
+  font-size: 12px;
+  color: #4C6FFF;
+  word-break: break-all;
+}
+
+/* ---- Additional notes ---- */
+.tpo-notes-block { margin-top: 18px; }
+.tpo-notes-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text-heading);
+  margin-bottom: 8px;
+}
+.tpo-notes-head svg { color: #8a94a6; }
+.tpo-notes-body {
+  background: #F2F7FF;
+  border: 1px solid #E1EBFA;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: #47566f;
+}
+
+/* ---- Approve / reject actions ---- */
+.tpo-details-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 20px;
+}
+.tpo-details-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 10px;
+  padding: 11px 14px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .15s ease, opacity .15s ease;
+}
+.tpo-details-actions button:disabled { opacity: .6; cursor: not-allowed; }
+.tpo-action-reject {
+  background: var(--card-bg);
+  border: 1px solid #F0B4B7;
+  color: #e5484d;
+}
+.tpo-action-reject:hover:not(:disabled) { background: #FDF2F3; }
+.tpo-action-approve {
+  background: #16A34A;
+  border: 1px solid #16A34A;
+  color: #fff;
+}
+.tpo-action-approve:hover:not(:disabled) { background: #12833c; }
+
+@media (max-width: 1200px) {
+  .tpo-stats-row-tinted { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .tpo-stats-row-tinted { grid-template-columns: 1fr; }
+  .tpo-details-actions { grid-template-columns: 1fr; }
+  .tpo-reset-btn { width: 100%; }
+}
+
+/* ============================================================
+   TPO — Session Requests: desktop fit / responsiveness
+   ============================================================ */
+
+/* The page used to blow past the viewport on smaller desktops because the
+   table and the 340px details panel both demanded their natural width.
+   Cap the page, let the main column shrink, and let the table scroll
+   inside its own card instead of pushing the layout wider. */
+.tpo-page {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.tpo-split-layout {
+  grid-template-columns: minmax(0, 1fr) ;
+  gap: 18px;
+  align-items: start;
+}
+.tpo-split-main { min-width: 0; }
+
+.tpo-table-wrap.tpo-split-main {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Column sizing so 8 columns fit a 1280–1440 desktop without scrolling */
+.tpo-table-approvals { table-layout: auto; min-width: 940px; }
+.tpo-table-approvals th,
+.tpo-table-approvals td { padding: 12px 12px; }
+.tpo-table-approvals th:first-child,
+.tpo-table-approvals td:first-child { padding-left: 16px; width: 40px; }
+.tpo-table-approvals th:last-child,
+.tpo-table-approvals td:last-child { padding-right: 16px; }
+
+/* Topic title wraps instead of forcing the table wide */
+.tpo-table-approvals td:nth-child(2) { white-space: normal; min-width: 117px; max-width: 240px; }
+.tpo-topic-name { display: block; line-height: 1.35; }
+
+/* Person cells: let long emails truncate rather than stretch the row */
+.tpo-table-approvals td:nth-child(3),
+.tpo-table-approvals td:nth-child(4) { min-width: 170px; max-width: 220px; }
+.tpo-table-person > div { min-width: 0; }
+.tpo-table-person > div > div {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 160px;
+}
+
+.tpo-table-approvals td:nth-child(5) { max-width: 130px; white-space: normal; }
+
+/* Details panel scrolls on its own so a long panel never stretches the page */
+.tpo-details-panel {
+  position: sticky;
+  top: 16px;
+  max-height: calc(100vh - 110px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.tpo-details-panel::-webkit-scrollbar { width: 8px; }
+.tpo-details-panel::-webkit-scrollbar-thumb {
+  background: #DDE3EE;
+  border-radius: 8px;
+}
+
+/* Toolbar reflows instead of overflowing on narrower desktops */
+.tpo-toolbar { align-items: center; }
+.tpo-toolbar select { flex: 0 1 165px; min-width: 132px; }
+.tpo-search-field { flex: 1 1 240px; min-width: 200px; }
+
+/* ---- Large desktop: give the table more room ---- */
+@media (min-width: 1600px) {
+  .tpo-split-layout { grid-template-columns: minmax(0, 1fr) 380px; }
+  .tpo-table-approvals th,
+  .tpo-table-approvals td { padding: 14px 16px; }
+}
+
+/* ---- Mid desktop / small laptop ---- */
+@media (max-width: 1400px) {
+  .tpo-stat-tile { padding: 16px 16px; gap: 12px; }
+  .tpo-stat-tile-icon { width: 46px; height: 46px; font-size: 19px; }
+  .tpo-stat-tile-text strong { font-size: 25px; }
+  .tpo-stat-tile-text em { font-size: 13px; }
+}
+
+/* ---- Below this the side panel drops under the table ---- */
+@media (max-width: 1150px) {
+  .tpo-split-layout { grid-template-columns: minmax(0, 1fr); }
+  .tpo-details-panel {
+    position: static;
+    max-height: none;
+    overflow: visible;
   }
 }
