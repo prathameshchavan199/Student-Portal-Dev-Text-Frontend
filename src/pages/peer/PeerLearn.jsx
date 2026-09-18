@@ -118,7 +118,8 @@ function BrowseTab({ onRequest }) {
 
 function RequestModal({ topic, onClose }) {
   const [date, setDate] = useState('');
-  const [timeSlot, setTimeSlot] = useState('');
+  const [timeSlotStart, setTimeSlotStart] = useState('');
+  const [timeSlotEnd, setTimeSlotEnd] = useState('');
   const [message, setMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -129,10 +130,14 @@ function RequestModal({ topic, onClose }) {
     setError('');
     if (!date) { setError('Pick a date for the session.'); return; }
 
+    const requestedTimeSlot = timeSlotStart && timeSlotEnd
+      ? `${timeSlotStart} - ${timeSlotEnd}`
+      : (timeSlotStart || timeSlotEnd || '');
+
     setSubmitting(true);
     try {
       await axios.post(`${API_BASE_URL}/api/peer/sessions`, {
-        topicId: topic.id, requestedDate: date, requestedTimeSlot: timeSlot, message,
+        topicId: topic.id, requestedDate: date, requestedTimeSlot, message,
       });
       setSent(true);
     } catch (err) {
@@ -183,7 +188,16 @@ function RequestModal({ topic, onClose }) {
             </div>
             <div style={{ marginBottom: 14 }}>
               <label className="pp-label">Preferred Time Slot (optional)</label>
-              <input className="pp-input" placeholder="e.g. 04:00 PM - 05:00 PM" value={timeSlot} onChange={(e) => setTimeSlot(e.target.value)} />
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+                <div>
+                  <label className="pp-label" style={{ fontWeight: 500, fontSize: 12 }}>Start</label>
+                  <input className="pp-input" type="time" value={timeSlotStart} onChange={(e) => setTimeSlotStart(e.target.value)} />
+                </div>
+                <div>
+                  <label className="pp-label" style={{ fontWeight: 500, fontSize: 12 }}>End</label>
+                  <input className="pp-input" type="time" value={timeSlotEnd} onChange={(e) => setTimeSlotEnd(e.target.value)} />
+                </div>
+              </div>
             </div>
             <div style={{ marginBottom: 20 }}>
               <label className="pp-label">Message (optional)</label>
