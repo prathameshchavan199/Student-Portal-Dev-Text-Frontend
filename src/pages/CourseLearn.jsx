@@ -9,6 +9,7 @@ import {
   FiChevronDown,
   FiChevronLeft,
   FiChevronRight,
+  FiFileText,
   FiLock,
   FiPlayCircle,
 } from 'react-icons/fi';
@@ -20,16 +21,29 @@ const lessonKey = (moduleIndex, lessonIndex) => `${moduleIndex}-${lessonIndex}`;
 
 // Normalizes a curriculum lesson entry — supports both the legacy plain-string
 // format ("Lesson name") and the newer object format ({ title, duration, videoUrl }).
+// A lesson can carry a video (videoUrl/videoKey), a PDF (pdfUrl/pdfKey), or a
+// Word document (docUrl/docKey); when none are present it shows as locked/coming-soon.
 function normalizeLesson(raw) {
   if (typeof raw === 'string') {
-    return { title: raw, duration: null, hasVideo: false, isPreview: false };
+    return { title: raw, duration: null, hasVideo: false, hasPdf: false, hasDoc: false, isPreview: false };
   }
   return {
     title: raw?.title ?? 'Untitled lesson',
     duration: raw?.duration ?? null,
     hasVideo: Boolean(raw?.videoUrl || raw?.videoKey),
+    hasPdf: Boolean(raw?.pdfUrl || raw?.pdfKey),
+    hasDoc: Boolean(raw?.docUrl || raw?.docKey),
     isPreview: Boolean(raw?.isPreview),
   };
+}
+
+// Wraps a document URL for inline preview via Microsoft's Office Online
+// viewer. That service fetches the document itself, so the URL it's given
+// must be publicly reachable (a presigned S3 URL, or a static asset URL) —
+// this is why the /doc endpoint returns the URL as JSON instead of
+// redirecting like /video and /pdf do.
+function officeViewerUrl(docUrl) {
+  return `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(docUrl)}`;
 }
 
 export default function CourseLearn({ onSignOut }) {
@@ -45,7 +59,10 @@ export default function CourseLearn({ onSignOut }) {
   const [activeLessonIdx, setActiveLessonIdx] = useState(0);
   const [openModule, setOpenModule] = useState(0);
   const [videoSrc, setVideoSrc] = useState('');
-  const [videoLoading, setVideoLoading] = useState(false);
+  const [pdfSrc, setPdfSrc] = useState('');
+  const [docViewerSrc, setDocViewerSrc] = useState('');
+  const [contentLoading, setContentLoading] = useState(false);
+  const [contentError, setContentError] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const videoRef = useRef(null);
 
@@ -104,10 +121,10 @@ export default function CourseLearn({ onSignOut }) {
         lIdx = l;
       }
     } else {
-      // fall back to the first playable lesson
+      // fall back to the first playable lesson (video, PDF, or doc)
       outer: for (let m = 0; m < modules.length; m++) {
         for (let l = 0; l < modules[m].lessons.length; l++) {
-          if (modules[m].lessons[l].hasVideo) {
+          if (modules[m].lessons[l].hasVideo || modules[m].lessons[l].hasPdf || modules[m].lessons[l].hasDoc) {
             mIdx = m;
             lIdx = l;
             break outer;
@@ -125,18 +142,47 @@ export default function CourseLearn({ onSignOut }) {
   const activeLesson = modules[activeModuleIdx]?.lessons[activeLessonIdx];
   const activeKey = lessonKey(activeModuleIdx, activeLessonIdx);
 
-  // Resolve the playable video URL for the active lesson via the backend
-  // redirect endpoint (handles both static demo assets and S3-presigned URLs).
+  // Resolve the viewable content for the active lesson.
+  // Video and PDF just point straight at a backend endpoint that redirects
+  // to the resolved URL (static asset or S3-presigned) — the <video>/<iframe>
+  // follows that redirect itself. A doc lesson is different: the Office
+  // Online viewer needs the actual document URL embedded in its own src
+  // parameter, so that one has to be resolved up front via a real fetch.
   useEffect(() => {
-    if (!activeLesson?.hasVideo) {
-      setVideoSrc('');
+    setVideoSrc('');
+    setPdfSrc('');
+    setDocViewerSrc('');
+    setContentError('');
+
+    if (!activeLesson?.hasVideo && !activeLesson?.hasPdf && !activeLesson?.hasDoc) {
       return;
     }
-    setVideoLoading(true);
-    setVideoSrc(
-      `${API_BASE_URL}/api/courses/${courseId}/lessons/${activeModuleIdx}/${activeLessonIdx}/video`,
-    );
-    setVideoLoading(false);
+
+    if (activeLesson.hasVideo) {
+      setVideoSrc(
+        `${API_BASE_URL}/api/courses/${courseId}/lessons/${activeModuleIdx}/${activeLessonIdx}/video`,
+      );
+    } else if (activeLesson.hasPdf) {
+      setPdfSrc(
+        `${API_BASE_URL}/api/courses/${courseId}/lessons/${activeModuleIdx}/${activeLessonIdx}/pdf`,
+      );
+    } else {
+      setContentLoading(true);
+      axios
+        .get(`${API_BASE_URL}/api/courses/${courseId}/lessons/${activeModuleIdx}/${activeLessonIdx}/doc`)
+        .then((res) => {
+          if (res.data?.success && res.data.data?.url) {
+            setDocViewerSrc(officeViewerUrl(res.data.data.url));
+          } else {
+            setContentError('Could not load this document.');
+          }
+        })
+        .catch((err) => {
+          console.error('Lesson doc fetch error:', err);
+          setContentError('Could not load this document.');
+        })
+        .finally(() => setContentLoading(false));
+    }
 
     // record that this lesson was opened, for "resume" next time
     axios
@@ -184,8 +230,11 @@ export default function CourseLearn({ onSignOut }) {
   const handleVideoEnded = () => {
     if (!completedSet.has(activeKey)) markComplete();
     const next = findAdjacentLesson(1);
-    if (next && modules[next[0]].lessons[next[1]].hasVideo) {
-      goToLesson(next[0], next[1]);
+    if (next) {
+      const nextLesson = modules[next[0]].lessons[next[1]];
+      if (nextLesson.hasVideo || nextLesson.hasPdf || nextLesson.hasDoc) {
+        goToLesson(next[0], next[1]);
+      }
     }
   };
 
@@ -241,7 +290,7 @@ export default function CourseLearn({ onSignOut }) {
 
           <div className="learn-body">
             <div className="learn-player-col">
-              <div className="learn-video-wrap">
+              <div className={`learn-video-wrap ${(activeLesson?.hasPdf || activeLesson?.hasDoc) ? 'is-document' : ''}`}>
                 {activeLesson?.hasVideo ? (
                   videoSrc && (
                     <video
@@ -254,6 +303,32 @@ export default function CourseLearn({ onSignOut }) {
                       onEnded={handleVideoEnded}
                     />
                   )
+                ) : activeLesson?.hasPdf ? (
+                  pdfSrc && (
+                    <iframe
+                      key={pdfSrc}
+                      className="learn-pdf-frame"
+                      src={pdfSrc}
+                      title={activeLesson?.title || 'Lesson document'}
+                    />
+                  )
+                ) : activeLesson?.hasDoc ? (
+                  contentError ? (
+                    <div className="learn-video-placeholder">
+                      <FiFileText />
+                      <strong>{contentError}</strong>
+                      <span>Try refreshing the page.</span>
+                    </div>
+                  ) : (
+                    docViewerSrc && (
+                      <iframe
+                        key={docViewerSrc}
+                        className="learn-pdf-frame"
+                        src={docViewerSrc}
+                        title={activeLesson?.title || 'Lesson document'}
+                      />
+                    )
+                  )
                 ) : (
                   <div className="learn-video-placeholder">
                     <FiLock />
@@ -261,7 +336,7 @@ export default function CourseLearn({ onSignOut }) {
                     <span>Check back soon — new lessons are added regularly.</span>
                   </div>
                 )}
-                {videoLoading && <div className="learn-video-loading">Loading video…</div>}
+                {contentLoading && <div className="learn-video-loading">Loading…</div>}
               </div>
 
               <div className="learn-lesson-header">
@@ -271,7 +346,7 @@ export default function CourseLearn({ onSignOut }) {
                   </span>
                   <h1>{activeLesson?.title || 'Select a lesson'}</h1>
                 </div>
-                {activeLesson?.hasVideo && (
+                {(activeLesson?.hasVideo || activeLesson?.hasPdf || activeLesson?.hasDoc) && (
                   <button
                     type="button"
                     className={`learn-complete-btn ${completedSet.has(activeKey) ? 'done' : ''}`}
@@ -338,11 +413,11 @@ export default function CourseLearn({ onSignOut }) {
                               <button
                                 type="button"
                                 key={key}
-                                className={`learn-lesson-row ${isActive ? 'active' : ''} ${!lesson.hasVideo ? 'locked' : ''}`}
+                                className={`learn-lesson-row ${isActive ? 'active' : ''} ${!(lesson.hasVideo || lesson.hasPdf || lesson.hasDoc) ? 'locked' : ''}`}
                                 onClick={() => goToLesson(mIdx, lIdx)}
                               >
                                 <span className="learn-lesson-icon">
-                                  {isDone ? <FiCheck /> : lesson.hasVideo ? <FiPlayCircle /> : <FiLock />}
+                                  {isDone ? <FiCheck /> : lesson.hasVideo ? <FiPlayCircle /> : (lesson.hasPdf || lesson.hasDoc) ? <FiFileText /> : <FiLock />}
                                 </span>
                                 <span className="learn-lesson-title">{lesson.title}</span>
                                 {lesson.duration && <span className="learn-lesson-duration">{lesson.duration}</span>}
