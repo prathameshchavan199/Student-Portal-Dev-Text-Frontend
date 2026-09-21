@@ -5,18 +5,6 @@ import TpoShell from '../../components/TpoShell.jsx';
 import TpoPagination from '../../components/TpoPagination.jsx';
 import { API_BASE_URL } from '../../api/axiosSetup.js';
 
-function StatCard({ icon: Icon, label, value, tone }) {
-  return (
-    <div className="tpo-stat-card">
-      <div className={`tpo-stat-icon tone-${tone}`}>
-        <Icon />
-      </div>
-      <div className="tpo-stat-label">{label}</div>
-      <div className="tpo-stat-value">{value}</div>
-    </div>
-  );
-}
-
 const CATEGORY_LABELS = { onDemand: 'On-Demand', onlineProgram: 'Online', offlineProgram: 'Offline' };
 const PAGE_SIZE = 10;
 
@@ -58,12 +46,47 @@ export default function TpoCourses() {
   return (
     <TpoShell title="Courses">
       <div className="tpo-page">
+        <div className="tpo-section-header">
+          <div className="tpo-section-header-icon"><FiBookOpen /></div>
+          <div>
+            <h2>Courses</h2>
+            <p>Track course enrollment and completion across your college</p>
+          </div>
+        </div>
+
         {data?.summary && (
-          <div className="tpo-stats-row">
-            <StatCard icon={FiBookOpen} label="Total Courses" value={data.summary.total} tone="purple" />
-            <StatCard icon={FiCheckCircle} label="Completed" value={data.summary.completed} tone="green" />
-            <StatCard icon={FiClock} label="In Progress" value={data.summary.inProgress} tone="orange" />
-            <StatCard icon={FiMoreHorizontal} label="Not Started" value={data.summary.notStarted} tone="gray" />
+          <div className="tpo-stats-row tpo-stats-row-tinted">
+            <div className="tpo-stat-tile tone-purple static">
+              <span className="tpo-stat-tile-icon"><FiBookOpen /></span>
+              <span className="tpo-stat-tile-text">
+                <strong>{data.summary.total}</strong>
+                <em>Total Courses</em>
+              </span>
+            </div>
+
+            <div className="tpo-stat-tile tone-green static">
+              <span className="tpo-stat-tile-icon"><FiCheckCircle /></span>
+              <span className="tpo-stat-tile-text">
+                <strong>{data.summary.completed}</strong>
+                <em>Completed</em>
+              </span>
+            </div>
+
+            <div className="tpo-stat-tile tone-orange static">
+              <span className="tpo-stat-tile-icon"><FiClock /></span>
+              <span className="tpo-stat-tile-text">
+                <strong>{data.summary.inProgress}</strong>
+                <em>In Progress</em>
+              </span>
+            </div>
+
+            <div className="tpo-stat-tile tone-gray static">
+              <span className="tpo-stat-tile-icon"><FiMoreHorizontal /></span>
+              <span className="tpo-stat-tile-text">
+                <strong>{data.summary.notStarted}</strong>
+                <em>Not Started</em>
+              </span>
+            </div>
           </div>
         )}
 

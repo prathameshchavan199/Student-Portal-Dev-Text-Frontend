@@ -7,18 +7,6 @@ import { API_BASE_URL } from '../../api/axiosSetup.js';
 
 const PAGE_SIZE = 10;
 
-function StatCard({ icon: Icon, label, value, tone }) {
-  return (
-    <div className="tpo-stat-card">
-      <div className={`tpo-stat-icon tone-${tone}`}>
-        <Icon />
-      </div>
-      <div className="tpo-stat-label">{label}</div>
-      <div className="tpo-stat-value">{value}</div>
-    </div>
-  );
-}
-
 function pctClass(pct) {
   if (pct >= 80) return 'tpo-badge-green';
   if (pct >= 60) return 'tpo-badge-blue';
@@ -53,12 +41,47 @@ export default function TpoAssessments() {
   return (
     <TpoShell title="Assessments">
       <div className="tpo-page">
+        <div className="tpo-section-header">
+          <div className="tpo-section-header-icon"><FiClipboard /></div>
+          <div>
+            <h2>Assessments</h2>
+            <p>Track assessment participation and completion across your college</p>
+          </div>
+        </div>
+
         {data?.summary && (
-          <div className="tpo-stats-row">
-            <StatCard icon={FiClipboard} label="Total Assessments" value={data.summary.totalAssessments} tone="purple" />
-            <StatCard icon={FiCheckCircle} label="Total Attempts" value={data.summary.totalAttempts.toLocaleString()} tone="green" />
-            <StatCard icon={FiUsers} label="Students Attempted" value={data.summary.studentsAttempted.toLocaleString()} tone="orange" />
-            <StatCard icon={FiTrendingUp} label="Avg Score" value={`${data.summary.averageScorePct}%`} tone="blue" />
+          <div className="tpo-stats-row tpo-stats-row-tinted">
+            <div className="tpo-stat-tile tone-purple static">
+              <span className="tpo-stat-tile-icon"><FiClipboard /></span>
+              <span className="tpo-stat-tile-text">
+                <strong>{data.summary.totalAssessments}</strong>
+                <em>Total Assessments</em>
+              </span>
+            </div>
+
+            <div className="tpo-stat-tile tone-green static">
+              <span className="tpo-stat-tile-icon"><FiCheckCircle /></span>
+              <span className="tpo-stat-tile-text">
+                <strong>{data.summary.totalAttempts.toLocaleString()}</strong>
+                <em>Total Attempts</em>
+              </span>
+            </div>
+
+            <div className="tpo-stat-tile tone-orange static">
+              <span className="tpo-stat-tile-icon"><FiUsers /></span>
+              <span className="tpo-stat-tile-text">
+                <strong>{data.summary.studentsAttempted.toLocaleString()}</strong>
+                <em>Students Attempted</em>
+              </span>
+            </div>
+
+            <div className="tpo-stat-tile tone-blue static">
+              <span className="tpo-stat-tile-icon"><FiTrendingUp /></span>
+              <span className="tpo-stat-tile-text">
+                <strong>{data.summary.averageScorePct}%</strong>
+                <em>Avg Score</em>
+              </span>
+            </div>
           </div>
         )}
 
