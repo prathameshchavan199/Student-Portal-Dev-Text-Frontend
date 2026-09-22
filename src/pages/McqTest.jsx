@@ -826,7 +826,7 @@ export default function McqTest({ onSignOut }) {
         </div>
       )}
 
-      <main className="course-shell mcq-shell">
+      <main className={`course-shell mcq-shell${(submitted || terminated) ? ' mcq-submitted' : ''}`}>
         <div className="mcq-header-panel">
             <div className="mcq-topbar">
               <button type="button" className="mcq-topbar-back" aria-label="Back to modules" onClick={handleBackBtn}>
