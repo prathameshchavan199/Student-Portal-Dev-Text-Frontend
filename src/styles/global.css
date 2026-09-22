@@ -4310,6 +4310,15 @@ a:hover { color: #ffb558; }
 /* ── MCQ Test Page ─────────────────────────────────────────── */
 .main:has(.mcq-shell) .topnav { display: none; }
 
+/* The topnav rule above only reaches inside .main — the sidebar is a
+   sibling of .main (not a descendant), so it needs its own :has() rule
+   scoped to the shared ancestor .dash-wrap. Without this, the left nav
+   stayed visible throughout the fullscreen proctored test. */
+.dash-wrap:has(.mcq-shell) .sidebar,
+.dash-wrap:has(.mcq-shell) .sidebar-overlay {
+  display: none;
+}
+
 
 .mcq-shell {
   background: var(--bg-0);
