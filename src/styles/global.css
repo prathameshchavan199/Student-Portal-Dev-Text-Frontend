@@ -2117,6 +2117,16 @@ a:hover { color: #ffb558; }
 @media (max-width: 900px) {
   .learn-video-wrap.is-document { aspect-ratio: 4/5; }
 }
+.learn-video-wrap.is-mcq {
+  aspect-ratio: auto;
+  overflow: visible;
+  background: var(--card-bg);
+  border-color: var(--border-color);
+  padding: 28px;
+}
+@media (max-width: 640px) {
+  .learn-video-wrap.is-mcq { padding: 20px 16px; }
+}
 .learn-video {
   width: 100%;
   height: 100%;
@@ -2178,6 +2188,17 @@ a:hover { color: #ffb558; }
   text-transform: uppercase;
   letter-spacing: 0.04em;
   margin-bottom: 6px;
+}
+.learn-lesson-eyebrow-tag {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(123, 92, 255, 0.14);
+  color: var(--purple);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
 }
 .learn-lesson-header h1 {
   margin: 0;
@@ -9124,3 +9145,160 @@ body.mcq-active .dash-wrap { overflow: visible !important; }
 @media (max-width: 560px) {
   .tpo-details-modal { max-width: 100%; padding: 18px 16px 20px; }
 }
+
+/* ============================================================
+   Course Learn — module knowledge-check MCQ slider
+   ============================================================ */
+
+.mcq-slider {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.mcq-slider-progress {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.mcq-slider-progress > span {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-subtle);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.mcq-slider-dots {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+.mcq-slider-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  background: var(--border-color);
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+.mcq-slider-dot.answered { background: var(--purple); opacity: 0.5; }
+.mcq-slider-dot.active { background: var(--purple); opacity: 1; transform: scale(1.25); }
+
+.mcq-slider-question {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-heading);
+  line-height: 1.5;
+}
+
+.mcq-slider-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.mcq-slider-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+  padding: 13px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  background: var(--card-bg);
+  color: var(--text-body);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.mcq-slider-option:hover:not(:disabled) {
+  border-color: var(--purple);
+  background: rgba(123, 92, 255, 0.06);
+}
+.mcq-slider-option:disabled { cursor: default; }
+.mcq-slider-option svg { flex-shrink: 0; font-size: 16px; }
+.mcq-slider-option.picked {
+  border-color: var(--purple);
+}
+.mcq-slider-option.correct {
+  border-color: #16a34a;
+  background: rgba(34, 197, 94, 0.1);
+  color: #16803c;
+}
+.mcq-slider-option.correct svg { color: #16a34a; }
+.mcq-slider-option.wrong {
+  border-color: #e5484d;
+  background: rgba(229, 72, 77, 0.08);
+  color: #c0292e;
+}
+.mcq-slider-option.wrong svg { color: #e5484d; }
+
+.mcq-slider-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 4px;
+}
+.mcq-slider-nav button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--card-bg);
+  color: var(--text-heading);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.mcq-slider-nav button:disabled { opacity: 0.45; cursor: not-allowed; }
+.mcq-slider-nav button:hover:not(:disabled) { background: var(--nav-active-bg); }
+.mcq-slider-finish {
+  border-color: transparent !important;
+  background: var(--purple) !important;
+  color: #fff !important;
+}
+.mcq-slider-finish:hover:not(:disabled) { opacity: 0.92; }
+
+.mcq-slider-result {
+  align-items: center;
+  text-align: center;
+  padding: 20px 10px 8px;
+  gap: 10px;
+}
+.mcq-result-score {
+  font-size: 40px;
+  font-weight: 800;
+  color: var(--purple);
+  line-height: 1;
+}
+.mcq-slider-result strong {
+  font-size: 16px;
+  color: var(--text-heading);
+}
+.mcq-slider-result span {
+  font-size: 13px;
+  color: var(--text-subtle);
+  max-width: 340px;
+}
+.mcq-slider-retake {
+  margin-top: 10px;
+  padding: 9px 18px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--card-bg);
+  color: var(--text-heading);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.mcq-slider-retake:hover { background: var(--nav-active-bg); }
