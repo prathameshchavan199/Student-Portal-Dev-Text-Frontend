@@ -14,6 +14,7 @@ import {
   FiUsers,
   FiVideo,
   FiX,
+  FiZap,
 } from 'react-icons/fi';
 
 import { AuthContext } from '../context/AuthContext.jsx';
@@ -28,6 +29,7 @@ const mainNavItems = [
   { icon: FiTrendingUp, label: 'Course Progress', path: '/course-progress' },
   { icon: FiClipboard, label: 'Assessment', path: '/assessment' },
   { icon: FiUsers, label: 'Peer to Peer', path: '/peer' },
+  { icon: FiZap, label: 'Kahoot Learning', path: '/kahoot' },
   { icon: FiBriefcase, label: 'Campus Placement Programs', path: '/dashboard' },
   { icon: FiVideo, label: 'Interactive Sessions', path: '/dashboard' },
 ];
