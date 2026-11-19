@@ -97,7 +97,7 @@ export default function AuthCallback() {
     handled.current = true;
 
     const params = new URLSearchParams(window.location.search);
-    const code = params.get('code');
+    const code = params.get(' ');
 
     if (!code) {
       navigate('/login', { replace: true });
